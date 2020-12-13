@@ -43,9 +43,9 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == LAUNCH_SECOND_ACTIVITY) {
             if (resultCode == RESULT_OK) {
-                val result = data?.getStringExtra("result")
+                val result: Task? = data?.getParcelableExtra("result")
                 val textView = TextView(applicationContext)
-                textView.text = result
+                textView.text = result.toString()
                 taskLayout.addView(textView)
             }
             if (resultCode == RESULT_CANCELED) {

@@ -34,7 +34,13 @@ class AddTaskActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_save -> {
             val returnIntent = Intent()
-            returnIntent.putExtra("result", taskNameEditText.text.toString())
+            val task = Task(
+                taskNameEditText.text.toString(),
+                Importance.IMPORTANT,
+                dueButton.getDate(),
+                if (snoozeSwitch.isChecked) snoozeButton.getDate() else null,
+                null)
+            returnIntent.putExtra("result", task)
             setResult(RESULT_OK, returnIntent)
             finish()
             true

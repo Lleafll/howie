@@ -23,17 +23,17 @@ class TaskManager(private val tasks: MutableList<Task> = mutableListOf()) {
         replace(task, newTask)
     }
 
-    fun snooze(task: Task, snoozed: Date) {
+    fun snooze(task: Task, snoozed: Calendar) {
         val newTask = task.copy(snoozed = snoozed)
         replace(task, newTask)
     }
 
-    fun followUp(task: Task, due: Date) {
+    fun followUp(task: Task, due: Calendar) {
         val newTask = task.copy(due = due)
         replace(task, newTask)
     }
 
-    fun setComplete(task: Task, completed: Date?) {
+    fun setComplete(task: Task, completed: Calendar?) {
         val newTask = task.copy(completed = completed)
         replace(task, newTask)
     }
