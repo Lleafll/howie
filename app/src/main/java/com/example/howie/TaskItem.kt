@@ -8,9 +8,11 @@ class TaskItem : androidx.appcompat.widget.AppCompatTextView {
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?) : super(context)
 
-    fun setTask(task: Task) {
-        text = "${task.name}\nDue: ${toDateString(task.due)}\nSnoozed: ${toDateString(task.snoozed)}"
-    }
+    var task: Task = Task("", Importance.IMPORTANT, Calendar.getInstance(), null, null)
+        set(value) {
+            field = value
+            text = "${value.name}\nDue: ${toDateString(value.due)}\nSnoozed: ${toDateString(value.snoozed)}"
+        }
 }
 
 private fun toDateString(date: Calendar?): String {

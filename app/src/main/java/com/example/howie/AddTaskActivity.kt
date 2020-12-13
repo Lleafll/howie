@@ -19,7 +19,8 @@ class AddTaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_task)
         setSupportActionBar(toolbar)
-        supportActionBar?.displayOptions = DISPLAY_HOME_AS_UP
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             val snoozeButton: Button = findViewById(R.id.snoozeButton)
             snoozeButton.isVisible = isChecked
