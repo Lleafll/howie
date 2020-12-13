@@ -10,6 +10,7 @@ import android.widget.Switch
 import androidx.appcompat.app.ActionBar.DISPLAY_HOME_AS_UP
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_add_task.*
+import java.util.*
 
 class AddTaskActivity : AppCompatActivity() {
 
@@ -18,7 +19,6 @@ class AddTaskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_task)
         setSupportActionBar(toolbar)
         supportActionBar?.displayOptions = DISPLAY_HOME_AS_UP
-        val snoozeSwitch: Switch = findViewById(R.id.snoozeSwitch)
         snoozeSwitch.setOnCheckedChangeListener {_, isChecked ->
             val snoozeButton: Button = findViewById(R.id.snoozeButton)
             snoozeButton.isVisible = isChecked
@@ -42,8 +42,7 @@ class AddTaskActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun showDueDatePickerDialog(view: View) {
         val datePicker = DatePickerFragment{year, month, day ->
-            val dueButton: Button = this.findViewById(R.id.dueButton)
-            dueButton.text = toDateString(year, month, day)
+            dueButton.setDate(GregorianCalendar(year, month, day))
         }
         datePicker.show(supportFragmentManager, "dueDatePicker")
     }
@@ -51,13 +50,8 @@ class AddTaskActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun showSnoozeDatePickerDialog(view: View) {
         val datePicker = DatePickerFragment{year, month, day ->
-            val snoozeButton: Button = this.findViewById(R.id.snoozeButton)
-            snoozeButton.text = toDateString(year, month, day)
+            snoozeButton.setDate(GregorianCalendar(year, month, day))
         }
         datePicker.show(supportFragmentManager, "snoozeDatePicker")
     }
-}
-
-private fun toDateString(year: Int, month: Int, day: Int): String {
-    return "$day.$month.$year"
 }
