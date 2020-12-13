@@ -14,6 +14,7 @@ private const val LAUNCH_SECOND_ACTIVITY = 1
 class MainActivity : AppCompatActivity() {
 
     private val taskManager: TaskManager = TaskManager()
+    private val taskAdapter: TaskAdapter = TaskAdapter(taskManager)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
+        taskListView.adapter = taskAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -41,12 +43,11 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == LAUNCH_SECOND_ACTIVITY) {
             if (resultCode == RESULT_OK) {
-                val result: Task? = data?.getParcelableExtra("result")
-                val taskView = TaskItem(applicationContext)
-                if (result != null) {
-                    taskView.setTask(result)
+                val task: Task? = data?.getParcelableExtra("result")
+                if (task != null) {
+                    taskManager.add(task)
+                    taskAdapter.notifyDataSetChanged()
                 }
-                taskLayout.addView(taskView)
             }
         }
     }

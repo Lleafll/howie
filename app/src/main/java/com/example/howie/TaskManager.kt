@@ -13,6 +13,10 @@ class TaskManager(private val tasks: MutableList<Task> = mutableListOf()) {
         tasks[index] = new_task
     }
 
+    fun add(task: Task) {
+        tasks.add(task)
+    }
+
     fun rename(task: Task, name: String) {
         val newTask = task.copy(name = name)
         replace(task, newTask)
