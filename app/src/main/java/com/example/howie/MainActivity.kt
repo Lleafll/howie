@@ -4,11 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.w3c.dom.Text
 
 
 private const val LAUNCH_SECOND_ACTIVITY = 1
@@ -44,12 +42,11 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == LAUNCH_SECOND_ACTIVITY) {
             if (resultCode == RESULT_OK) {
                 val result: Task? = data?.getParcelableExtra("result")
-                val textView = TextView(applicationContext)
-                textView.text = result.toString()
-                taskLayout.addView(textView)
-            }
-            if (resultCode == RESULT_CANCELED) {
-                //Write your code if there's no result
+                val taskView = TaskView(applicationContext)
+                if (result != null) {
+                    taskView.setTask(result)
+                }
+                taskLayout.addView(taskView)
             }
         }
     }
