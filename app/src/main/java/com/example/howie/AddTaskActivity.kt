@@ -39,8 +39,25 @@ class AddTaskActivity : AppCompatActivity() {
         }
     }
 
-    fun showDatePickerDialog(view: View) {
-        val newFragment = DatePickerFragment()
-        newFragment.show(supportFragmentManager, "datePicker")
+    @Suppress("UNUSED_PARAMETER")
+    fun showDueDatePickerDialog(view: View) {
+        val datePicker = DatePickerFragment{year, month, day ->
+            val dueButton: Button = this.findViewById(R.id.dueButton)
+            dueButton.text = toDateString(year, month, day)
+        }
+        datePicker.show(supportFragmentManager, "dueDatePicker")
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun showSnoozeDatePickerDialog(view: View) {
+        val datePicker = DatePickerFragment{year, month, day ->
+            val snoozeButton: Button = this.findViewById(R.id.snoozeButton)
+            snoozeButton.text = toDateString(year, month, day)
+        }
+        datePicker.show(supportFragmentManager, "snoozeDatePicker")
+    }
+}
+
+private fun toDateString(year: Int, month: Int, day: Int): String {
+    return "$day.$month.$year"
 }
