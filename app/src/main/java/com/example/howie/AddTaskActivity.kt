@@ -3,6 +3,7 @@ package com.example.howie
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import androidx.appcompat.app.ActionBar.DISPLAY_HOME_AS_UP
 import kotlinx.android.synthetic.main.activity_add_task.*
 
 class AddTaskActivity : AppCompatActivity() {
@@ -11,7 +12,7 @@ class AddTaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_task)
         setSupportActionBar(toolbar)
-        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.displayOptions = DISPLAY_HOME_AS_UP
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
