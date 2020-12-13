@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == LAUNCH_SECOND_ACTIVITY) {
             if (resultCode == RESULT_OK) {
                 val result: Task? = data?.getParcelableExtra("result")
-                val taskView = TaskView(applicationContext)
+                val taskView = TaskItem(applicationContext)
                 if (result != null) {
                     taskView.setTask(result)
                 }
