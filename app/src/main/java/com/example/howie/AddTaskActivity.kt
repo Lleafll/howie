@@ -34,7 +34,7 @@ class AddTaskActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_save -> {
             val returnIntent = Intent()
-            returnIntent.putExtra("result", "New Task")
+            returnIntent.putExtra("result", taskNameEditText.text.toString())
             setResult(RESULT_OK, returnIntent)
             finish()
             true
