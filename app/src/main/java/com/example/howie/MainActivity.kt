@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 val task: Task? = data?.getParcelableExtra("result")
                 if (task != null) {
                     taskManager.add(task)
-                    taskAdapter.notifyDataSetChanged()
+                    taskAdapter.notifyItemInserted(taskManager.tasks().size - 1)
                 }
             }
         }
