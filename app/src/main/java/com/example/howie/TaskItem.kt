@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import java.util.*
 
 class TaskItem : androidx.appcompat.widget.AppCompatTextView {
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?) : super(context)
 
     var task: Task = Task("", Importance.IMPORTANT, Calendar.getInstance(), null, null)
         set(value) {
