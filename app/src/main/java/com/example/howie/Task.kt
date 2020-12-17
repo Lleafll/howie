@@ -44,6 +44,6 @@ data class Task(
     val snoozed: LocalDate?,
     val completed: LocalDate?
 ) : Parcelable {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }

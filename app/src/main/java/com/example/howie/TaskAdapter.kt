@@ -3,19 +3,14 @@ package com.example.howie
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 class TaskAdapter(private val clickListener: (Task) -> Unit) :
-    RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
+    ListAdapter<Task, TaskAdapter.TaskViewHolder>(TasksComparator()) {
 
-    private var tasks: List<Task> = listOf()
-
-    fun setTasks(value: List<Task>) {
-        tasks = value
-        notifyDataSetChanged()
-    }
-
-    class ViewHolder(view: View, private val clickListener: (Task) -> Unit) :
+    class TaskViewHolder(view: View, private val clickListener: (Task) -> Unit) :
         RecyclerView.ViewHolder(view), View.OnClickListener {
         val taskItem: TaskItem = view.findViewById(R.id.taskItem)
 
@@ -23,21 +18,31 @@ class TaskAdapter(private val clickListener: (Task) -> Unit) :
             view.setOnClickListener(this)
         }
 
+        companion object {
+            fun create(parent: ViewGroup, clickListener: (Task) -> Unit): TaskViewHolder {
+                val view: View = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.task_row_item, parent, false)
+                return TaskViewHolder(view, clickListener)
+            }
+        }
+
         override fun onClick(v: View?) {
             clickListener(taskItem.task)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.task_row_item, parent, false),
-            clickListener
-        )
 
+    class TasksComparator : DiffUtil.ItemCallback<Task>() {
+        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem === newItem
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.taskItem.task = tasks[position]
+        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem == newItem
+
     }
 
-    override fun getItemCount(): Int = tasks.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder =
+        TaskViewHolder.create(parent, clickListener)
+
+    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
+        holder.taskItem.task = getItem(position)
+    }
 }

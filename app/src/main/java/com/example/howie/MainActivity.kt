@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
         taskListView.adapter = taskAdapter
         taskManager.tasks.observe(this, Observer { tasks ->
-            taskAdapter.setTasks(tasks)
+            tasks.let{taskAdapter.submitList(it)}
         })
     }
 
@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
                 val task: Task? = data?.getParcelableExtra("result")
                 if (task != null) {
                     taskManager.add(task)
-                    taskAdapter.notifyItemInserted(taskAdapter.itemCount - 1)
                 }
             }
         }
