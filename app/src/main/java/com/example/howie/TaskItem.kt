@@ -17,7 +17,7 @@ class TaskItem : androidx.appcompat.widget.AppCompatTextView {
 
 private fun toDateString(date: Calendar?): String {
     return if (date == null) {
-        "";
+        ""
     } else {
         "${date.get(Calendar.DAY_OF_MONTH)}.${date.get(Calendar.MONTH)}.${date.get(Calendar.YEAR)}"
     }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeMembers() {
         taskManager = TaskManager(applicationContext)
-        taskAdapter = TaskAdapter(taskManager!!) {
+        taskAdapter = TaskAdapter {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
@@ -34,6 +35,9 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
         taskListView.adapter = taskAdapter
+        taskManager!!.tasks().observe(this, Observer { tasks ->
+            taskAdapter?.setTasks(tasks)
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -55,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 val task: Task? = data?.getParcelableExtra("result")
                 if (task != null) {
                     taskManager!!.add(task)
-                    taskAdapter!!.notifyItemInserted(taskManager!!.tasks().size - 1)
+                    taskAdapter!!.notifyItemInserted(taskAdapter!!.itemCount - 1)
                 }
             }
         }

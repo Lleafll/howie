@@ -1,13 +1,15 @@
 package com.example.howie
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import java.util.*
 
-class TaskManager(context: Context)  {
+class TaskManager(context: Context) : ViewModel() {
 
     private val database: TasksDatabase = TasksDatabaseSingleton.getDatabase(context)
 
-    fun tasks(): List<Task> {
+    fun tasks(): LiveData<List<Task>> {
         return database.getTaskDao().getAll()
     }
 
