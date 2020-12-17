@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBar.DISPLAY_HOME_AS_UP
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_add_task.*
+import java.time.LocalDate
 import java.util.*
 
 
@@ -53,7 +54,7 @@ class AddTaskActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun showDueDatePickerDialog(view: View) {
         val datePicker = DatePickerFragment{ year, month, day ->
-            dueButton.setDate(GregorianCalendar(year, month, day))
+            dueButton.setDate(LocalDate.of(year, month, day))
         }
         datePicker.show(supportFragmentManager, "dueDatePicker")
     }
@@ -61,7 +62,7 @@ class AddTaskActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun showSnoozeDatePickerDialog(view: View) {
         val datePicker = DatePickerFragment{ year, month, day ->
-            snoozeButton.setDate(GregorianCalendar(year, month, day))
+            snoozeButton.setDate(LocalDate.of(year, month, day))
         }
         datePicker.show(supportFragmentManager, "snoozeDatePicker")
     }

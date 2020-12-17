@@ -2,24 +2,20 @@ package com.example.howie
 
 import android.content.Context
 import android.util.AttributeSet
-import java.util.*
+import java.time.LocalDate
 
 class DateButton(context: Context?, attrs: AttributeSet?) :
     androidx.appcompat.widget.AppCompatButton(context, attrs) {
 
-    private var date: Calendar = Calendar.getInstance();
+    private var date: LocalDate = LocalDate.now();
 
-    fun getDate(): Calendar {
+    fun getDate(): LocalDate {
         return date
     }
 
-    fun setDate(date: Calendar) {
+    fun setDate(date: LocalDate) {
         this.date = date
-        text = toDateString(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH))
+        text = date.toString()
     }
 
-}
-
-private fun toDateString(year: Int, month: Int, day: Int): String {
-    return "$day.$month.$year"
 }
