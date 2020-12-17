@@ -6,8 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import kotlinx.android.parcel.Parcelize
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDate
 
 enum class Importance {
     IMPORTANT, UNIMPORTANT
@@ -21,15 +20,18 @@ class Converters {
     fun toInt(importance: Importance): Int = importance.ordinal
 
     @TypeConverter
-    fun toCalendar(serialized: String): Calendar {
-        val calendar = Calendar.getInstance()
-        val parser = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
-        calendar.time = parser.parse(serialized)!!
-        return calendar
+    fun toLocalDate(epochDay: Long?): LocalDate? {
+        return if (epochDay == null) {
+            null
+        } else {
+            LocalDate.ofEpochDay(epochDay)
+        }
     }
 
     @TypeConverter
-    fun toString(calendar: Calendar): String = calendar.toString()
+    fun toLong(date: LocalDate?): Long? {
+        return date?.toEpochDay()
+    }
 }
 
 @Parcelize
@@ -38,9 +40,10 @@ class Converters {
 data class Task(
     val name: String,
     val importance: Importance,
-    val due: Calendar,
-    val snoozed: Calendar?,
-    val completed: Calendar?
+    val due: LocalDate,
+    val snoozed: LocalDate?,
+    val completed: LocalDate?
 ) : Parcelable {
-    @PrimaryKey var id: Int = 0
+    @PrimaryKey
+    var id: Int = 0
 }
