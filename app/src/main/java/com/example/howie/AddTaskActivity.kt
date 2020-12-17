@@ -41,29 +41,27 @@ class AddTaskActivity : AppCompatActivity() {
                 Importance.IMPORTANT,
                 dueButton.getDate(),
                 if (snoozeSwitch.isChecked) snoozeButton.getDate() else null,
-                null)
+                null
+            )
             returnIntent.putExtra("result", task)
             setResult(RESULT_OK, returnIntent)
             finish()
             true
-        } else -> {
+        }
+        else -> {
             super.onOptionsItemSelected(item)
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun showDueDatePickerDialog(view: View) {
-        val datePicker = DatePickerFragment{ year, month, day ->
-            dueButton.setDate(LocalDate.of(year, month, day))
-        }
+        val datePicker = DatePickerFragment { date -> dueButton.setDate(date) }
         datePicker.show(supportFragmentManager, "dueDatePicker")
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun showSnoozeDatePickerDialog(view: View) {
-        val datePicker = DatePickerFragment{ year, month, day ->
-            snoozeButton.setDate(LocalDate.of(year, month, day))
-        }
+        val datePicker = DatePickerFragment { date -> snoozeButton.setDate(date) }
         datePicker.show(supportFragmentManager, "snoozeDatePicker")
     }
 }
