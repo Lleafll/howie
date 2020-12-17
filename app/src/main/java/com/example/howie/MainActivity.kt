@@ -14,12 +14,13 @@ private const val LAUNCH_SECOND_ACTIVITY = 1
 
 class MainActivity : AppCompatActivity() {
 
-    private var taskManager: TaskManager? = null
-    private var taskAdapter: TaskAdapter? = null
-
-    private fun initializeMembers() {
-        taskManager = TaskManager(applicationContext)
-        taskAdapter = TaskAdapter {
+    private val taskManager: TaskManager by lazy {
+        val dataBase = TasksDatabaseSingleton.getDatabase(applicationContext)
+        val repository = TaskRepository(dataBase.getTaskDao())
+        TaskManager(repository)
+    }
+    private val taskAdapter: TaskAdapter by lazy {
+        TaskAdapter {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
@@ -27,7 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initializeMembers()
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         add_task_button.setOnClickListener {
@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
         }
         taskListView.adapter = taskAdapter
-        taskManager!!.tasks().observe(this, Observer { tasks ->
-            taskAdapter?.setTasks(tasks)
+        taskManager.tasks.observe(this, Observer { tasks ->
+            taskAdapter.setTasks(tasks)
         })
     }
 
@@ -58,8 +58,8 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 val task: Task? = data?.getParcelableExtra("result")
                 if (task != null) {
-                    taskManager!!.add(task)
-                    taskAdapter!!.notifyItemInserted(taskAdapter!!.itemCount - 1)
+                    taskManager.add(task)
+                    taskAdapter.notifyItemInserted(taskAdapter.itemCount - 1)
                 }
             }
         }

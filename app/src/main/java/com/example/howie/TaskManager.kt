@@ -3,18 +3,16 @@ package com.example.howie
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+
 import java.util.*
 
-class TaskManager(context: Context) : ViewModel() {
+class TaskManager(private val repository: TaskRepository) : ViewModel() {
+    val tasks: LiveData<List<Task>> = repository.tasks
 
-    private val database: TasksDatabase = TasksDatabaseSingleton.getDatabase(context)
-
-    fun tasks(): LiveData<List<Task>> {
-        return database.getTaskDao().getAll()
-    }
-
-    fun add(task: Task) {
-        database.getTaskDao().insert(task)
+    fun add(task: Task) = viewModelScope.launch {
+        repository.insert(task)
     }
 
     fun rename(task: Task, name: String) {
@@ -37,7 +35,7 @@ class TaskManager(context: Context) : ViewModel() {
         // TODO(Implement)
     }
 
-    fun remove(task: Task) {
-        database.getTaskDao().delete(task)
+    fun remove(task: Task) = viewModelScope.launch {
+        repository.delete(task)
     }
 }
