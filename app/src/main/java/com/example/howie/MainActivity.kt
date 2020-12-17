@@ -13,14 +13,20 @@ private const val LAUNCH_SECOND_ACTIVITY = 1
 
 class MainActivity : AppCompatActivity() {
 
-    private val taskManager: TaskManager = TaskManager(applicationContext)
-    private val taskAdapter: TaskAdapter = TaskAdapter(taskManager) {
-        val intent = Intent(applicationContext, AddTaskActivity::class.java)
-        startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+    private var taskManager: TaskManager? = null
+    private var taskAdapter: TaskAdapter? = null
+
+    private fun initializeMembers() {
+        taskManager = TaskManager(applicationContext)
+        taskAdapter = TaskAdapter(taskManager!!) {
+            val intent = Intent(applicationContext, AddTaskActivity::class.java)
+            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initializeMembers()
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         add_task_button.setOnClickListener {
@@ -48,8 +54,8 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 val task: Task? = data?.getParcelableExtra("result")
                 if (task != null) {
-                    taskManager.add(task)
-                    taskAdapter.notifyItemInserted(taskManager.tasks().size - 1)
+                    taskManager!!.add(task)
+                    taskAdapter!!.notifyItemInserted(taskManager!!.tasks().size - 1)
                 }
             }
         }
