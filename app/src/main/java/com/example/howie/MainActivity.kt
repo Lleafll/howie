@@ -13,7 +13,7 @@ private const val LAUNCH_SECOND_ACTIVITY = 1
 
 class MainActivity : AppCompatActivity() {
 
-    private val taskManager: TaskManager = TaskManager()
+    private val taskManager: TaskManager = TaskManager(applicationContext)
     private val taskAdapter: TaskAdapter = TaskAdapter(taskManager) {
         val intent = Intent(applicationContext, AddTaskActivity::class.java)
         startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
