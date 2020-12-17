@@ -1,12 +1,11 @@
 package com.example.howie
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
-import java.util.*
 
 class TaskManager(private val repository: TaskRepository) : ViewModel() {
     val tasks: LiveData<List<Task>> = repository.tasks
@@ -23,15 +22,15 @@ class TaskManager(private val repository: TaskRepository) : ViewModel() {
         // TODO(Implement)
     }
 
-    fun snooze(task: Task, snoozed: Calendar) {
+    fun snooze(task: Task, snoozed: LocalDate) {
         // TODO(Implement)
     }
 
-    fun followUp(task: Task, due: Calendar) {
+    fun followUp(task: Task, due: LocalDate) {
         // TODO(Implement)
     }
 
-    fun setComplete(task: Task, completed: Calendar?) {
+    fun setComplete(task: Task, completed: LocalDate?) {
         // TODO(Implement)
     }
 

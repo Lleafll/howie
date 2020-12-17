@@ -27,7 +27,6 @@ class Converters {
             LocalDate.ofEpochDay(epochDay)
         }
 
-
     @TypeConverter
     fun toLong(date: LocalDate?): Long? = date?.toEpochDay()
 }

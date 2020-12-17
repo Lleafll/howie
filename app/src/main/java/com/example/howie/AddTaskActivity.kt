@@ -6,12 +6,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
-import androidx.appcompat.app.ActionBar.DISPLAY_HOME_AS_UP
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_add_task.*
-import java.time.LocalDate
-import java.util.*
 
 
 class AddTaskActivity : AppCompatActivity() {
