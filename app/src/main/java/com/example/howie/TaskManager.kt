@@ -14,27 +14,11 @@ class TaskManager(private val repository: TaskRepository) : ViewModel() {
         repository.insert(task)
     }
 
-    fun rename(task: Task, name: String) {
-        // TODO(Implement)
+    fun replace(oldTask: Task, newTask: Task) {
+        // TODO: Implement
     }
 
-    fun setImportance(task: Task, importance: Importance) {
-        // TODO(Implement)
-    }
-
-    fun snooze(task: Task, snoozed: LocalDate) {
-        // TODO(Implement)
-    }
-
-    fun followUp(task: Task, due: LocalDate) {
-        // TODO(Implement)
-    }
-
-    fun setComplete(task: Task, completed: LocalDate?) {
-        // TODO(Implement)
-    }
-
-    fun remove(task: Task) = viewModelScope.launch {
+    fun delete(task: Task) = viewModelScope.launch {
         repository.delete(task)
     }
 }

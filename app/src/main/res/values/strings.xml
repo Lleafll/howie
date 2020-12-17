@@ -8,4 +8,5 @@
     <string name="new_task">New Task</string>
     <string name="pick_date">Pick Date</string>
     <string name="button_for_adding_a_task">Button for adding a task</string>
+    <string name="action_delete">Delete</string>
 </resources>

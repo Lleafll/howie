@@ -10,7 +10,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 
-private const val LAUNCH_SECOND_ACTIVITY = 1
+private const val LAUNCH_ADD_TASK_ACTIVITY = 1
+private const val LAUNCH_TASK_ACTIVITY = 2
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,8 +22,9 @@ class MainActivity : AppCompatActivity() {
     }
     private val taskAdapter: TaskAdapter by lazy {
         TaskAdapter {
-            val intent = Intent(applicationContext, AddTaskActivity::class.java)
-            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+            val intent = Intent(applicationContext, TaskActivity::class.java)
+            intent.putExtra("task", it)
+            startActivityForResult(intent, LAUNCH_TASK_ACTIVITY)
         }
     }
 
@@ -32,11 +34,11 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         add_task_button.setOnClickListener {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)
-            startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY)
+            startActivityForResult(intent, LAUNCH_ADD_TASK_ACTIVITY)
         }
         taskListView.adapter = taskAdapter
         taskManager.tasks.observe(this, Observer { tasks ->
-            tasks.let{taskAdapter.submitList(it)}
+            tasks.let { taskAdapter.submitList(it) }
         })
     }
 
@@ -54,12 +56,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
-            if (resultCode == RESULT_OK) {
-                val task: Task? = data?.getParcelableExtra("result")
-                if (task != null) {
-                    taskManager.add(task)
-                }
+        if (requestCode == LAUNCH_ADD_TASK_ACTIVITY) {
+            if (resultCode != RESULT_OK) {
+                return
+            }
+            val task: Task = data!!.getParcelableExtra("result")!!
+            taskManager.add(task)
+        } else if (requestCode == LAUNCH_TASK_ACTIVITY) {
+            if (resultCode != RESULT_OK) {
+                return
+            }
+            val oldTask: Task = data!!.getParcelableExtra("oldTask")!!
+            val deleteTask = data.getBooleanExtra("delete", false)
+            if (deleteTask) {
+                taskManager.delete(oldTask)
+            } else {
+                val newTask: Task = data.getParcelableExtra("newTask")!!
+                taskManager.replace(oldTask, newTask)
             }
         }
     }
