@@ -29,9 +29,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun toLong(date: LocalDate?): Long? {
-        return date?.toEpochDay()
-    }
+    fun toLong(date: LocalDate?): Long? = date?.toEpochDay()
 }
 
 @Parcelize
