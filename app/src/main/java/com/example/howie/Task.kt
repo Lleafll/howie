@@ -14,11 +14,11 @@ enum class Importance {
 @Parcelize
 @Entity
 data class Task(
+    @PrimaryKey val id: int,
     val name: String,
     val importance: Importance,
     val due: Calendar,
     val snoozed: Calendar?,
     val completed: Calendar?
 ) : Parcelable {
-    @PrimaryKey(autoGenerate = true)
 }

@@ -1,44 +1,41 @@
 package com.example.howie
 
+import android.content.Context
 import java.util.*
 
-class TaskManager(private val tasks: MutableList<Task> = mutableListOf())  {
+class TaskManager(context: Context)  {
+
+    private val database: TasksDatabase = TasksDatabaseSingleton.getDatabase(context)
 
     fun tasks(): List<Task> {
-        return tasks
-    }
-
-    private fun replace(old_task: Task, new_task: Task) {
-        val index = tasks.indexOf(old_task)
-        tasks[index] = new_task
+        return database.getTaskDao().getAll()
     }
 
     fun add(task: Task) {
-        tasks.add(task)
+        database.getTaskDao().insert(task)
     }
 
     fun rename(task: Task, name: String) {
-        val newTask = task.copy(name = name)
-        replace(task, newTask)
+        // TODO(Implement)
     }
 
     fun setImportance(task: Task, importance: Importance) {
-        val newTask = task.copy(importance = importance)
-        replace(task, newTask)
+        // TODO(Implement)
     }
 
     fun snooze(task: Task, snoozed: Calendar) {
-        val newTask = task.copy(snoozed = snoozed)
-        replace(task, newTask)
+        // TODO(Implement)
     }
 
     fun followUp(task: Task, due: Calendar) {
-        val newTask = task.copy(due = due)
-        replace(task, newTask)
+        // TODO(Implement)
     }
 
     fun setComplete(task: Task, completed: Calendar?) {
-        val newTask = task.copy(completed = completed)
-        replace(task, newTask)
+        // TODO(Implement)
+    }
+
+    fun remove(task: Task) {
+        database.getTaskDao().delete(task)
     }
 }
