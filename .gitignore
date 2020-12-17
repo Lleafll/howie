@@ -12,3 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
+/app/schemas/com.example.howie.TasksDatabase/0.json
