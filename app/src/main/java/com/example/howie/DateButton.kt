@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import java.util.*
 
-class DateButton(context: Context?, attrs: AttributeSet?) :
+class DateButton(context: Context, attrs: AttributeSet?) :
     androidx.appcompat.widget.AppCompatButton(context, attrs) {
 
     private var date: Calendar = Calendar.getInstance();
