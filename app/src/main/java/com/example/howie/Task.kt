@@ -1,6 +1,9 @@
 package com.example.howie
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import java.util.Calendar
 
@@ -9,10 +12,13 @@ enum class Importance {
 }
 
 @Parcelize
+@Entity
 data class Task(
     val name: String,
     val importance: Importance,
     val due: Calendar,
     val snoozed: Calendar?,
     val completed: Calendar?
-) : Parcelable
+) : Parcelable {
+    @PrimaryKey(autoGenerate = true)
+}
