@@ -20,13 +20,13 @@ class Converters {
     fun toInt(importance: Importance): Int = importance.ordinal
 
     @TypeConverter
-    fun toLocalDate(epochDay: Long?): LocalDate? {
-        return if (epochDay == null) {
+    fun toLocalDate(epochDay: Long?): LocalDate? =
+        if (epochDay == null) {
             null
         } else {
             LocalDate.ofEpochDay(epochDay)
         }
-    }
+
 
     @TypeConverter
     fun toLong(date: LocalDate?): Long? = date?.toEpochDay()
