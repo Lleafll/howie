@@ -14,7 +14,7 @@ enum class Importance {
 @Parcelize
 @Entity
 data class Task(
-    @PrimaryKey val id: int,
+    @PrimaryKey val id: Int,
     val name: String,
     val importance: Importance,
     val due: Calendar,
