@@ -5,20 +5,20 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(version = 1, entities = (arrayOf(Task::class)))
+@Database(version = 2, entities = (arrayOf(Task::class)))
 abstract class TasksDatabase : RoomDatabase() {
-    abstract fun getTaskDao() : TaskDao
+    abstract fun getTaskDao(): TaskDao
 }
 
 object TasksDatabaseSingleton {
     private var database: TasksDatabase? = null
 
-    fun getDatabase(applicationContext: Context) :TasksDatabase {
+    fun getDatabase(applicationContext: Context): TasksDatabase {
         if (database == null) {
             database = Room.databaseBuilder(
                 applicationContext,
                 TasksDatabase::class.java, "tasks-database"
-            ).build()
+            ).fallbackToDestructiveMigration().build()
         }
         return database!!
     }
