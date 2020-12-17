@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 
 class TaskManager(private val repository: TaskRepository) : ViewModel() {
@@ -14,8 +13,8 @@ class TaskManager(private val repository: TaskRepository) : ViewModel() {
         repository.insert(task)
     }
 
-    fun replace(oldTask: Task, newTask: Task) {
-        // TODO: Implement
+    fun update(task: Task) = viewModelScope.launch {
+        repository.update(task)
     }
 
     fun delete(task: Task) = viewModelScope.launch {

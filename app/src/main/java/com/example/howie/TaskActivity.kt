@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_task.*
 
 class TaskActivity : AppCompatActivity() {
 
-    private var oldTask: Task? = null
+    private var taskId: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,20 +21,21 @@ class TaskActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        oldTask = intent.getParcelableExtra("task")!!
-        fillFields()
+        val oldTask: Task = intent.getParcelableExtra("task")!!
+        fillFields(oldTask)
+        taskId = intent.getIntExtra("taskId", 0)
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             val snoozeButton: Button = findViewById(R.id.snoozeButton)
             snoozeButton.isVisible = isChecked
         }
     }
 
-    private fun fillFields() {
-        taskNameEditText.setText(oldTask!!.name)
-        dueButton.setDate(oldTask!!.due)
-        if (oldTask!!.snoozed != null) {
+    private fun fillFields(oldTask: Task) {
+        taskNameEditText.setText(oldTask.name)
+        dueButton.setDate(oldTask.due)
+        if (oldTask.snoozed != null) {
             snoozeSwitch.isChecked = true
-            snoozeButton.setDate(oldTask!!.snoozed!!)
+            snoozeButton.setDate(oldTask.snoozed)
         }
     }
 
@@ -46,17 +47,15 @@ class TaskActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_save -> {
             val returnIntent = Intent()
-            val newTask = buildTask()
-            returnIntent.putExtra("newTask", newTask)
-            returnIntent.putExtra("oldTask", oldTask!!)
+            returnIntent.putExtra("updateTask", buildTask())
+            returnIntent.putExtra("updateTaskId", taskId)
             setResult(RESULT_OK, returnIntent)
             finish()
             true
         }
         R.id.action_delete -> {
             val returnIntent = Intent()
-            returnIntent.putExtra("oldTask", oldTask!!)
-            returnIntent.putExtra("delete", true)
+            returnIntent.putExtra("deleteTaskId", taskId!!)
             setResult(RESULT_OK, returnIntent)
             finish()
             true
@@ -73,7 +72,6 @@ class TaskActivity : AppCompatActivity() {
         if (snoozeSwitch.isChecked) snoozeButton.getDate() else null,
         null
     )
-
 
     @Suppress("UNUSED_PARAMETER")
     fun showDueDatePickerDialog(view: View) {

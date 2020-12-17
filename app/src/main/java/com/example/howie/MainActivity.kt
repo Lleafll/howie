@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.time.LocalDate
 
 
 private const val LAUNCH_ADD_TASK_ACTIVITY = 1
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         TaskAdapter {
             val intent = Intent(applicationContext, TaskActivity::class.java)
             intent.putExtra("task", it)
+            intent.putExtra("taskId", it.id)
             startActivityForResult(intent, LAUNCH_TASK_ACTIVITY)
         }
     }
@@ -66,13 +68,18 @@ class MainActivity : AppCompatActivity() {
             if (resultCode != RESULT_OK) {
                 return
             }
-            val oldTask: Task = data!!.getParcelableExtra("oldTask")!!
-            val deleteTask = data.getBooleanExtra("delete", false)
-            if (deleteTask) {
-                taskManager.delete(oldTask)
-            } else {
-                val newTask: Task = data.getParcelableExtra("newTask")!!
-                taskManager.replace(oldTask, newTask)
+            val updateTask: Task? = data!!.getParcelableExtra("updateTask")
+            if (updateTask != null) {
+                updateTask.id = data.getIntExtra("updateTaskId", 0)
+                taskManager.update(updateTask)
+                return
+            }
+            val deleteTaskId: Int = data.getIntExtra("deleteTaskId", 0)
+            if (deleteTaskId != 0) {
+                val task = Task("", Importance.IMPORTANT, LocalDate.now(), null, null)
+                task.id = deleteTaskId
+                taskManager.delete(task)
+                return
             }
         }
     }
