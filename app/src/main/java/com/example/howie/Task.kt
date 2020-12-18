@@ -33,10 +33,10 @@ class Converters {
 @TypeConverters(Converters::class)
 data class Task(
     val name: String,
-    val importance: Importance,
-    val due: LocalDate?,
-    val snoozed: LocalDate?,
-    val completed: LocalDate?
+    val importance: Importance = Importance.IMPORTANT,
+    val due: LocalDate? = null,
+    val snoozed: LocalDate? = null,
+    val completed: LocalDate? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
