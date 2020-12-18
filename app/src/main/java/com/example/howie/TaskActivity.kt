@@ -3,12 +3,10 @@ package com.example.howie
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_task.*
-import kotlinx.android.synthetic.main.task_view.view.*
 
 
 class TaskActivity : AppCompatActivity() {

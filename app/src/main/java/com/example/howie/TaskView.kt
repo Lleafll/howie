@@ -2,7 +2,7 @@ package com.example.howie
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.CalendarView
+import android.widget.DatePicker
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isInvisible
@@ -33,25 +33,24 @@ class TaskView : ConstraintLayout {
     fun getTask() = Task(
         taskNameEditText.text.toString(),
         Importance.IMPORTANT,
-        readDateFromPicker(duePicker),
-        readDateFromPicker(snoozePicker)
+        readDate(dueSwitch, duePicker),
+        readDate(snoozeSwitch, snoozePicker)
     )
 }
 
-private fun setDateFields(picker: CalendarView, switch: SwitchCompat, date: LocalDate?) {
+private fun setDateFields(picker: DatePicker, switch: SwitchCompat, date: LocalDate?) {
     if (date != null) {
         switch.isChecked = true
-        picker.date = date.toEpochDay()
+        picker.updateDate(date.year, date.monthValue - 1, date.dayOfMonth)
     } else {
         switch.isChecked = false
-        picker.isVisible = false
     }
 }
 
-private fun readDateFromPicker(picker: CalendarView): LocalDate? {
-    return if (picker.isInvisible) {
+private fun readDate(switch: SwitchCompat, picker: DatePicker): LocalDate? {
+    return if (!switch.isChecked) {
         null
     } else {
-        LocalDate.ofEpochDay(picker.date)
+        LocalDate.of(picker.year, picker.month + 1, picker.dayOfMonth)
     }
 }
