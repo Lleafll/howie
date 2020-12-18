@@ -3,10 +3,7 @@ package com.example.howie
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_add_task.*
 
 
@@ -18,10 +15,7 @@ class AddTaskActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val snoozeButton: Button = findViewById(R.id.snoozeButton)
-            snoozeButton.isVisible = isChecked
-        }
+        task_view.setTask(Task("New Task"))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -31,13 +25,7 @@ class AddTaskActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_save -> {
-            val task = Task(
-                taskNameEditText.text.toString(),
-                Importance.IMPORTANT,
-                dueButton.getDate(),
-                if (snoozeSwitch.isChecked) snoozeButton.getDate() else null,
-                null
-            )
+            val task =  task_view.getTask()
             TaskManager.getInstance(applicationContext).add(task)
             finish()
             true
@@ -45,17 +33,5 @@ class AddTaskActivity : AppCompatActivity() {
         else -> {
             super.onOptionsItemSelected(item)
         }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun showDueDatePickerDialog(view: View) {
-        val datePicker = DatePickerFragment { date -> dueButton.setDate(date) }
-        datePicker.show(supportFragmentManager, "dueDatePicker")
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun showSnoozeDatePickerDialog(view: View) {
-        val datePicker = DatePickerFragment { date -> snoozeButton.setDate(date) }
-        datePicker.show(supportFragmentManager, "snoozeDatePicker")
     }
 }
