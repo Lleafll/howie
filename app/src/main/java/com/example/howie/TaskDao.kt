@@ -8,16 +8,16 @@ interface TaskDao {
     @Query("SELECT * FROM task")
     fun getAllTasks(): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE importance = 0 AND due IS NOT NULL")
+    @Query("SELECT * FROM task WHERE importance = 0 AND due IS NOT NULL ORDER BY snoozed, due")
     fun getDoTasks(): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE importance = 0 AND due IS NULL")
+    @Query("SELECT * FROM task WHERE importance = 0 AND due IS NULL ORDER BY snoozed")
     fun getDecideTasks(): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE importance = 1 AND due IS NOT NULL")
+    @Query("SELECT * FROM task WHERE importance = 1 AND due IS NOT NULL ORDER BY snoozed, due")
     fun getDelegateTasks(): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE importance = 1 AND due IS NULL")
+    @Query("SELECT * FROM task WHERE importance = 1 AND due IS NULL ORDER BY snoozed")
     fun getDropTasks(): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE id = :id")
