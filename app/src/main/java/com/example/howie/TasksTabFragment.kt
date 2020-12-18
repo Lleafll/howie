@@ -12,15 +12,19 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-private const val ARG_OBJECT = "object"
-
 class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewPager: ViewPager2 = view.findViewById(R.id.pager)
         viewPager.adapter = TasksTabAdapter(this)
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = "OBJECT ${(position + 1)}"
+            tab.text = when (position) {
+                0 -> "Do"
+                1 -> "Decide"
+                2 -> "Delegate"
+                3 -> "Drop"
+                else -> position.toString()
+            }
         }.attach()
     }
 }
