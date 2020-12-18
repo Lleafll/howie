@@ -1,5 +1,6 @@
 package com.example.howie
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,5 +20,20 @@ class TaskManager(private val repository: TaskRepository) : ViewModel() {
 
     fun delete(task: Task) = viewModelScope.launch {
         repository.delete(task)
+    }
+
+    fun getTask(id: Int) = repository.getTask(id)
+
+    companion object {
+        private var instance: TaskManager? = null
+
+        fun getInstance(applicationContext: Context) : TaskManager {
+            if (instance == null) {
+                val database  = TasksDatabaseSingleton.getDatabase(applicationContext)
+                val repository = TaskRepository(database.getTaskDao())
+                instance = TaskManager(repository)
+            }
+            return instance!!
+        }
     }
 }

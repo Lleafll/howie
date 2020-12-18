@@ -8,12 +8,18 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_task.*
+import java.time.LocalDate
 
 
 class TaskActivity : AppCompatActivity() {
-
+    private val taskManager: TaskManager by lazy {
+        TaskManager.getInstance(applicationContext)
+    }
     private var taskId: Int? = null
+    private lateinit var taskLiveData: LiveData<Task>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,21 +27,23 @@ class TaskActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val oldTask: Task = intent.getParcelableExtra("task")!!
-        fillFields(oldTask)
         taskId = intent.getIntExtra("taskId", 0)
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             val snoozeButton: Button = findViewById(R.id.snoozeButton)
             snoozeButton.isVisible = isChecked
         }
+        taskLiveData = taskManager.getTask(taskId!!)
+        taskLiveData.observe(this, Observer{task ->
+            updateFields(task)
+        })
     }
 
-    private fun fillFields(oldTask: Task) {
-        taskNameEditText.setText(oldTask.name)
-        dueButton.setDate(oldTask.due)
-        if (oldTask.snoozed != null) {
+    private fun updateFields(task: Task) {
+        taskNameEditText.setText(task.name)
+        dueButton.setDate(task.due)
+        if (task.snoozed != null) {
             snoozeSwitch.isChecked = true
-            snoozeButton.setDate(oldTask.snoozed)
+            snoozeButton.setDate(task.snoozed)
         }
     }
 
@@ -46,17 +54,17 @@ class TaskActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_save -> {
-            val returnIntent = Intent()
-            returnIntent.putExtra("updateTask", buildTask())
-            returnIntent.putExtra("updateTaskId", taskId)
-            setResult(RESULT_OK, returnIntent)
+            val task = buildTask()
+            task.id = taskId!!
+            taskManager.update(task)
             finish()
             true
         }
         R.id.action_delete -> {
-            val returnIntent = Intent()
-            returnIntent.putExtra("deleteTaskId", taskId!!)
-            setResult(RESULT_OK, returnIntent)
+            taskLiveData.removeObservers(this)
+            val task = Task("", Importance.IMPORTANT, LocalDate.now(), null, null)
+            task.id = taskId!!
+            taskManager.delete(task)
             finish()
             true
         }

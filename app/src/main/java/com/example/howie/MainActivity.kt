@@ -12,21 +12,16 @@ import java.time.LocalDate
 
 
 private const val LAUNCH_ADD_TASK_ACTIVITY = 1
-private const val LAUNCH_TASK_ACTIVITY = 2
 
 class MainActivity : AppCompatActivity() {
-
     private val taskManager: TaskManager by lazy {
-        val dataBase = TasksDatabaseSingleton.getDatabase(applicationContext)
-        val repository = TaskRepository(dataBase.getTaskDao())
-        TaskManager(repository)
+        TaskManager.getInstance(applicationContext)
     }
     private val taskAdapter: TaskAdapter by lazy {
         TaskAdapter {
             val intent = Intent(applicationContext, TaskActivity::class.java)
-            intent.putExtra("task", it)
-            intent.putExtra("taskId", it.id)
-            startActivityForResult(intent, LAUNCH_TASK_ACTIVITY)
+            intent.putExtra("taskId", it)
+            startActivity(intent)
         }
     }
 
@@ -64,23 +59,6 @@ class MainActivity : AppCompatActivity() {
             }
             val task: Task = data!!.getParcelableExtra("result")!!
             taskManager.add(task)
-        } else if (requestCode == LAUNCH_TASK_ACTIVITY) {
-            if (resultCode != RESULT_OK) {
-                return
-            }
-            val updateTask: Task? = data!!.getParcelableExtra("updateTask")
-            if (updateTask != null) {
-                updateTask.id = data.getIntExtra("updateTaskId", 0)
-                taskManager.update(updateTask)
-                return
-            }
-            val deleteTaskId: Int = data.getIntExtra("deleteTaskId", 0)
-            if (deleteTaskId != 0) {
-                val task = Task("", Importance.IMPORTANT, LocalDate.now(), null, null)
-                task.id = deleteTaskId
-                taskManager.delete(task)
-                return
-            }
         }
     }
 
