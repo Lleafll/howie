@@ -7,7 +7,7 @@ import java.time.LocalDate
 class DateButton(context: Context, attrs: AttributeSet?) :
     androidx.appcompat.widget.AppCompatButton(context, attrs) {
 
-    private var date: LocalDate = LocalDate.now();
+    private var date: LocalDate = LocalDate.now()
 
     fun getDate(): LocalDate {
         return date

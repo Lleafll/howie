@@ -1,4 +1,4 @@
-package com.example.howie;
+package com.example.howie
 
 import android.content.Context
 import android.content.Intent

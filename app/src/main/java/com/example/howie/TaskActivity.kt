@@ -1,19 +1,16 @@
 package com.example.howie
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_task.*
 import java.time.LocalDate
-import java.util.*
 
 
 class TaskActivity : AppCompatActivity() {
@@ -48,7 +45,7 @@ class TaskActivity : AppCompatActivity() {
         setDateFields(snoozeButton, snoozeSwitch, task.snoozed)
     }
 
-    private fun setDateFields(button: DateButton, switch: Switch, date: LocalDate?){
+    private fun setDateFields(button: DateButton, switch: SwitchCompat, date: LocalDate?){
         if (date != null) {
             switch.isChecked = true
             button.setDate(date)

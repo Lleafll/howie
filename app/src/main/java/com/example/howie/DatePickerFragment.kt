@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import java.time.LocalDate
-import java.util.*
 
 class DatePickerFragment(private val listener: (LocalDate) -> Unit) : DialogFragment(),
     DatePickerDialog.OnDateSetListener {

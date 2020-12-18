@@ -12,4 +12,5 @@
     <string name="task_item_default_name">Name</string>
     <string name="task_item_default_due">Due: 2020-12-24</string>
     <string name="task_item_default_snooze">Snoozed: 2020-12-24</string>
+    <string name="edit_name_of_task">Edit name of task</string>
 </resources>

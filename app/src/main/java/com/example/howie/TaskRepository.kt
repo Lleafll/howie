@@ -1,7 +1,6 @@
 package com.example.howie
 
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
 
 class TaskRepository(private val taskDao: TaskDao) {
     val tasks = taskDao.getAllTasks()
