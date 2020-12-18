@@ -4,7 +4,11 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 
 class TaskRepository(private val taskDao: TaskDao) {
-    val tasks: LiveData<List<Task>> = taskDao.getAll()
+    val tasks = taskDao.getAllTasks()
+    val doTasks = taskDao.getDoTasks()
+    val decideTasks = taskDao.getDecideTasks()
+    val delegateTasks = taskDao.getDelegateTasks()
+    val dropTasks = taskDao.getDropTasks()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

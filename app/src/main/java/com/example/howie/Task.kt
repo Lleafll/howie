@@ -34,7 +34,7 @@ class Converters {
 data class Task(
     val name: String,
     val importance: Importance,
-    val due: LocalDate,
+    val due: LocalDate?,
     val snoozed: LocalDate?,
     val completed: LocalDate?
 ) {

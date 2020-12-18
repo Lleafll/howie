@@ -6,12 +6,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_task.*
 import java.time.LocalDate
+import java.util.*
 
 
 class TaskActivity : AppCompatActivity() {
@@ -29,8 +31,10 @@ class TaskActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         taskId = intent.getIntExtra("taskId", 0)
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val snoozeButton: Button = findViewById(R.id.snoozeButton)
             snoozeButton.isVisible = isChecked
+        }
+        dueSwitch.setOnCheckedChangeListener { _, isChecked ->
+            dueButton.isVisible = isChecked
         }
         taskLiveData = taskManager.getTask(taskId!!)
         taskLiveData.observe(this, Observer{task ->
@@ -40,10 +44,16 @@ class TaskActivity : AppCompatActivity() {
 
     private fun updateFields(task: Task) {
         taskNameEditText.setText(task.name)
-        dueButton.setDate(task.due)
-        if (task.snoozed != null) {
-            snoozeSwitch.isChecked = true
-            snoozeButton.setDate(task.snoozed)
+        setDateFields(dueButton, dueSwitch, task.due)
+        setDateFields(snoozeButton, snoozeSwitch, task.snoozed)
+    }
+
+    private fun setDateFields(button: DateButton, switch: Switch, date: LocalDate?){
+        if (date != null) {
+            switch.isChecked = true
+            button.setDate(date)
+        } else {
+            switch.isChecked = false
         }
     }
 
@@ -76,7 +86,7 @@ class TaskActivity : AppCompatActivity() {
     private fun buildTask() = Task(
         taskNameEditText.text.toString(),
         Importance.IMPORTANT,
-        dueButton.getDate(),
+        if (dueSwitch.isChecked) dueButton.getDate() else null,
         if (snoozeSwitch.isChecked) snoozeButton.getDate() else null,
         null
     )
