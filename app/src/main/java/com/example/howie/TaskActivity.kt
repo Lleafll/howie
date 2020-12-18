@@ -69,9 +69,7 @@ class TaskActivity : AppCompatActivity() {
         }
         R.id.action_delete -> {
             taskLiveData.removeObservers(this)
-            val task = Task("", Importance.IMPORTANT, LocalDate.now(), null, null)
-            task.id = taskId!!
-            taskManager.delete(task)
+            taskManager.delete(taskId!!)
             finish()
             true
         }

@@ -23,8 +23,8 @@ class TaskRepository(private val taskDao: TaskDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun delete(task: Task) {
-        taskDao.delete(task)
+    suspend fun delete(id: Int) {
+        taskDao.delete(id)
     }
 
     fun getTask(id: Int) = taskDao.getTask(id)
