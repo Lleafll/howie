@@ -50,7 +50,7 @@
                     android:id="@+id/snoozeSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/snoozeLabel"
                     app:layout_constraintTop_toTopOf="@+id/snoozeLabel" />
 
                 <TextView
@@ -67,18 +67,19 @@
                     android:id="@+id/dueLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="@string/due"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/importanceButton" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/dueSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toEndOf="@+id/dueLabel"
+                    app:layout_constraintTop_toTopOf="@+id/dueLabel" />
 
                 <DatePicker
                     android:id="@+id/snoozePicker"
@@ -87,6 +88,19 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/snoozeLabel" />
+
+                <ToggleButton
+                    android:id="@+id/importanceButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/importancetogglebutton"
+                    android:textOff="@string/unimportant"
+                    android:textOn="@string/important"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>

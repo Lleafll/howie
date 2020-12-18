@@ -26,13 +26,14 @@ class TaskView : ConstraintLayout {
 
     fun setTask(task: Task) {
         taskNameEditText.setText(task.name)
+        importanceButton.isChecked = task.importance == Importance.IMPORTANT
         setDateFields(duePicker, dueSwitch, task.due)
         setDateFields(snoozePicker, snoozeSwitch, task.snoozed)
     }
 
     fun getTask() = Task(
         taskNameEditText.text.toString(),
-        Importance.IMPORTANT,
+        if (importanceButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
         readDate(dueSwitch, duePicker),
         readDate(snoozeSwitch, snoozePicker)
     )
@@ -41,9 +42,11 @@ class TaskView : ConstraintLayout {
 private fun setDateFields(picker: DatePicker, switch: SwitchCompat, date: LocalDate?) {
     if (date != null) {
         switch.isChecked = true
+        picker.isVisible = true
         picker.updateDate(date.year, date.monthValue - 1, date.dayOfMonth)
     } else {
         switch.isChecked = false
+        picker.isVisible = false
     }
 }
 
