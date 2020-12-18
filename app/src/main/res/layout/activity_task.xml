@@ -54,8 +54,19 @@
         android:layout_height="wrap_content"
         android:onClick="showDueDatePickerDialog"
         android:text="@string/pick_date"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dueLabel" />
+
+    <Switch
+        android:id="@+id/dueSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintStart_toEndOf="@+id/dueButton"
         app:layout_constraintTop_toBottomOf="@+id/dueLabel" />
 
     <TextView
