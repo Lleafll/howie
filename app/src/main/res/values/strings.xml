@@ -9,4 +9,7 @@
     <string name="pick_date">Pick Date</string>
     <string name="button_for_adding_a_task">Button for adding a task</string>
     <string name="action_delete">Delete</string>
+    <string name="task_item_default_name">Name</string>
+    <string name="task_item_default_due">Due: 2020-12-24</string>
+    <string name="task_item_default_snooze">Snoozed: 2020-12-24</string>
 </resources>
