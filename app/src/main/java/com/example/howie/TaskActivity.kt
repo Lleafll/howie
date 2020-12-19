@@ -22,9 +22,10 @@ class TaskActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         taskId = intent.getIntExtra("taskId", 0)
         taskLiveData = taskManager.getTask(taskId!!)
-        taskLiveData.observe(this, Observer{task ->
+        taskLiveData.observe(this, Observer { task ->
             task_view.setTask(task)
         })
     }
