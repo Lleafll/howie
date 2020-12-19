@@ -18,7 +18,7 @@ object TasksDatabaseSingleton {
             database = Room.databaseBuilder(
                 applicationContext,
                 TasksDatabase::class.java, "tasks-database"
-            ).fallbackToDestructiveMigration().build()
+            ).build()
         }
         return database!!
     }
