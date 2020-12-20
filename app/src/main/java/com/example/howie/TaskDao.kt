@@ -56,6 +56,9 @@ interface TaskDao {
     @Update
     suspend fun update(task: Task)
 
+    @Query("UPDATE task SET ARCHIVED = $today WHERE id = :id")
+    suspend fun doArchive(id: Int)
+
     @Query("DELETE FROM task WHERE id = :id")
     suspend fun delete(id: Int)
 }

@@ -18,4 +18,5 @@
     <string name="snoozedTasks">Snoozed Tasks</string>
     <string name="tasks">Tasks</string>
     <string name="archive">Archive</string>
+    <string name="unarchive">Unarchive</string>
 </resources>
