@@ -17,4 +17,5 @@
     <string name="important">Important</string>
     <string name="snoozedTasks">Snoozed Tasks</string>
     <string name="tasks">Tasks</string>
+    <string name="archive">Archive</string>
 </resources>

@@ -23,9 +23,11 @@
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        android:background="#999999"
+        app:backgroundTint="#999999"
+        app:menu="@menu/menu_bottom_bar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
