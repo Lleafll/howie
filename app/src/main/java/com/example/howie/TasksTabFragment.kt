@@ -20,15 +20,18 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         val viewPager: ViewPager2 = view.findViewById(R.id.pager)
         viewPager.adapter = TasksTabAdapter(view.context, this)
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> "Do"
-                1 -> "Decide"
-                2 -> "Delegate"
-                3 -> "Drop"
-                else -> position.toString()
+        TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
+        val taskManager = TaskManager.getInstance(view.context)
+        val observerFactory = {position: Int, lowerText: String ->
+            Observer{tasks: List<Task> ->
+                val upperText = if(tasks.isNotEmpty()) tasks.size.toString() else "✓"
+                tabLayout.getTabAt(position)!!.text = "$upperText\n$lowerText"
             }
-        }.attach()
+        }
+        taskManager.doTasks.observe(this, observerFactory(0, "Do"))
+        taskManager.decideTasks.observe(this, observerFactory(1, "Decode"))
+        taskManager.delegateTasks.observe(this, observerFactory(2, "Delegate"))
+        taskManager.dropTasks.observe(this, observerFactory(3, "Drop"))
     }
 }
 
