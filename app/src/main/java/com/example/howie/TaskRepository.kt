@@ -5,9 +5,13 @@ import androidx.annotation.WorkerThread
 class TaskRepository(private val taskDao: TaskDao) {
     val tasks = taskDao.getAllTasks()
     val doTasks = taskDao.getDoTasks()
+    val snoozedDoTasks = taskDao.getSnoozedDoTasks()
     val decideTasks = taskDao.getDecideTasks()
+    val snoozedDecideTasks = taskDao.getSnoozedDecideTasks()
     val delegateTasks = taskDao.getDelegateTasks()
+    val snoozedDelegateTasks = taskDao.getSnoozedDelegateTasks()
     val dropTasks = taskDao.getDropTasks()
+    val snoozedDropTasks = taskDao.getSnoozedDropTasks()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

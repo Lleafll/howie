@@ -10,9 +10,13 @@ import kotlinx.coroutines.launch
 class TaskManager(private val repository: TaskRepository) : ViewModel() {
     val tasks: LiveData<List<Task>> = repository.tasks
     val doTasks = repository.doTasks
+    val snoozedDoTasks = repository.snoozedDoTasks
     val decideTasks = repository.decideTasks
+    val snoozedDecideTasks = repository.snoozedDecideTasks
     val delegateTasks = repository.delegateTasks
+    val snoozedDelegateTasks = repository.snoozedDelegateTasks
     val dropTasks = repository.dropTasks
+    val snoozedDropTasks = repository.snoozedDropTasks
 
     fun add(task: Task) = viewModelScope.launch {
         repository.insert(task)
