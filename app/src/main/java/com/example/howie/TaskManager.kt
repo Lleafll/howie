@@ -17,6 +17,7 @@ class TaskManager(private val repository: TaskRepository) : ViewModel() {
     val snoozedDelegateTasks = repository.snoozedDelegateTasks
     val dropTasks = repository.dropTasks
     val snoozedDropTasks = repository.snoozedDropTasks
+    val archive = repository.archive
 
     fun add(task: Task) = viewModelScope.launch {
         repository.insert(task)
@@ -24,6 +25,10 @@ class TaskManager(private val repository: TaskRepository) : ViewModel() {
 
     fun update(task: Task) = viewModelScope.launch {
         repository.update(task)
+    }
+
+    fun doArchive(id: Int) = viewModelScope.launch {
+        repository.doArchive(id)
     }
 
     fun delete(id: Int) = viewModelScope.launch {

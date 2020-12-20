@@ -32,6 +32,20 @@ class TaskActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_task, menu)
+        taskLiveData.observe(this, Observer { task ->
+            val saveItem = menu.findItem(R.id.action_save)
+            val archiveItem = menu.findItem(R.id.action_archive)
+            val unarchiveItem = menu.findItem(R.id.action_unarchive)
+            if (task.archived == null) {
+                saveItem.isVisible = true
+                archiveItem.isVisible = true
+                unarchiveItem.isVisible = false
+            } else {
+                saveItem.isVisible = false
+                archiveItem.isVisible = false
+                unarchiveItem.isVisible = true
+            }
+        })
         return true
     }
 
@@ -40,6 +54,12 @@ class TaskActivity : AppCompatActivity() {
             val task = task_view.getTask()
             task.id = taskId!!
             taskManager.update(task)
+            finish()
+            true
+        }
+        R.id.action_archive -> {
+            taskLiveData.removeObservers(this)
+            taskManager.doArchive(taskId!!)
             finish()
             true
         }
