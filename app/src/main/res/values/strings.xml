@@ -16,4 +16,5 @@
     <string name="unimportant">Unimportant</string>
     <string name="important">Important</string>
     <string name="snoozedTasks">Snoozed Tasks</string>
+    <string name="tasks">Tasks</string>
 </resources>
