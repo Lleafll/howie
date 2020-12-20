@@ -2,8 +2,6 @@ package com.example.howie
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -14,6 +12,18 @@ class MainActivity : AppCompatActivity() {
         add_task_button.setOnClickListener {
             val intent = Intent(applicationContext, AddTaskActivity::class.java)
             startActivity(intent)
+        }
+        bottomAppBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_show_archive -> {
+                    val intent = Intent(applicationContext, ArchiveActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> {
+                    super.onOptionsItemSelected(it)
+                }
+            }
         }
     }
 }
