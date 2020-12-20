@@ -7,8 +7,10 @@ private const val isImportant = "importance = 0"
 private const val isUnimportant = "importance = 0"
 private const val isDue = "due IS NOT NULL"
 private const val isNotDue = "due IS NULL"
-private const val isSnoozed = "snoozed IS NOT NULL AND snoozed > due"
-private const val isNotSnoozed = "snoozed IS NULL OR snoozed <= due"
+private const val numberOfSecondsInADay = 86400
+private const val today = "STRFTIME('%s','now') / $numberOfSecondsInADay"
+private const val isSnoozed = "snoozed IS NOT NULL AND snoozed > $today"
+private const val isNotSnoozed = "snoozed IS NULL OR snoozed <= $today"
 private const val order = "ORDER BY snoozed, due"
 
 @Dao
