@@ -29,7 +29,7 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
             }
         }
         taskManager.doTasks.observe(this, observerFactory(0, "Do"))
-        taskManager.decideTasks.observe(this, observerFactory(1, "Decode"))
+        taskManager.decideTasks.observe(this, observerFactory(1, "Decide"))
         taskManager.delegateTasks.observe(this, observerFactory(2, "Delegate"))
         taskManager.dropTasks.observe(this, observerFactory(3, "Drop"))
     }
