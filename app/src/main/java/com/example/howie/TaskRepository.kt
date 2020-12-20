@@ -12,6 +12,7 @@ class TaskRepository(private val taskDao: TaskDao) {
     val snoozedDelegateTasks = taskDao.getSnoozedDelegateTasks()
     val dropTasks = taskDao.getDropTasks()
     val snoozedDropTasks = taskDao.getSnoozedDropTasks()
+    val archive = taskDao.getArchive()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

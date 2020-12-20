@@ -36,7 +36,8 @@ data class Task(
     val importance: Importance = Importance.IMPORTANT,
     val due: LocalDate? = null,
     val snoozed: LocalDate? = null,
-    val completed: LocalDate? = null
+    val completed: LocalDate? = null,
+    val archived: LocalDate? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0

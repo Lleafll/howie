@@ -24,7 +24,7 @@ class ArchiveActivity : AppCompatActivity() {
         }
         archive_view.adapter = taskAdapter
         val taskManager = TaskManager.getInstance(applicationContext)
-        val tasks = taskManager.tasks
+        val tasks = taskManager.archive
         tasks.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
     }
 }

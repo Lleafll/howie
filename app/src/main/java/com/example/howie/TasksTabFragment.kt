@@ -74,8 +74,8 @@ class TasksObjectFragment(
             startActivity(intent)
         }
         view.adapter = taskAdapter
-        tasks.observe(this, Observer { tasks ->
-            tasks.let { taskAdapter.submitList(it) }
+        tasks.observe(this, Observer {
+            it.let { taskAdapter.submitList(it) }
         })
     }
 }
