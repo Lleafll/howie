@@ -2,30 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group
-        android:id="@+id/top"
+        android:id="@+id/add_list_group"
         android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/action_add_list"
+            android:title="Add New List" />
+
+    </group>
+
+    <group
+        android:id="@+id/list_groups"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/nav_camera"
-            android:icon="@drawable/outline_archive_white_24"
             android:title="Home" />
-    </group>
 
-    <group
-        android:id="@+id/middle"
-        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_share"
-            android:icon="@drawable/outline_archive_white_24"
             android:title="Directory" />
-    </group>
 
-    <group
-        android:id="@+id/bottom"
-        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_send"
-            android:icon="@drawable/outline_archive_white_24"
             android:title="About Us" />
+
     </group>
 
 </menu>
