@@ -46,9 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
-
-        val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
-        navigationView.setNavigationItemSelectedListener(this)
+        nav_view.setNavigationItemSelectedListener(this)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
