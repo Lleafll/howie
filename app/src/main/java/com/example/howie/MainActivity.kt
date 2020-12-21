@@ -2,6 +2,7 @@ package com.example.howie
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
+        nav_view.menu.add(R.id.list_groups, Menu.NONE, Menu.NONE,"New item")
         nav_view.setNavigationItemSelectedListener(this)
     }
 
