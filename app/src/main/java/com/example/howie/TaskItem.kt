@@ -14,7 +14,7 @@ class TaskItem : LinearLayout {
         inflate(context, R.layout.task_item, this)
     }
 
-    var task: Task = Task("", Importance.IMPORTANT, LocalDate.now(), null, null)
+    var task: Task = Task("", 0)
         set(value) {
             field = value
             name_text_view.text = value.name

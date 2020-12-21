@@ -38,7 +38,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
                 setTask(task)
             })
         } else {
-            setTask(Task("New Task", Importance.IMPORTANT))
+            setTask(Task("New Task", taskManager.currentTaskListId, Importance.IMPORTANT))
         }
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             snoozedTextDate.isVisible = isChecked
@@ -85,6 +85,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
 
     private fun getTask() = Task(
         taskNameEditText.text.toString(),
+        taskManager.currentTaskListId,
         if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
         readDate(dueSwitch, dueTextDate),
         readDate(snoozeSwitch, snoozedTextDate)
