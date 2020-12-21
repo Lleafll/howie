@@ -11,7 +11,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_task.*
-import org.w3c.dom.Text
 import java.lang.Exception
 import java.time.LocalDate
 
