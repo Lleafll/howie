@@ -21,4 +21,6 @@
     <string name="unarchive">Unarchive</string>
     <string name="importance">Importance</string>
     <string name="update">Update</string>
+    <string name="navigation_drawer_open">Open Drawer</string>
+    <string name="navigation_drawer_close">Close Drawer</string>
 </resources>
