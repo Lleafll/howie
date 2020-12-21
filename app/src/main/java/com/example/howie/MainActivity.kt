@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         add_task_button.setOnClickListener {
-            val intent = Intent(applicationContext, AddTaskActivity::class.java)
+            val intent = Intent(applicationContext, TaskActivity::class.java)
             startActivity(intent)
         }
         bottomAppBar.setOnMenuItemClickListener {
