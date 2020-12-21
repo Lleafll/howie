@@ -22,7 +22,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
         TaskManager.getInstance(applicationContext)
     }
     private var taskId: Int? = null
-    private lateinit var taskLiveData: LiveData<Task>
+    private var taskLiveData: LiveData<Task>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +31,15 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        taskId = intent.getIntExtra("taskId", 0)
-        taskLiveData = taskManager.getTask(taskId!!)
-        taskLiveData.observe(this, Observer { task ->
-            setTask(task)
-        })
+        taskId = intent.getIntExtra("taskId", -1)
+        if (taskId != -1) {
+            taskLiveData = taskManager.getTask(taskId!!)
+            taskLiveData!!.observe(this, Observer { task ->
+                setTask(task)
+            })
+        } else {
+            setTask(Task("New Task", Importance.IMPORTANT))
+        }
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             snoozedTextDate.isVisible = isChecked
         }
@@ -43,7 +47,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
             dueTextDate.isVisible = isChecked
         }
         val onClickListenerFactory = { dateId: Int ->
-            {view: View ->
+            { view: View ->
                 val textView = view as TextView
                 val datePicker = DatePickerFragment()
                 val arguments = Bundle()
@@ -89,41 +93,56 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_task, menu)
         val saveItem = menu.findItem(R.id.action_save)
+        val updateItem = menu.findItem(R.id.action_update)
         val archiveItem = menu.findItem(R.id.action_archive)
         val unarchiveItem = menu.findItem(R.id.action_unarchive)
         val deleteItem = menu.findItem(R.id.action_delete)
-        taskLiveData.observe(this, Observer { task ->
-            if (task.archived == null) {
-                saveItem.isVisible = true
-                archiveItem.isVisible = true
-                unarchiveItem.isVisible = false
-            } else {
-                saveItem.isVisible = false
-                archiveItem.isVisible = false
-                unarchiveItem.isVisible = true
-            }
+        if (taskLiveData == null) {
+            saveItem.isVisible = true
+            updateItem.isVisible = false
+            deleteItem.isVisible = false
+            archiveItem.isVisible = false
+            unarchiveItem.isVisible = false
+        } else {
+            saveItem.isVisible = false
+            updateItem.isVisible = true
             deleteItem.isVisible = true
-        })
+            taskLiveData!!.observe(this, Observer { task ->
+                if (task.archived == null) {
+                    archiveItem.isVisible = true
+                    unarchiveItem.isVisible = false
+                } else {
+                    archiveItem.isVisible = false
+                    unarchiveItem.isVisible = true
+                }
+            })
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_save -> {
-            taskLiveData.removeObservers(this)
+        R.id.action_update -> {
+            taskLiveData?.removeObservers(this)
             val task = getTask()
             task.id = taskId!!
             taskManager.update(task)
             finish()
             true
         }
+        R.id.action_save -> {
+            val task = getTask()
+            taskManager.add(task)
+            finish()
+            true
+        }
         R.id.action_archive -> {
-            taskLiveData.removeObservers(this)
+            taskLiveData?.removeObservers(this)
             taskManager.doArchive(taskId!!)
             finish()
             true
         }
         R.id.action_delete -> {
-            taskLiveData.removeObservers(this)
+            taskLiveData?.removeObservers(this)
             taskManager.delete(taskId!!)
             finish()
             true
