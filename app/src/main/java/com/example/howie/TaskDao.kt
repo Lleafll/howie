@@ -12,8 +12,8 @@ private const val today = "(STRFTIME('%s','now') / $numberOfSecondsInADay)"
 private const val isSnoozed = "(snoozed IS NOT NULL AND (snoozed > $today))"
 private const val isNotSnoozed = "(snoozed IS NULL OR (snoozed <= $today))"
 private const val order = "ORDER BY snoozed, due"
-private const val isArchived = "(archived is NOT NULL)"
-private const val isNotArchived = "(archived is NULL)"
+private const val isArchived = "(archived IS NOT NULL)"
+private const val isNotArchived = "(archived IS NULL)"
 
 @Dao
 interface TaskDao {
