@@ -16,7 +16,6 @@ class AddTaskActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        task_view.setTask(Task("New Task"))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -26,8 +25,7 @@ class AddTaskActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_save -> {
-            val task =  task_view.getTask()
-            TaskManager.getInstance(applicationContext).add(task)
+            // TODO: Implement
             finish()
             true
         }

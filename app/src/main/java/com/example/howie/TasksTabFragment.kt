@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_tasks_object.*
 class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewPager: ViewPager2 = view.findViewById(R.id.pager)
-        viewPager.adapter = TasksTabAdapter(view.context, this)
+        viewPager.adapter = TasksTabAdapter(this)
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
         val taskManager = TaskManager.getInstance(view.context)
@@ -35,13 +35,23 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
     }
 }
 
-class TasksTabAdapter(private val context: Context, fragment: Fragment) :
-    FragmentStateAdapter(fragment) {
+class TasksTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = 4
 
     override fun createFragment(position: Int): Fragment {
-        val taskManager = TaskManager.getInstance(context)
-        val tasks = when (position) {
+        val tasksObjectFragment = TasksObjectFragment()
+        val arguments = Bundle()
+        arguments.putInt("position", position)
+        tasksObjectFragment.arguments = arguments
+        return tasksObjectFragment
+    }
+}
+
+class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val taskManager = TaskManager.getInstance(activity!!.applicationContext)
+        val position = arguments!!.getInt("position", 4)
+        val unsnoozedTasks = when (position) {
             0 -> taskManager.doTasks
             1 -> taskManager.decideTasks
             2 -> taskManager.delegateTasks
@@ -55,16 +65,6 @@ class TasksTabAdapter(private val context: Context, fragment: Fragment) :
             3 -> taskManager.snoozedDropTasks
             else -> taskManager.tasks
         }
-        return TasksObjectFragment(tasks, snoozedTasks)
-    }
-}
-
-class TasksObjectFragment(
-    private val unsnoozedTasks: LiveData<List<Task>>,
-    private val snoozedTasks: LiveData<List<Task>>
-) : Fragment(R.layout.fragment_tasks_object) {
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupView(taskListView, unsnoozedTasks, view.context)
         setupView(snoozedTaskListView, snoozedTasks, view.context)
     }
