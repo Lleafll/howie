@@ -35,6 +35,8 @@ class TaskManager(
     val archive: LiveData<List<Task>> =
         switchMap(taskListIdLiveData) { taskDao.getArchive(it) }
     val taskLists = taskListDao.getAllTaskLists()
+    val currentTaskList: LiveData<TaskList> =
+        switchMap(taskListIdLiveData){taskListDao.getTaskList(it)}
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)

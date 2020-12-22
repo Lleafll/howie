@@ -22,6 +22,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val intent = Intent(applicationContext, TaskActivity::class.java)
             startActivity(intent)
         }
+        setupToolBar()
+        setupDrawer()
+    }
+
+    private fun setupToolBar() {
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_show_archive -> {
@@ -34,7 +39,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-        setupDrawer()
+        val taskManager = TaskManager.getInstance(applicationContext)
+        taskManager.currentTaskList.observe(this, Observer {
+            toolbar.title = it.name
+        })
     }
 
     private fun setupDrawer() {

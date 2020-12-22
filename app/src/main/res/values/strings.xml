@@ -24,4 +24,7 @@
     <string name="navigation_drawer_open">Open Drawer</string>
     <string name="navigation_drawer_close">Close Drawer</string>
     <string name="add_new_list">Add New List</string>
+    <string name="show_archive">Show Archive</string>
+    <string name="rename_list">Rename List</string>
+    <string name="delete_list">Delete List</string>
 </resources>

@@ -5,7 +5,14 @@
     tools:context="com.example.howie.MainActivity">
     <item
         android:id="@+id/action_show_archive"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/outline_archive_white_48"
-        android:title="@string/archive" />
+        app:showAsAction="never"
+        android:title="@string/show_archive" />
+    <item
+        android:id="@+id/action_rename"
+        app:showAsAction="never"
+        android:title="@string/rename_list" />
+    <item
+        android:id="@+id/action_delete"
+        app:showAsAction="never"
+        android:title="@string/delete_list" />
 </menu>
