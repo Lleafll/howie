@@ -9,7 +9,9 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.Transformations.switchMap
 
 
-class TaskManager(private val taskDao: TaskDao) : ViewModel() {
+class TaskManager(
+    private val taskDao: TaskDao, private val taskListDao: TaskListDao
+) : ViewModel() {
     var currentTaskListId = 0
     private val taskListIdLiveData = defaultTaskListId(currentTaskListId)
     val tasks: LiveData<List<Task>> =
@@ -32,6 +34,7 @@ class TaskManager(private val taskDao: TaskDao) : ViewModel() {
         switchMap(taskListIdLiveData) { taskDao.getSnoozedDropTasks() }
     val archive: LiveData<List<Task>> =
         switchMap(taskListIdLiveData) { taskDao.getArchive() }
+    val taskLists = taskListDao.getAllTaskLists()
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
@@ -60,7 +63,7 @@ class TaskManager(private val taskDao: TaskDao) : ViewModel() {
         fun getInstance(applicationContext: Context): TaskManager {
             if (instance == null) {
                 val database = TasksDatabaseSingleton.getDatabase(applicationContext)
-                instance = TaskManager(database.getTaskDao())
+                instance = TaskManager(database.getTaskDao(), database.getTaskListDao())
             }
             return instance!!
         }

@@ -9,6 +9,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -47,8 +48,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
-        nav_view.menu.add(R.id.list_groups, Menu.NONE, Menu.NONE,"New item")
-        nav_view.setNavigationItemSelectedListener(this)
+        val taskManager = TaskManager.getInstance(applicationContext)
+        taskManager.taskLists.observe(this, Observer {
+            for (taskList in it) {
+                nav_view.menu.add(R.id.list_groups, Menu.NONE, Menu.NONE, taskList.name)
+                nav_view.setNavigationItemSelectedListener(this)
+            }
+        })
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
