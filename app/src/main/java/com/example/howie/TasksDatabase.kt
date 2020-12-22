@@ -63,8 +63,8 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
 }
 
 private val atLeastOneTaskListCallback = object : RoomDatabase.Callback() {
-    override fun onCreate(database: SupportSQLiteDatabase) {
-        super.onCreate(database)
+    override fun onOpen(database: SupportSQLiteDatabase) {
+        super.onOpen(database)
         database.execSQL("INSERT OR IGNORE INTO TaskList (id, name) VALUES (0, 'Tasks')")
     }
 }
