@@ -15,26 +15,25 @@ class TaskManager(
     var currentTaskListId = 0
         private set
     private val taskListIdLiveData = defaultTaskListId(currentTaskListId)
-    val tasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getAllTasks() }
+    val tasks: LiveData<List<Task>> = taskDao.getAllTasks()
     val doTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDoTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getDoTasks(it) }
     val snoozedDoTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDoTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getSnoozedDoTasks(it) }
     val decideTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDecideTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getDecideTasks(it) }
     val snoozedDecideTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDecideTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getSnoozedDecideTasks(it) }
     val delegateTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDelegateTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getDelegateTasks(it) }
     val snoozedDelegateTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDelegateTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getSnoozedDelegateTasks(it) }
     val dropTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDropTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getDropTasks(it) }
     val snoozedDropTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDropTasks() }
+        switchMap(taskListIdLiveData) { taskDao.getSnoozedDropTasks(it) }
     val archive: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getArchive() }
+        switchMap(taskListIdLiveData) { taskDao.getArchive(it) }
     val taskLists = taskListDao.getAllTaskLists()
 
     fun add(task: Task) = viewModelScope.launch {
