@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val intent = Intent(applicationContext, TaskActivity::class.java)
             startActivity(intent)
         }
-        bottomAppBar.setOnMenuItemClickListener {
+        toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_show_archive -> {
                     val intent = Intent(applicationContext, ArchiveActivity::class.java)
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toggle = ActionBarDrawerToggle(
             this,
             drawer,
-            bottomAppBar,
+            toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
