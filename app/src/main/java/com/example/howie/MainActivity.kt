@@ -54,15 +54,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             for (taskList in it) {
                 val itemId = R.id.action_add_list + taskList.id + 1
                 nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, taskList.name)
-                nav_view.setNavigationItemSelectedListener(this)
             }
+            nav_view.setNavigationItemSelectedListener(this)
         })
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val taskManager = TaskManager.getInstance(applicationContext)
         if (item.itemId == R.id.action_add_list) {
-            taskManager.addTaskList("Tasks")
+            taskManager.addTaskList("New Task List")
         } else {
             val itemId = item.itemId - R.id.action_add_list - 1
             taskManager.switchToTaskList(itemId)
