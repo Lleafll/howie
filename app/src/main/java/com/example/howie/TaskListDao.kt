@@ -15,4 +15,7 @@ interface TaskListDao {
 
     @Insert
     suspend fun insert(taskList: TaskList)
+
+    @Query("DELETE FROM TaskList WHERE id = :id")
+    suspend fun delete(id: Int)
 }

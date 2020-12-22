@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -34,6 +35,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     startActivity(intent)
                     true
                 }
+                R.id.action_rename -> {
+                    // TODO: Implement
+                    true
+                }
+                R.id.action_delete -> {
+                    onDeleteClick()
+                    true
+                }
                 else -> {
                     super.onOptionsItemSelected(it)
                 }
@@ -43,6 +52,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         taskManager.currentTaskList.observe(this, Observer {
             toolbar.title = it.name
         })
+    }
+
+    private fun onDeleteClick() {
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setMessage("Delete Task List?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { _, _ ->
+                TaskManager.getInstance(applicationContext).deleteCurrentTaskList()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
     }
 
     private fun setupDrawer() {

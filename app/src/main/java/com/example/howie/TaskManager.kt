@@ -63,6 +63,15 @@ class TaskManager(
         taskListDao.insert(TaskList(name))
     }
 
+    fun deleteCurrentTaskList() = viewModelScope.launch {
+        if (currentTaskListId != 0) {
+            taskListDao.delete(currentTaskListId)
+            taskDao.deleteTaskListTasks(currentTaskListId)
+            currentTaskListId = 0
+            taskListIdLiveData.value = 0
+        }
+    }
+
     companion object {
         private var instance: TaskManager? = null
 
