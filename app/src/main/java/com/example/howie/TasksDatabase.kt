@@ -12,6 +12,23 @@ abstract class TasksDatabase : RoomDatabase() {
     abstract fun getTaskDao(): TaskDao
 }
 
+object TasksDatabaseSingleton {
+    private var database: TasksDatabase? = null
+
+    fun getDatabase(applicationContext: Context): TasksDatabase {
+        if (database == null) {
+            database = Room.databaseBuilder(
+                applicationContext,
+                TasksDatabase::class.java,
+                "tasks-database"
+            ).addMigrations(MIGRATION_4_5, MIGRATION_5_6)
+                .addCallback(atLeastOneTaskListCallback)
+                .build()
+        }
+        return database!!
+    }
+}
+
 val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE Task ADD archived INTEGER")
@@ -24,17 +41,9 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
     }
 }
 
-object TasksDatabaseSingleton {
-    private var database: TasksDatabase? = null
-
-    fun getDatabase(applicationContext: Context): TasksDatabase {
-        if (database == null) {
-            database = Room.databaseBuilder(
-                applicationContext,
-                TasksDatabase::class.java,
-                "tasks-database"
-            ).addMigrations(MIGRATION_4_5, MIGRATION_5_6).build()
-        }
-        return database!!
+private val atLeastOneTaskListCallback = object : RoomDatabase.Callback() {
+    override fun onCreate(database: SupportSQLiteDatabase) {
+        super.onCreate(database)
+        database.execSQL("INSERT OR IGNORE INTO TaskList (id, name) VALUES (0, 'Tasks')")
     }
 }
