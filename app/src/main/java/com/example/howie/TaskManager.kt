@@ -13,6 +13,7 @@ class TaskManager(
     private val taskDao: TaskDao, private val taskListDao: TaskListDao
 ) : ViewModel() {
     var currentTaskListId = 0
+        private set
     private val taskListIdLiveData = defaultTaskListId(currentTaskListId)
     val tasks: LiveData<List<Task>> =
         switchMap(taskListIdLiveData) { taskDao.getAllTasks() }
@@ -55,6 +56,10 @@ class TaskManager(
     fun switchToTaskList(newTaskListId: Int) {
         currentTaskListId = newTaskListId
         taskListIdLiveData.value = newTaskListId
+    }
+
+    fun addTaskList(name: String) = viewModelScope.launch {
+        taskListDao.insert(TaskList(name))
     }
 
     companion object {

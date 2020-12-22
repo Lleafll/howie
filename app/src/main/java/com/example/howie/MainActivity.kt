@@ -50,23 +50,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
         val taskManager = TaskManager.getInstance(applicationContext)
         taskManager.taskLists.observe(this, Observer {
+            nav_view.menu.removeGroup(R.id.list_groups)
             for (taskList in it) {
-                nav_view.menu.add(R.id.list_groups, Menu.NONE, Menu.NONE, taskList.name)
+                val itemId = R.id.action_add_list + taskList.id + 1
+                nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, taskList.name)
                 nav_view.setNavigationItemSelectedListener(this)
             }
         })
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        val id: Int = item.itemId
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_share) {
-        } else if (id == R.id.nav_send) {
+        val taskManager = TaskManager.getInstance(applicationContext)
+        if (item.itemId == R.id.action_add_list) {
+            taskManager.addTaskList("Tasks")
+        } else {
+            val itemId = item.itemId - R.id.action_add_list - 1
+            taskManager.switchToTaskList(itemId)
         }
-        val drawer = findViewById<View>(R.id.drawer_layout) as DrawerLayout
-        drawer.closeDrawer(GravityCompat.START)
+        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 }

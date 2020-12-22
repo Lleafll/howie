@@ -4,8 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class TaskList (
-    @PrimaryKey(autoGenerate = true)
-    var id: Int,
+data class TaskList(
     val name: String
-)
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}
