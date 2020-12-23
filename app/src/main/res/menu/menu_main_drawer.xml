@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/add_list_group"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/action_add_list"
+            android:title="@string/add_new_list" />
+
+    </group>
+
+    <group
+        android:id="@+id/list_groups"
+        android:checkableBehavior="single"/>
+
+</menu>
