@@ -3,4 +3,7 @@
     <color name="colorPrimary">#6699CC</color>
     <color name="colorPrimaryDark">#3973AC</color>
     <color name="colorAccent">#6699CC</color>
+    <color name="statusBarColorDark">#121212</color>
+    <color name="navigationBarColorDark">@color/statusBarColorDark</color>
+    <color name="tabColorDark">@color/statusBarColorDark</color>
 </resources>

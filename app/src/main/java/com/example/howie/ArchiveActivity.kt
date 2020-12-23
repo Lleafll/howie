@@ -5,10 +5,12 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_archive.*
 import kotlinx.android.synthetic.main.activity_archive.toolbar
+import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
 class ArchiveActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,19 +30,20 @@ class ArchiveActivity : AppCompatActivity() {
         val taskManager = TaskManager.getInstance(applicationContext)
         val tasks = taskManager.archive
         tasks.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
-        setupStatusbar()
+        setupColors()
     }
 
-    private fun setupStatusbar() {
-        window.statusBarColor =
-            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    Color.BLACK
-                }
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    Color.WHITE
-                }
-                else -> return
+    private fun setupColors() {
+        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                window.statusBarColor =
+                    ContextCompat.getColor(applicationContext, R.color.statusBarColorDark)
+                window.navigationBarColor =
+                    ContextCompat.getColor(applicationContext, R.color.navigationBarColorDark)
             }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                window.statusBarColor = Color.WHITE
+            }
+        }
     }
 }

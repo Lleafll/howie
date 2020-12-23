@@ -3,22 +3,19 @@ package com.example.howie
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -31,20 +28,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         setupToolBar()
         setupDrawer()
-        setupStatusbar()
+        setupColors()
     }
 
-    private fun setupStatusbar() {
-        window.statusBarColor =
-            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    Color.BLACK
-                }
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    Color.WHITE
-                }
-                else -> return
+    private fun setupColors() {
+        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                tab_layout.setBackgroundColor(
+                    ContextCompat.getColor(applicationContext, R.color.tabColorDark)
+                )
+                window.statusBarColor =
+                    ContextCompat.getColor(applicationContext, R.color.statusBarColorDark)
+                window.navigationBarColor =
+                    ContextCompat.getColor(applicationContext, R.color.navigationBarColorDark)
             }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                window.statusBarColor = Color.WHITE
+            }
+        }
     }
 
     private fun setupToolBar() {
