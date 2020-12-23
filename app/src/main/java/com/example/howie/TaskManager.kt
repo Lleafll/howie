@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 
-
 class TaskManager(
     private val taskDao: TaskDao, private val taskListDao: TaskListDao
 ) : ViewModel() {
@@ -41,9 +40,11 @@ class TaskManager(
     val taskLists = taskListDao.getAllTaskLists()
     val currentTaskList: LiveData<TaskList> =
         switchMap(taskListIdLiveData) { taskListDao.getTaskList(it) }
+    val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
+        lastInsertedTaskCategory.value = taskCategory(task)
     }
 
     fun update(task: Task) = viewModelScope.launch {
@@ -60,21 +61,20 @@ class TaskManager(
 
     fun switchToTaskList(newTaskListId: Long) {
         currentTaskListId = newTaskListId
+        lastInsertedTaskCategory.value = TaskCategory.DO
         taskListIdLiveData.value = newTaskListId
     }
 
     fun addTaskList(name: String) = viewModelScope.launch {
         val id = taskListDao.insert(TaskList(name))
-        currentTaskListId = id
-        taskListIdLiveData.value = id
+        switchToTaskList(id)
     }
 
     fun deleteCurrentTaskList() = viewModelScope.launch {
         if (currentTaskListId != 0L) {
             taskListDao.delete(currentTaskListId)
             taskDao.deleteTaskListTasks(currentTaskListId)
-            currentTaskListId = 0L
-            taskListIdLiveData.value = 0L
+            switchToTaskList(0L)
         }
     }
 

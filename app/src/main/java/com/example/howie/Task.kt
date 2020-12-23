@@ -43,3 +43,21 @@ data class Task(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }
+
+enum class TaskCategory {
+    DO, DECIDE, DELEGATE, DROP
+}
+
+fun taskCategory(task: Task): TaskCategory = if (task.importance == Importance.IMPORTANT) {
+    if (task.due != null) {
+        TaskCategory.DO
+    } else {
+        TaskCategory.DECIDE
+    }
+} else {
+    if (task.due != null) {
+        TaskCategory.DELEGATE
+    } else {
+        TaskCategory.DROP
+    }
+}

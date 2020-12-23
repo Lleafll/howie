@@ -33,6 +33,9 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         taskManager.decideTasks.observe(this, observerFactory(1, "Decide"))
         taskManager.delegateTasks.observe(this, observerFactory(2, "Delegate"))
         taskManager.dropTasks.observe(this, observerFactory(3, "Drop"))
+        taskManager.lastInsertedTaskCategory.observe(this, Observer {
+            tabLayout.getTabAt(it.ordinal)?.select()
+        })
     }
 }
 
