@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
@@ -39,6 +40,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
             })
         } else {
             setTask(Task("New Task", taskManager.currentTaskListId, Importance.IMPORTANT))
+            taskNameEditText.requestFocus()
+            window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             snoozedTextDate.isVisible = isChecked
