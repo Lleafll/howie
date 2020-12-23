@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import com.google.android.material.navigation.NavigationView
@@ -115,7 +116,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             "${countToString(taskCounts[1])}/" +
                             "${countToString(taskCounts[2])}/" +
                             "${countToString(taskCounts[3])})"
-                    nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
+                    val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
+                    if (taskManager.currentTaskListId == taskList.id) {
+                        item.isChecked = true
+                    }
                 })
             }
             nav_view.setNavigationItemSelectedListener(this)
@@ -132,6 +136,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId == R.id.action_add_list) {
             taskManager.addTaskList("New Task List")
         } else {
+            for (i in 0 until nav_view.menu.size) {
+                nav_view.menu.getItem(i).isChecked = false
+            }
+            item.isChecked = true
             val itemId = item.itemId - R.id.action_add_list - 1
             taskManager.switchToTaskList(itemId.toLong())
         }

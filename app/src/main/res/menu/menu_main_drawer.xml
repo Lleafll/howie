@@ -3,7 +3,7 @@
 
     <group
         android:id="@+id/add_list_group"
-        android:checkableBehavior="single">
+        android:checkableBehavior="none">
 
         <item
             android:id="@+id/action_add_list"
