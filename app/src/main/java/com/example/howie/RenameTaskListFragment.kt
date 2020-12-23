@@ -1,26 +1,21 @@
 package com.example.howie
 
+import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
 class RenameTaskListFragment : DialogFragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_rename_task_list, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupClickListeners(view)
-    }
-
-    private fun setupClickListeners(view: View) {
-        // TODO: Implement
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val messageBoxBuilder =
+            AlertDialog.Builder(activity!!).setView(R.layout.fragment_rename_task_list)
+                .setMessage("Rename List")
+                .setPositiveButton("Ok") { _, _ ->
+                    // TODO: Implement
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+        return messageBoxBuilder.create()
     }
 }
