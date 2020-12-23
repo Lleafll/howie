@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun onDeleteClick() {
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setMessage("Delete Task List?")
-            .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
                 TaskManager.getInstance(applicationContext).deleteCurrentTaskList()
             }
