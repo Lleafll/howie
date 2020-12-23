@@ -108,11 +108,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         taskManager.taskLists.observe(this, Observer {
             nav_view.menu.removeGroup(R.id.list_groups)
             for (taskList in it) {
-                val itemId = R.id.action_add_list + taskList.id + 1
-                nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, taskList.name)
+                taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
+                    val itemId = R.id.action_add_list + taskList.id.toInt() + 1
+                    val name = "${taskList.name} (" +
+                            "${countToString(taskCounts[0])}/" +
+                            "${countToString(taskCounts[1])}/" +
+                            "${countToString(taskCounts[2])}/" +
+                            "${countToString(taskCounts[3])})"
+                    nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
+                })
             }
             nav_view.setNavigationItemSelectedListener(this)
         })
+    }
+
+    private fun countToString(count: Int) = when (count) {
+        0 -> "✓"
+        else -> count.toString()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

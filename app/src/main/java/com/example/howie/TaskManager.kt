@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.Transformations.switchMap
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
 
 
 class TaskManager(
@@ -76,6 +80,20 @@ class TaskManager(
 
     fun renameCurrentTaskList(newName: String) = viewModelScope.launch {
         taskListDao.rename(currentTaskListId, newName)
+    }
+
+    fun getTaskCounts(taskListId: Long): LiveData<List<Int>> {
+        val taskCounts = MutableLiveData<List<Int>>()
+        viewModelScope.launch {
+            val values: Flow<Int> = flow {
+                emit(taskDao.countDoTasks(taskListId).first())
+                emit(taskDao.countDecideTasks(taskListId).first())
+                emit(taskDao.countDelegateTasks(taskListId).first())
+                emit(taskDao.countDropTasks(taskListId).first())
+            }
+            taskCounts.value = values.toList()
+        }
+        return taskCounts
     }
 
     companion object {

@@ -2,6 +2,7 @@ package com.example.howie
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 private const val isImportant = "(importance = 0)"
 private const val isUnimportant = "(importance = 1)"
@@ -15,41 +16,63 @@ private const val order = "ORDER BY snoozed, due"
 private const val isArchived = "(archived IS NOT NULL)"
 private const val isNotArchived = "(archived IS NULL)"
 private const val isOnList = "(taskListId = :taskListId)"
+private const val select = "SELECT *"
+private const val count = "SELECT COUNT(*)"
+private const val fromDoTasks =
+    "FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order"
+private const val fromDecideTasks =
+    "FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order"
+private const val fromDelegateTasks =
+    "FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order"
+private const val fromDropTasks =
+    "FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order"
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM task")
+    @Query("$select FROM task")
     fun getAllTasks(): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order")
+    @Query("$select $fromDoTasks")
     fun getDoTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
     fun getSnoozedDoTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order")
+    @Query("$select $fromDecideTasks")
     fun getDecideTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
     fun getSnoozedDecideTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order")
+    @Query("$select $fromDelegateTasks")
     fun getDelegateTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
     fun getSnoozedDelegateTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order")
+    @Query("$select $fromDropTasks")
     fun getDropTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
     fun getSnoozedDropTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("SELECT * FROM task WHERE id = :id")
+    @Query("$select FROM task WHERE id = :id")
     fun getTask(id: Int): LiveData<Task>
 
-    @Query("SELECT * FROM task WHERE $isOnList AND $isArchived ORDER BY archived DESC")
+    @Query("$select FROM task WHERE $isOnList AND $isArchived ORDER BY archived DESC")
     fun getArchive(taskListId: Long): LiveData<List<Task>>
+
+    @Query("$count $fromDoTasks")
+    fun countDoTasks(taskListId: Long): Flow<Int>
+
+    @Query("$count $fromDecideTasks")
+    fun countDecideTasks(taskListId: Long): Flow<Int>
+
+    @Query("$count $fromDelegateTasks")
+    fun countDelegateTasks(taskListId: Long): Flow<Int>
+
+    @Query("$count $fromDropTasks")
+    fun countDropTasks(taskListId: Long): Flow<Int>
 
     @Insert
     suspend fun insert(task: Task)
