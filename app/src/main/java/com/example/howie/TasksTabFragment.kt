@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -65,11 +66,16 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
             3 -> taskManager.snoozedDropTasks
             else -> taskManager.tasks
         }
-        setupView(taskListView, unsnoozedTasks, view.context)
-        setupView(snoozedTaskListView, snoozedTasks, view.context)
+        setupView(taskListView, unsnoozedTasks, view.context, tasksTextView)
+        setupView(snoozedTaskListView, snoozedTasks, view.context, snoozedTasksTextView)
     }
 
-    private fun setupView(view: RecyclerView, tasks: LiveData<List<Task>>, context: Context) {
+    private fun setupView(
+        view: RecyclerView,
+        tasks: LiveData<List<Task>>,
+        context: Context,
+        header: TextView
+    ) {
         taskListView.layoutManager = LinearLayoutManager(context)
         val taskAdapter = TaskAdapter {
             val intent = Intent(activity!!.applicationContext, TaskActivity::class.java)
@@ -78,8 +84,17 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
         }
         view.adapter = taskAdapter
         tasks.observe(this, Observer {
+            header.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
             it.let { taskAdapter.submitList(it) }
         })
+        header.setOnClickListener {
+            view.visibility = when (view.visibility) {
+                View.GONE -> View.VISIBLE
+                View.VISIBLE -> View.GONE
+                View.INVISIBLE -> View.VISIBLE
+                else -> View.VISIBLE
+            }
+        }
     }
 }
 
