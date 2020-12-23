@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
                 R.id.action_rename -> {
-                    // TODO: Implement
+                    onRenameClick()
                     true
                 }
                 R.id.action_delete -> {
@@ -52,6 +52,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         taskManager.currentTaskList.observe(this, Observer {
             toolbar.title = it.name
         })
+    }
+
+    private fun onRenameClick() {
+        val dialog = RenameTaskListFragment()
+        dialog.show(supportFragmentManager, "renameTask")
     }
 
     private fun onDeleteClick() {
