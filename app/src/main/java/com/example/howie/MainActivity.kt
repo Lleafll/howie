@@ -106,16 +106,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer.addDrawerListener(toggle)
         toggle.syncState()
         val taskManager = TaskManager.getInstance(applicationContext)
+        // TODO: Causes really ugly race conditions
         taskManager.taskLists.observe(this, Observer {
+            buildDrawerContent()
+        })
+        taskManager.tasks.observe(this, Observer { updateDrawerContent() })
+    }
+
+    private fun buildDrawerContent() {
+        val taskManager = TaskManager.getInstance(applicationContext)
+        taskManager.taskLists.observeOnce(this, Observer {
             nav_view.menu.removeGroup(R.id.list_groups)
             for (taskList in it) {
                 taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
                     val itemId = R.id.action_add_list + taskList.id.toInt() + 1
-                    val name = "${taskList.name} (" +
-                            "${countToString(taskCounts[0])}/" +
-                            "${countToString(taskCounts[1])}/" +
-                            "${countToString(taskCounts[2])}/" +
-                            "${countToString(taskCounts[3])})"
+                    val name = buildDrawerItemName(taskList, taskCounts)
                     val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
                     if (taskManager.currentTaskListId == taskList.id) {
                         item.isChecked = true
@@ -125,6 +130,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             nav_view.setNavigationItemSelectedListener(this)
         })
     }
+
+    private fun updateDrawerContent() {
+        val taskManager = TaskManager.getInstance(applicationContext)
+        taskManager.taskLists.observeOnce(this, Observer {
+            for (taskList in it) {
+                taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
+                    val itemId = R.id.action_add_list + taskList.id.toInt() + 1
+                    val item = nav_view.menu.findItem(itemId)
+                    if (item != null) {
+                        item.title = buildDrawerItemName(taskList, taskCounts)
+                    }
+                })
+            }
+            nav_view.setNavigationItemSelectedListener(this)
+        })
+    }
+
+    private fun buildDrawerItemName(taskList: TaskList, taskCounts: List<Int>): String {
+        return "${taskList.name} (" +
+                "${countToString(taskCounts[0])}/" +
+                "${countToString(taskCounts[1])}/" +
+                "${countToString(taskCounts[2])}/" +
+                "${countToString(taskCounts[3])})"
+    }
+
 
     private fun countToString(count: Int) = when (count) {
         0 -> "✓"
