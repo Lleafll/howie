@@ -22,9 +22,9 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
         val taskManager = TaskManager.getInstance(view.context)
-        val observerFactory = {position: Int, lowerText: String ->
-            Observer{tasks: List<Task> ->
-                val upperText = if(tasks.isNotEmpty()) tasks.size.toString() else "✓"
+        val observerFactory = { position: Int, lowerText: String ->
+            Observer { tasks: List<Task> ->
+                val upperText = if (tasks.isNotEmpty()) tasks.size.toString() else "✓"
                 tabLayout.getTabAt(position)!!.text = "$upperText\n$lowerText"
             }
         }
