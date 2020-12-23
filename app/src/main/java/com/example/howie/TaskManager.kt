@@ -96,6 +96,10 @@ class TaskManager(
         return taskCounts
     }
 
+    fun moveToList(taskId: Int, taskListId: Long) = viewModelScope.launch {
+        taskDao.moveToTaskList(taskId, taskListId)
+    }
+
     companion object {
         private var instance: TaskManager? = null
 

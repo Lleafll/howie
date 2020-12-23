@@ -2,7 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.howie.TaskActivity">
+    tools:context="com.example.howie.TaskActivity"
+    tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/action_update"
@@ -19,8 +20,6 @@
     <item
         android:id="@+id/action_unarchive"
         android:icon="@drawable/outline_unarchive_24"
-        android:iconTint="#FF0101"
-        android:orderInCategory="98"
         android:title="@string/unarchive"
         app:showAsAction="always" />
 
@@ -30,6 +29,13 @@
         app:showAsAction="always">
 
         <menu>
+
+            <item
+                android:id="@+id/action_move_to_different_list"
+                android:icon="@drawable/outline_call_made_24"
+                android:orderInCategory="98"
+                android:title="@string/move_to_different_list"
+                app:showAsAction="never" />
 
             <item
                 android:id="@+id/action_archive"

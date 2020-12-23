@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
@@ -15,14 +16,14 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_task.*
-import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 import java.lang.Exception
 import java.time.LocalDate
 
 private const val DUE_DATE_ID = 0
 private const val SNOOZED_DATE_ID = 1
 
-class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener {
+class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
+    MoveTaskFragment.MoveTaskFragmentListener {
     private val taskManager: TaskManager by lazy {
         TaskManager.getInstance(applicationContext)
     }
@@ -120,16 +121,19 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
         val archiveItem = menu.findItem(R.id.action_archive)
         val unarchiveItem = menu.findItem(R.id.action_unarchive)
         val deleteItem = menu.findItem(R.id.action_delete)
+        val moveToTaskList = menu.findItem(R.id.action_move_to_different_list)
         if (taskLiveData == null) {
             saveItem.isVisible = true
             updateItem.isVisible = false
             deleteItem.isVisible = false
             archiveItem.isVisible = false
             unarchiveItem.isVisible = false
+            moveToTaskList.isVisible = false
         } else {
             saveItem.isVisible = false
             updateItem.isVisible = true
             deleteItem.isVisible = true
+            moveToTaskList.isVisible = true
             taskLiveData!!.observe(this, Observer { task ->
                 if (task.archived == null) {
                     archiveItem.isVisible = true
@@ -165,14 +169,36 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
             true
         }
         R.id.action_delete -> {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Delete Task?")
+                .setPositiveButton("Yes") { _, _ ->
+                    taskLiveData?.removeObservers(this)
+                    taskManager.delete(taskId!!)
+                    finish()
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+            val alert = builder.create()
+            alert.show()
+            true
+        }
+        R.id.action_move_to_different_list -> {
             taskLiveData?.removeObservers(this)
-            taskManager.delete(taskId!!)
-            finish()
+            val dialog = MoveTaskFragment()
+            val arguments = Bundle()
+            arguments.putInt("taskId", taskId!!)
+            dialog.arguments = arguments
+            dialog.show(supportFragmentManager, "moveTaskDialog")
             true
         }
         else -> {
             super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onTaskMoved() {
+        finish()
     }
 }
 

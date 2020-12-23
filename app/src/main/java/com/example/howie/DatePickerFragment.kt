@@ -37,7 +37,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         try {
             listener = context as DatePickerListener
         } catch (e: ClassCastException) {
-            throw ClassCastException("$context must implement NoticeDialogListener")
+            throw ClassCastException("$context must implement DatePickerListener")
         }
     }
 }

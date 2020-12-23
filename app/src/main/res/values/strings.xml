@@ -27,4 +27,5 @@
     <string name="show_archive">Show Archive</string>
     <string name="rename_list">Rename List</string>
     <string name="delete_list">Delete List</string>
+    <string name="move_to_different_list">Move to different list</string>
 </resources>
