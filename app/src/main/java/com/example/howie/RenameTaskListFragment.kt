@@ -2,6 +2,7 @@ package com.example.howie
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
@@ -19,6 +20,8 @@ class RenameTaskListFragment : DialogFragment() {
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
-        return messageBoxBuilder.create()
+        val dialog = messageBoxBuilder.create()
+        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        return dialog
     }
 }
