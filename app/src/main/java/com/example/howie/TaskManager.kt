@@ -12,7 +12,7 @@ import androidx.lifecycle.Transformations.switchMap
 class TaskManager(
     private val taskDao: TaskDao, private val taskListDao: TaskListDao
 ) : ViewModel() {
-    var currentTaskListId = 0
+    var currentTaskListId = 0L
         private set
     private val taskListIdLiveData = defaultTaskListId(currentTaskListId)
     val tasks: LiveData<List<Task>> = taskDao.getAllTasks()
@@ -54,21 +54,23 @@ class TaskManager(
 
     fun getTask(id: Int) = taskDao.getTask(id)
 
-    fun switchToTaskList(newTaskListId: Int) {
+    fun switchToTaskList(newTaskListId: Long) {
         currentTaskListId = newTaskListId
         taskListIdLiveData.value = newTaskListId
     }
 
     fun addTaskList(name: String) = viewModelScope.launch {
-        taskListDao.insert(TaskList(name))
+        val id = taskListDao.insert(TaskList(name))
+        currentTaskListId = id
+        taskListIdLiveData.value = id
     }
 
     fun deleteCurrentTaskList() = viewModelScope.launch {
-        if (currentTaskListId != 0) {
+        if (currentTaskListId != 0L) {
             taskListDao.delete(currentTaskListId)
             taskDao.deleteTaskListTasks(currentTaskListId)
-            currentTaskListId = 0
-            taskListIdLiveData.value = 0
+            currentTaskListId = 0L
+            taskListIdLiveData.value = 0L
         }
     }
 
@@ -89,8 +91,8 @@ class TaskManager(
     }
 }
 
-private fun defaultTaskListId(value: Int): MutableLiveData<Int> {
-    val taskListId = MutableLiveData<Int>()
+private fun defaultTaskListId(value: Long): MutableLiveData<Long> {
+    val taskListId = MutableLiveData<Long>()
     taskListId.value = value
     return taskListId
 }

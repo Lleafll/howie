@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             taskManager.addTaskList("New Task List")
         } else {
             val itemId = item.itemId - R.id.action_add_list - 1
-            taskManager.switchToTaskList(itemId)
+            taskManager.switchToTaskList(itemId.toLong())
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true

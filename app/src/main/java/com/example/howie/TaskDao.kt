@@ -22,34 +22,34 @@ interface TaskDao {
     fun getAllTasks(): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order")
-    fun getDoTasks(taskListId: Int): LiveData<List<Task>>
+    fun getDoTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
-    fun getSnoozedDoTasks(taskListId: Int): LiveData<List<Task>>
+    fun getSnoozedDoTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order")
-    fun getDecideTasks(taskListId: Int): LiveData<List<Task>>
+    fun getDecideTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
-    fun getSnoozedDecideTasks(taskListId: Int): LiveData<List<Task>>
+    fun getSnoozedDecideTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order")
-    fun getDelegateTasks(taskListId: Int): LiveData<List<Task>>
+    fun getDelegateTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
-    fun getSnoozedDelegateTasks(taskListId: Int): LiveData<List<Task>>
+    fun getSnoozedDelegateTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order")
-    fun getDropTasks(taskListId: Int): LiveData<List<Task>>
+    fun getDropTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
-    fun getSnoozedDropTasks(taskListId: Int): LiveData<List<Task>>
+    fun getSnoozedDropTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("SELECT * FROM task WHERE id = :id")
     fun getTask(id: Int): LiveData<Task>
 
     @Query("SELECT * FROM task WHERE $isOnList AND $isArchived ORDER BY archived DESC")
-    fun getArchive(taskListId: Int): LiveData<List<Task>>
+    fun getArchive(taskListId: Long): LiveData<List<Task>>
 
     @Insert
     suspend fun insert(task: Task)
@@ -64,5 +64,5 @@ interface TaskDao {
     suspend fun delete(id: Int)
 
     @Query("DELETE FROM task WHERE taskListId = :taskListId")
-    suspend fun deleteTaskListTasks(taskListId: Int)
+    suspend fun deleteTaskListTasks(taskListId: Long)
 }

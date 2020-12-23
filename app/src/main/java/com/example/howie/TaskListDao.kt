@@ -11,14 +11,14 @@ interface TaskListDao {
     fun getAllTaskLists(): LiveData<List<TaskList>>
 
     @Query("SELECT * FROM TaskList WHERE id = :id")
-    fun getTaskList(id: Int): LiveData<TaskList>
+    fun getTaskList(id: Long): LiveData<TaskList>
 
     @Insert
-    suspend fun insert(taskList: TaskList)
+    suspend fun insert(taskList: TaskList): Long
 
     @Query("UPDATE TaskList SET name = :name WHERE id = :id")
-    suspend fun rename(id: Int, name: String)
+    suspend fun rename(id: Long, name: String)
 
     @Query("DELETE FROM TaskList WHERE id = :id")
-    suspend fun delete(id: Int)
+    suspend fun delete(id: Long)
 }

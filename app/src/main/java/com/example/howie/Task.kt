@@ -33,7 +33,7 @@ class Converters {
 @TypeConverters(Converters::class)
 data class Task(
     val name: String,
-    val taskListId: Int,
+    val taskListId: Long,
     val importance: Importance = Importance.IMPORTANT,
     val due: LocalDate? = null,
     val snoozed: LocalDate? = null,
