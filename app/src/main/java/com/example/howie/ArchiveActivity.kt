@@ -1,6 +1,8 @@
 package com.example.howie
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -26,5 +28,19 @@ class ArchiveActivity : AppCompatActivity() {
         val taskManager = TaskManager.getInstance(applicationContext)
         val tasks = taskManager.archive
         tasks.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
+        setupStatusbar()
+    }
+
+    private fun setupStatusbar() {
+        window.statusBarColor =
+            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    Color.BLACK
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    Color.WHITE
+                }
+                else -> return
+            }
     }
 }

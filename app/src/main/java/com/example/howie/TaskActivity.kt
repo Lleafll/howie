@@ -1,5 +1,7 @@
 package com.example.howie
 
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -62,6 +64,20 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener 
         }
         dueTextDate.setOnClickListener(onClickListenerFactory(DUE_DATE_ID))
         snoozedTextDate.setOnClickListener(onClickListenerFactory(SNOOZED_DATE_ID))
+        setupStatusbar()
+    }
+
+    private fun setupStatusbar() {
+        window.statusBarColor =
+            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    Color.BLACK
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    Color.WHITE
+                }
+                else -> return
+            }
     }
 
     override fun onDateChanged(id: Int, date: LocalDate) {
