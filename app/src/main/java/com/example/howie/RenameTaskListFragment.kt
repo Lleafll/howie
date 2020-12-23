@@ -2,9 +2,10 @@ package com.example.howie
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.textfield.TextInputEditText
+import kotlinx.android.synthetic.main.fragment_rename_task_list.*
 
 class RenameTaskListFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -12,7 +13,9 @@ class RenameTaskListFragment : DialogFragment() {
             AlertDialog.Builder(activity!!).setView(R.layout.fragment_rename_task_list)
                 .setMessage("Rename List")
                 .setPositiveButton("Ok") { _, _ ->
-                    // TODO: Implement
+                    val textEdit: TextInputEditText = dialog!!.findViewById(R.id.new_task_list_name)
+                    val taskManager = TaskManager.getInstance(activity!!.applicationContext)
+                    taskManager.renameCurrentTaskList(textEdit.text.toString())
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

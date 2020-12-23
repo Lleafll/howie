@@ -6,7 +6,7 @@
     android:padding="12dp">
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/tvTitle"
+        android:id="@+id/new_task_list_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"

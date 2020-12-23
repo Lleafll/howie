@@ -36,7 +36,7 @@ class TaskManager(
         switchMap(taskListIdLiveData) { taskDao.getArchive(it) }
     val taskLists = taskListDao.getAllTaskLists()
     val currentTaskList: LiveData<TaskList> =
-        switchMap(taskListIdLiveData){taskListDao.getTaskList(it)}
+        switchMap(taskListIdLiveData) { taskListDao.getTaskList(it) }
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
@@ -70,6 +70,10 @@ class TaskManager(
             currentTaskListId = 0
             taskListIdLiveData.value = 0
         }
+    }
+
+    fun renameCurrentTaskList(newName: String) = viewModelScope.launch {
+        taskListDao.rename(currentTaskListId, newName)
     }
 
     companion object {
