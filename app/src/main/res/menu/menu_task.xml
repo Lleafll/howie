@@ -3,23 +3,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.howie.TaskActivity">
-    <item android:id="@+id/action_update"
+
+    <item
+        android:id="@+id/action_update"
+        android:icon="@drawable/outline_done_24"
         android:title="@string/update"
-        app:showAsAction="ifRoom"/>
-    <item android:id="@+id/action_save"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/outline_add_task_24"
         android:title="@string/action_save"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_unarchive"
-        android:orderInCategory="99"
+        android:icon="@drawable/outline_unarchive_24"
+        android:iconTint="#FF0101"
+        android:orderInCategory="98"
         android:title="@string/unarchive"
-        app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_archive"
-        android:orderInCategory="99"
-        android:title="@string/archive"
-        app:showAsAction="never"/>
-    <item android:id="@+id/action_delete"
-        android:orderInCategory="100"
-        android:title="@string/action_delete"
-        app:showAsAction="never"/>
+        app:showAsAction="always" />
+
+    <item
+        android:icon="@drawable/outline_more_vert_24"
+        android:title=""
+        app:showAsAction="always">
+
+        <menu>
+
+            <item
+                android:id="@+id/action_archive"
+                android:icon="@drawable/outline_archive_24"
+                android:orderInCategory="99"
+                android:title="@string/archive"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_delete"
+                android:icon="@drawable/outline_delete_24"
+                android:orderInCategory="100"
+                android:title="@string/action_delete"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
+
 </menu>
