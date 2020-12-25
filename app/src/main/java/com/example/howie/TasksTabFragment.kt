@@ -9,11 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.android.synthetic.main.expandable_task_list_view.*
+import kotlinx.android.synthetic.main.expandable_task_list_view.view.*
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
@@ -69,35 +70,26 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
             3 -> taskManager.snoozedDropTasks
             else -> taskManager.tasks
         }
-        setupView(taskListView, unsnoozedTasks, view.context, tasksTextView)
-        setupView(snoozedTaskListView, snoozedTasks, view.context, snoozedTasksTextView)
+        setupView(unsnoozed_tasks_view, unsnoozedTasks, "Tasks")
+        setupView(snoozed_tasks_view, snoozedTasks, "Snoozed Tasks")
     }
 
     private fun setupView(
-        view: RecyclerView,
+        view: ExpandableTasksView,
         tasks: LiveData<List<Task>>,
-        context: Context,
-        header: TextView
+        headerText: String
     ) {
-        taskListView.layoutManager = LinearLayoutManager(context)
+        view.setHeaderText(headerText)
         val taskAdapter = TaskAdapter {
             val intent = Intent(activity!!.applicationContext, TaskActivity::class.java)
             intent.putExtra("taskId", it)
             startActivity(intent)
         }
-        view.adapter = taskAdapter
+        view.setAdapter(taskAdapter)
         tasks.observe(this, Observer {
-            header.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+            view.setExpanded(it.isNotEmpty())
             it.let { taskAdapter.submitList(it) }
         })
-        header.setOnClickListener {
-            view.visibility = when (view.visibility) {
-                View.GONE -> View.VISIBLE
-                View.VISIBLE -> View.GONE
-                View.INVISIBLE -> View.VISIBLE
-                else -> View.VISIBLE
-            }
-        }
     }
 }
 
