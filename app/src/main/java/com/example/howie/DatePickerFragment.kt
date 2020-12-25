@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import java.time.LocalDate
+import java.util.*
 
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
     private lateinit var listener: DatePickerListener
@@ -18,13 +19,15 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dateString = arguments!!.getString("date")
         val date = LocalDate.parse(dateString)
-        return DatePickerDialog(
+        val datePickerDialog = DatePickerDialog(
             activity!!,
             this,
             date.year,
             date.monthValue - 1,
             date.dayOfMonth
         )
+        datePickerDialog.datePicker.firstDayOfWeek = Calendar.MONDAY
+        return datePickerDialog
     }
 
     override fun onDateSet(picker: DatePicker?, year: Int, month: Int, day: Int) {
