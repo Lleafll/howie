@@ -88,10 +88,15 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         if (id == -1) {
             throw Exception("Pass id arguments to DatePickerFragment")
         }
+        val dateString = date.toString()
         if (id == DUE_DATE_ID) {
-            dueTextDate.text = date.toString()
+            dueTextDate.text = dateString
         } else if (id == SNOOZED_DATE_ID) {
-            snoozedTextDate.text = date.toString()
+            snoozedTextDate.text = dateString
+            if (date > LocalDate.parse(dueTextDate.text)) {
+                // Due can't realistically be before snoozed
+                dueTextDate.text = dateString
+            }
         }
     }
 
