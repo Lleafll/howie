@@ -12,54 +12,56 @@ private const val numberOfSecondsInADay = 86400
 private const val today = "(STRFTIME('%s','now') / $numberOfSecondsInADay)"
 private const val isSnoozed = "(snoozed IS NOT NULL AND (snoozed > $today))"
 private const val isNotSnoozed = "(snoozed IS NULL OR (snoozed <= $today))"
-private const val order = "ORDER BY snoozed, due"
+private const val orderByDue = "ORDER BY due"
+private const val orderBySnoozed = "ORDER BY snoozed"
+private const val orderByArchived = "ORDER BY archived DESC"
 private const val isArchived = "(archived IS NOT NULL)"
 private const val isNotArchived = "(archived IS NULL)"
 private const val isOnList = "(taskListId = :taskListId)"
 private const val select = "SELECT *"
 private const val count = "SELECT COUNT(*)"
 private const val fromDoTasks =
-    "FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order"
+    "FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isNotSnoozed AND $isNotArchived"
 private const val fromDecideTasks =
-    "FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order"
+    "FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived"
 private const val fromDelegateTasks =
-    "FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isNotSnoozed AND $isNotArchived $order"
+    "FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isNotSnoozed AND $isNotArchived"
 private const val fromDropTasks =
-    "FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived $order"
+    "FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isNotSnoozed AND $isNotArchived"
 
 @Dao
 interface TaskDao {
     @Query("$select FROM task")
     fun getAllTasks(): LiveData<List<Task>>
 
-    @Query("$select $fromDoTasks")
+    @Query("$select $fromDoTasks $orderByDue")
     fun getDoTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
     fun getSnoozedDoTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("$select $fromDecideTasks")
+    @Query("$select $fromDecideTasks $orderByDue")
     fun getDecideTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
     fun getSnoozedDecideTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("$select $fromDelegateTasks")
+    @Query("$select $fromDelegateTasks $orderByDue")
     fun getDelegateTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
     fun getSnoozedDelegateTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("$select $fromDropTasks")
+    @Query("$select $fromDropTasks $orderByDue")
     fun getDropTasks(taskListId: Long): LiveData<List<Task>>
 
-    @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isSnoozed AND $isNotArchived $order")
+    @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
     fun getSnoozedDropTasks(taskListId: Long): LiveData<List<Task>>
 
     @Query("$select FROM task WHERE id = :id")
     fun getTask(id: Int): LiveData<Task>
 
-    @Query("$select FROM task WHERE $isOnList AND $isArchived ORDER BY archived DESC")
+    @Query("$select FROM task WHERE $isOnList AND $isArchived $orderByArchived")
     fun getArchive(taskListId: Long): LiveData<List<Task>>
 
     @Query("$count $fromDoTasks")
