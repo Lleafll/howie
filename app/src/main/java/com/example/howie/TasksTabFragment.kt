@@ -91,6 +91,7 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
             if (it.isEmpty()) {
                 view.visibility = View.GONE
             } else {
+                view.visibility = View.VISIBLE
                 view.setExpanded(defaultExpandState)
                 it.let { taskAdapter.submitList(it) }
             }
