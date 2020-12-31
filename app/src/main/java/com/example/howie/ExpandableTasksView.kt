@@ -1,11 +1,11 @@
 package com.example.howie
 
 import android.content.Context
+import android.graphics.drawable.Icon
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.expandable_task_list_view.view.*
 
@@ -16,11 +16,9 @@ class ExpandableTasksView(context: Context, attrs: AttributeSet?) :
         LayoutInflater.from(context).inflate(R.layout.expandable_task_list_view, this)
         taskListView.layoutManager = LinearLayoutManager(context)
         header.setOnClickListener {
-            taskListView.visibility = when (taskListView.visibility) {
-                View.GONE -> View.VISIBLE
-                View.VISIBLE -> View.GONE
-                View.INVISIBLE -> View.VISIBLE
-                else -> View.VISIBLE
+            when (taskListView.visibility) {
+                View.VISIBLE -> this.setExpanded(false)
+                else -> this.setExpanded(true)
             }
         }
     }
@@ -35,5 +33,11 @@ class ExpandableTasksView(context: Context, attrs: AttributeSet?) :
 
     fun setExpanded(shouldExpand: Boolean) {
         taskListView.visibility = if (shouldExpand) View.VISIBLE else View.GONE
+        expandIndicator.setImageIcon(
+            Icon.createWithResource(
+                context,
+                if (shouldExpand) android.R.drawable.arrow_down_float else android.R.drawable.arrow_up_float
+            )
+        )
     }
 }
