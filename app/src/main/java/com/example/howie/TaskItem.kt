@@ -19,7 +19,8 @@ class TaskItem : LinearLayout {
             field = value
             name_text_view.text = value.name
             due_text_view.text = toDateString("", value.due)
-            snoozed_text_view.text = toDateString("Snoozed ", value.snoozed)
+            snoozed_text_view.text = toDateString("\u23F0 ", value.snoozed)
+            archived_text_view.text = toDateString("\uD83D\uDDC3 ", value.archived)
         }
 }
 
