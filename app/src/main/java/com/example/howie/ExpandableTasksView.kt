@@ -15,6 +15,7 @@ class ExpandableTasksView(context: Context, attrs: AttributeSet?) :
     init {
         LayoutInflater.from(context).inflate(R.layout.expandable_task_list_view, this)
         taskListView.layoutManager = LinearLayoutManager(context)
+        taskListView.isNestedScrollingEnabled = false
         header.setOnClickListener {
             when (taskListView.visibility) {
                 View.VISIBLE -> this.setExpanded(false)
