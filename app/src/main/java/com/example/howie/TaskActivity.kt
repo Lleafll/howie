@@ -44,7 +44,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 setTask(task)
             })
         } else {
-            setTask(Task("New Task", taskManager.currentTaskListId, Importance.IMPORTANT))
+            setTask(Task("", taskManager.currentTaskListId, Importance.IMPORTANT))
             taskNameEditText.requestFocus()
             window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
