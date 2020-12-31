@@ -70,14 +70,15 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
             3 -> taskManager.snoozedDropTasks
             else -> taskManager.tasks
         }
-        setupView(unsnoozed_tasks_view, unsnoozedTasks, "Tasks")
-        setupView(snoozed_tasks_view, snoozedTasks, "Snoozed Tasks")
+        setupView(unsnoozed_tasks_view, unsnoozedTasks, "Tasks", true)
+        setupView(snoozed_tasks_view, snoozedTasks, "Snoozed Tasks", false)
     }
 
     private fun setupView(
         view: ExpandableTasksView,
         tasks: LiveData<List<Task>>,
-        headerText: String
+        headerText: String,
+        defaultExpandState: Boolean
     ) {
         view.setHeaderText(headerText)
         val taskAdapter = TaskAdapter {
@@ -87,8 +88,12 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
         }
         view.setAdapter(taskAdapter)
         tasks.observe(this, Observer {
-            view.setExpanded(it.isNotEmpty())
-            it.let { taskAdapter.submitList(it) }
+            if (it.isEmpty()) {
+                view.visibility = View.GONE
+            } else {
+                view.setExpanded(defaultExpandState)
+                it.let { taskAdapter.submitList(it) }
+            }
         })
     }
 }

@@ -16,11 +16,9 @@ class ExpandableTasksView(context: Context, attrs: AttributeSet?) :
         LayoutInflater.from(context).inflate(R.layout.expandable_task_list_view, this)
         taskListView.layoutManager = LinearLayoutManager(context)
         header.setOnClickListener {
-            taskListView.visibility = when (taskListView.visibility) {
-                View.GONE -> View.VISIBLE
-                View.VISIBLE -> View.GONE
-                View.INVISIBLE -> View.VISIBLE
-                else -> View.VISIBLE
+            when (taskListView.visibility) {
+                View.VISIBLE -> this.setExpanded(false)
+                else -> this.setExpanded(true)
             }
         }
     }
@@ -35,6 +33,11 @@ class ExpandableTasksView(context: Context, attrs: AttributeSet?) :
 
     fun setExpanded(shouldExpand: Boolean) {
         taskListView.visibility = if (shouldExpand) View.VISIBLE else View.GONE
-        expandIndicator.setImageIcon(if(shouldExpand) Icon.createWithResource(context, drawable))
+        expandIndicator.setImageIcon(
+            Icon.createWithResource(
+                context,
+                if (shouldExpand) android.R.drawable.arrow_down_float else android.R.drawable.arrow_up_float
+            )
+        )
     }
 }
