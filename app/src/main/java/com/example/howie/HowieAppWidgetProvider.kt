@@ -60,9 +60,9 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private fun toText(count: Int) = if (count != 0) count.toString() else "✓"
-
     override fun onDisabled(context: Context?) {
         job.cancel()
     }
 }
+
+private fun toText(count: Int) = if (count != 0) count.toString() else "✓"
