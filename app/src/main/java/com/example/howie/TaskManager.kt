@@ -59,6 +59,8 @@ class TaskManager(
 
     fun getTask(id: Int) = taskDao.getTask(id)
 
+    fun getTaskList(id: Long) = taskListDao.getTaskListFlow(id)
+
     fun switchToTaskList(newTaskListId: Long) {
         currentTaskListId = newTaskListId
         lastInsertedTaskCategory.value = TaskCategory.DO
@@ -86,10 +88,10 @@ class TaskManager(
         val taskCounts = MutableLiveData<List<Int>>()
         viewModelScope.launch {
             val values: Flow<Int> = flow {
-                emit(taskDao.countDoTasks(taskListId).first())
-                emit(taskDao.countDecideTasks(taskListId).first())
-                emit(taskDao.countDelegateTasks(taskListId).first())
-                emit(taskDao.countDropTasks(taskListId).first())
+                emit(countDoTasks(taskListId).first())
+                emit(countDecideTasks(taskListId).first())
+                emit(countDelegateTasks(taskListId).first())
+                emit(countDropTasks(taskListId).first())
             }
             taskCounts.value = values.toList()
         }
@@ -99,6 +101,14 @@ class TaskManager(
     fun moveToList(taskId: Int, taskListId: Long) = viewModelScope.launch {
         taskDao.moveToTaskList(taskId, taskListId)
     }
+
+    fun countDoTasks(taskListId: Long) = taskDao.countDoTasks(taskListId)
+
+    fun countDecideTasks(taskListId: Long) = taskDao.countDecideTasks(taskListId)
+
+    fun countDelegateTasks(taskListId: Long) = taskDao.countDelegateTasks(taskListId)
+
+    fun countDropTasks(taskListId: Long) = taskDao.countDropTasks(taskListId)
 
     companion object {
         private var instance: TaskManager? = null

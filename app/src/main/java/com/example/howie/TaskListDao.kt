@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskListDao {
@@ -12,6 +13,9 @@ interface TaskListDao {
 
     @Query("SELECT * FROM TaskList WHERE id = :id")
     fun getTaskList(id: Long): LiveData<TaskList>
+
+    @Query("SELECT * FROM TaskList WHERE id = :id")
+    fun getTaskListFlow(id: Long): Flow<TaskList>
 
     @Insert
     suspend fun insert(taskList: TaskList): Long
