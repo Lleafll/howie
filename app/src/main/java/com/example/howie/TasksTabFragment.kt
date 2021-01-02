@@ -87,7 +87,7 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
         val taskAdapter = TaskAdapter {
             val intent = Intent(activity!!.applicationContext, TaskActivity::class.java)
             intent.putExtra(TASK_ID, it)
-            startActivity(intent)
+            activity!!.startActivityForResult(intent, TASK_REQUEST_CODE)
         }
         view.setAdapter(taskAdapter)
         tasks.observe(this, Observer {

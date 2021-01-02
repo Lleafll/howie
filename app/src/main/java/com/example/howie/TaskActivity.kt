@@ -1,5 +1,6 @@
 package com.example.howie
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -170,6 +171,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         R.id.action_archive -> {
             taskLiveData?.removeObservers(this)
             taskManager.doArchive(taskId!!)
+            buildIntent(TASK_ARCHIVED_RETURN_CODE)
             finish()
             true
         }
@@ -179,6 +181,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 .setPositiveButton("Yes") { _, _ ->
                     taskLiveData?.removeObservers(this)
                     taskManager.delete(taskId!!)
+                    buildIntent(TASK_DELETED_RETURN_CODE)
                     finish()
                 }
                 .setNegativeButton("No") { dialog, _ ->
@@ -202,7 +205,14 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
     }
 
+    private fun buildIntent(code: Int) {
+        val intent = Intent()
+        intent.putExtra(TASK_RETURN_CODE, code)
+        setResult(RESULT_OK, intent)
+    }
+
     override fun onTaskMoved() {
+        buildIntent(TASK_MOVED_RETURN_CODE)
         finish()
     }
 }
