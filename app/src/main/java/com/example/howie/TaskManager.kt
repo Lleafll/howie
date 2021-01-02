@@ -80,17 +80,16 @@ class TaskManager(
     }
 
     fun getTaskCounts(taskListId: Long): Flow<List<Int>> {
-        val taskCounts = MutableStateFlow<List<Int>>(listOf())
-        viewModelScope.launch {
-            val values: Flow<Int> = flow {
-                emit(countDoTasks(taskListId).first())
-                emit(countDecideTasks(taskListId).first())
-                emit(countDelegateTasks(taskListId).first())
-                emit(countDropTasks(taskListId).first())
-            }
-            taskCounts.value = values.toList()
+        return flow {
+            emit(
+                listOf(
+                    countDoTasks(taskListId).first(),
+                    countDecideTasks(taskListId).first(),
+                    countDelegateTasks(taskListId).first(),
+                    countDropTasks(taskListId).first()
+                )
+            )
         }
-        return taskCounts
     }
 
     fun moveToList(taskId: Int, taskListId: Long) = viewModelScope.launch {
