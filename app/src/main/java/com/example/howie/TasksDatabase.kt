@@ -7,10 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(version = 9, entities = (arrayOf(Task::class, TaskList::class)))
+@Database(version = 10, entities = (arrayOf(Task::class, TaskList::class, WidgetSettings::class)))
 abstract class TasksDatabase : RoomDatabase() {
     abstract fun getTaskDao(): TaskDao
     abstract fun getTaskListDao(): TaskListDao
+    abstract fun getWidgetSettingsDao(): WidgetSettingsDao
 }
 
 object TasksDatabaseSingleton {
@@ -22,7 +23,14 @@ object TasksDatabaseSingleton {
                 applicationContext,
                 TasksDatabase::class.java,
                 "tasks-database"
-            ).addMigrations(MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+            ).addMigrations(
+                MIGRATION_4_5,
+                MIGRATION_5_6,
+                MIGRATION_6_7,
+                MIGRATION_7_8,
+                MIGRATION_8_9,
+                MIGRATION_9_10
+            )
                 .addCallback(atLeastOneTaskListCallback)
                 .build()
         }
@@ -59,6 +67,12 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("DROP TABLE TaskList")
         database.execSQL("CREATE TABLE TaskList (id INTEGER NOT NULL DEFAULT 0, name TEXT NOT NULL, PRIMARY KEY(id))")
+    }
+}
+
+val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE WidgetSettings (widgetId INTEGER NOT NULL DEFAULT 0, taskListId INTEGER NOT NULL, PRIMARY KEY(widgetId))")
     }
 }
 
