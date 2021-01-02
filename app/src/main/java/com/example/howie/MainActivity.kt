@@ -13,12 +13,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 
+@ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,9 +76,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         val taskManager = TaskManager.getInstance(applicationContext)
-        taskManager.currentTaskList.observe(this, Observer {
-            toolbar.title = it.name
-        })
+        lifecycleScope.launch {
+            taskManager.currentTaskList.collect { toolbar.title = it.name }
+        }
     }
 
     private fun onRenameClick() {
@@ -107,44 +112,49 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
         val taskManager = TaskManager.getInstance(applicationContext)
         // TODO: Causes really ugly race conditions
-        taskManager.taskLists.observe(this, Observer {
-            buildDrawerContent()
-        })
-        taskManager.tasks.observe(this, Observer { updateDrawerContent() })
+        lifecycleScope.launch {
+            taskManager.taskLists.collect { buildDrawerContent() }
+            taskManager.tasks.collect { updateDrawerContent() }
+        }
     }
 
     private fun buildDrawerContent() {
         val taskManager = TaskManager.getInstance(applicationContext)
-        taskManager.taskLists.observeOnce(this, Observer {
+        val listener = this
+        lifecycleScope.launch {
+            val taskLists = taskManager.taskLists.first()
             nav_view.menu.removeGroup(R.id.list_groups)
-            for (taskList in it) {
-                taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
+            for (taskList in taskLists) {
+                taskManager.getTaskCounts(taskList.id).collect { taskCounts ->
                     val itemId = R.id.action_add_list + taskList.id.toInt() + 1
                     val name = buildDrawerItemName(taskList, taskCounts)
                     val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
                     if (taskManager.currentTaskListId == taskList.id) {
                         item.isChecked = true
                     }
-                })
+                }
             }
-            nav_view.setNavigationItemSelectedListener(this)
-        })
+            nav_view.setNavigationItemSelectedListener(listener)
+        }
     }
 
     private fun updateDrawerContent() {
         val taskManager = TaskManager.getInstance(applicationContext)
-        taskManager.taskLists.observeOnce(this, Observer {
-            for (taskList in it) {
-                taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
+        val listener = this
+        lifecycleScope.launch {
+            val taskLists = taskManager.taskLists.first()
+            for (taskList in taskLists) {
+                taskManager.getTaskCounts(taskList.id).collect { taskCounts ->
                     val itemId = R.id.action_add_list + taskList.id.toInt() + 1
                     val item = nav_view.menu.findItem(itemId)
                     if (item != null) {
                         item.title = buildDrawerItemName(taskList, taskCounts)
                     }
-                })
+                }
             }
-            nav_view.setNavigationItemSelectedListener(this)
-        })
+            nav_view.setNavigationItemSelectedListener(listener)
+        }
+
     }
 
     private fun buildDrawerItemName(taskList: TaskList, taskCounts: List<Int>): String {
