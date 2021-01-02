@@ -7,11 +7,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_archive.*
 import kotlinx.android.synthetic.main.activity_archive.toolbar
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class ArchiveActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +34,11 @@ class ArchiveActivity : AppCompatActivity() {
         archive_view.adapter = taskAdapter
         val taskManager = TaskManager.getInstance(applicationContext)
         val tasks = taskManager.archive
-        tasks.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
+        lifecycleScope.launch {
+            tasks.collect {
+                taskAdapter.submitList(it)
+            }
+        }
         setupColors()
     }
 
