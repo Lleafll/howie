@@ -19,10 +19,16 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
         val taskManager = TaskManager.getInstance(view.context)
-        taskManager.currentTaskCounts.observe(this, Observer {
+        taskManager.countCurrentDoTasks().observe(this, Observer {
             setTab(0, it, tabLayout, "Do")
+        })
+        taskManager.countCurrentDecideTasks().observe(this, Observer {
             setTab(1, it, tabLayout, "Decide")
+        })
+        taskManager.countCurrentDelegateTasks().observe(this, Observer {
             setTab(2, it, tabLayout, "Delegate")
+        })
+        taskManager.countCurrentDropTasks().observe(this, Observer {
             setTab(3, it, tabLayout, "Drop")
         })
         taskManager.lastInsertedTaskCategory.observe(this, Observer {
@@ -30,13 +36,8 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         })
     }
 
-    private fun setTab(
-        position: Int,
-        taskCountList: List<Int>,
-        tabLayout: TabLayout,
-        lowerText: String
-    ) {
-        val taskCount = taskCountList[position]
+
+    private fun setTab(position: Int, taskCount: Int, tabLayout: TabLayout, lowerText: String) {
         val upperText = if (taskCount != 0) taskCount.toString() else "✓"
         tabLayout.getTabAt(position)!!.text = "$upperText\n$lowerText"
     }
