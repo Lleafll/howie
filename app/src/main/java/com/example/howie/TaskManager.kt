@@ -6,41 +6,35 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import androidx.lifecycle.Transformations.switchMap
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 
+@ExperimentalCoroutinesApi
 class TaskManager(
     private val taskDao: TaskDao, private val taskListDao: TaskListDao
 ) : ViewModel() {
     var currentTaskListId = 0L
         private set
-    private val taskListIdLiveData = defaultTaskListId(currentTaskListId)
-    val tasks: LiveData<List<Task>> = taskDao.getAllTasks()
-    val doTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDoTasks(it) }
-    val snoozedDoTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDoTasks(it) }
-    val decideTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDecideTasks(it) }
-    val snoozedDecideTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDecideTasks(it) }
-    val delegateTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDelegateTasks(it) }
-    val snoozedDelegateTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDelegateTasks(it) }
-    val dropTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDropTasks(it) }
-    val snoozedDropTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDropTasks(it) }
-    val archive: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getArchive(it) }
+    private val taskListIdFlow = defaultTaskListId(currentTaskListId)
+    val tasks: Flow<List<Task>> = taskDao.getAllTasks()
+    val doTasks = toFlowWhichIsUpdatedOnChange { taskDao.getDoTasks(it) }
+    val snoozedDoTasks = toFlowWhichIsUpdatedOnChange { taskDao.getSnoozedDoTasks(it) }
+    val decideTasks = toFlowWhichIsUpdatedOnChange { taskDao.getDecideTasks(it) }
+    val snoozedDecideTasks = toFlowWhichIsUpdatedOnChange { taskDao.getSnoozedDecideTasks(it) }
+    val delegateTasks = toFlowWhichIsUpdatedOnChange { taskDao.getDelegateTasks(it) }
+    val snoozedDelegateTasks = toFlowWhichIsUpdatedOnChange { taskDao.getSnoozedDelegateTasks(it) }
+    val dropTasks = toFlowWhichIsUpdatedOnChange { taskDao.getDropTasks(it) }
+    val snoozedDropTasks = toFlowWhichIsUpdatedOnChange { taskDao.getSnoozedDropTasks(it) }
+    val archive = toFlowWhichIsUpdatedOnChange { taskDao.getArchive(it) }
     val taskLists = taskListDao.getAllTaskLists()
-    val currentTaskList: LiveData<TaskList> =
-        switchMap(taskListIdLiveData) { taskListDao.getTaskList(it) }
+    val currentTaskList = toFlowWhichIsUpdatedOnChange { taskListDao.getTaskList(it) }
     val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
+
+    private fun <T> toFlowWhichIsUpdatedOnChange(func: (Long) -> Flow<T>): Flow<T> {
+        return flow {
+            taskListIdFlow.collect { emit(func(it).first()) }
+        }
+    }
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
@@ -64,7 +58,7 @@ class TaskManager(
     fun switchToTaskList(newTaskListId: Long) {
         currentTaskListId = newTaskListId
         lastInsertedTaskCategory.value = TaskCategory.DO
-        taskListIdLiveData.value = newTaskListId
+        taskListIdFlow.value = newTaskListId
     }
 
     fun addTaskList(name: String) = viewModelScope.launch {
@@ -124,8 +118,7 @@ class TaskManager(
     }
 }
 
-private fun defaultTaskListId(value: Long): MutableLiveData<Long> {
-    val taskListId = MutableLiveData<Long>()
-    taskListId.value = value
-    return taskListId
+@ExperimentalCoroutinesApi
+private fun defaultTaskListId(value: Long): MutableStateFlow<Long> {
+    return MutableStateFlow(value)
 }
