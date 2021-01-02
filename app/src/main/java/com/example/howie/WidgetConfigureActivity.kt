@@ -6,13 +6,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_widget_configure.*
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class WidgetConfigureActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,20 +43,23 @@ class WidgetConfigureActivity : AppCompatActivity() {
             }
         }
         val taskManager = TaskManager.getInstance(applicationContext)
-        taskManager.taskLists.observe(this, Observer {
-            val nameList = mutableListOf<String>()
-            it.map { taskList -> taskList.name }
-            for (taskList in it) {
-                nameList.add(taskList.name)
-                taskListIds.add(taskList.id)
+        val context = this
+        lifecycleScope.launch {
+            taskManager.taskLists.collect {
+                val nameList = mutableListOf<String>()
+                it.map { taskList -> taskList.name }
+                for (taskList in it) {
+                    nameList.add(taskList.name)
+                    taskListIds.add(taskList.id)
+                }
+                val adapter = ArrayAdapter<String>(
+                    context,
+                    android.R.layout.simple_spinner_item,
+                    nameList
+                )
+                taskListSelection.adapter = adapter
             }
-            val adapter = ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_spinner_item,
-                nameList
-            )
-            taskListSelection.adapter = adapter
-        })
+        }
     }
 
     private fun updateWidget(widgetId: Int) {
