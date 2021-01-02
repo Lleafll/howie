@@ -15,20 +15,27 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_task.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.time.LocalDate
+import kotlinx.coroutines.flow.collect
 
 private const val DUE_DATE_ID = 0
 private const val SNOOZED_DATE_ID = 1
 
+@ExperimentalCoroutinesApi
 class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     MoveTaskFragment.MoveTaskFragmentListener {
     private val taskManager: TaskManager by lazy {
         TaskManager.getInstance(applicationContext)
     }
     private var taskId: Int? = null
-    private var taskLiveData: LiveData<Task>? = null
+    private var taskLiveData: Flow<Task>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +47,9 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         taskId = intent.getIntExtra("taskId", -1)
         if (taskId != -1) {
             taskLiveData = taskManager.getTask(taskId!!)
-            taskLiveData!!.observe(this, Observer { task ->
-                setTask(task)
-            })
+            lifecycleScope.launch {
+                taskLiveData!!.collect { task -> setTask(task) }
+            }
         } else {
             setTask(Task("", taskManager.currentTaskListId, Importance.IMPORTANT))
             taskNameEditText.requestFocus()
@@ -139,22 +146,24 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             updateItem.isVisible = true
             deleteItem.isVisible = true
             moveToTaskList.isVisible = true
-            taskLiveData!!.observe(this, Observer { task ->
-                if (task.archived == null) {
-                    archiveItem.isVisible = true
-                    unarchiveItem.isVisible = false
-                } else {
-                    archiveItem.isVisible = false
-                    unarchiveItem.isVisible = true
+            lifecycleScope.launch {
+                taskLiveData!!.collect { task ->
+                    if (task.archived == null) {
+                        archiveItem.isVisible = true
+                        unarchiveItem.isVisible = false
+                    } else {
+                        archiveItem.isVisible = false
+                        unarchiveItem.isVisible = true
+                    }
                 }
-            })
+            }
         }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_update -> {
-            taskLiveData?.removeObservers(this)
+            lifecycleScope.cancel()
             val task = getTask()
             task.id = taskId!!
             taskManager.update(task)
@@ -168,7 +177,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             true
         }
         R.id.action_archive -> {
-            taskLiveData?.removeObservers(this)
+            lifecycleScope.cancel()
             taskManager.doArchive(taskId!!)
             finish()
             true
@@ -177,7 +186,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Delete Task?")
                 .setPositiveButton("Yes") { _, _ ->
-                    taskLiveData?.removeObservers(this)
+                    lifecycleScope.cancel()
                     taskManager.delete(taskId!!)
                     finish()
                 }
@@ -189,7 +198,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             true
         }
         R.id.action_move_to_different_list -> {
-            taskLiveData?.removeObservers(this)
+            lifecycleScope.cancel()
             val dialog = MoveTaskFragment()
             val arguments = Bundle()
             arguments.putInt("taskId", taskId!!)
