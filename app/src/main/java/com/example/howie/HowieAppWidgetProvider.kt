@@ -2,13 +2,18 @@ package com.example.howie
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
+const val CONFIGURE_UPDATE = "com.example.howie.CONFIGURE_UPDATE"
+const val CONFIGURE_APP_WIDGET_ID = "AppWidgetID"
 
 class HowieAppWidgetProvider : AppWidgetProvider() {
     private val job = SupervisorJob()
@@ -21,9 +26,9 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         taskManager = TaskManager.getInstance(context)
+        val repository = WidgetSettingsRepository.getInstance(context)
         coroutineScope.launch {
             appWidgetIds.forEach { appWidgetId ->
-                val repository = WidgetSettingsRepository.getInstance(context)
                 repository.getWidgetSettings(appWidgetId).collect {
                     if (it != null) {
                         setupWidget(context, it.taskListId, appWidgetManager, appWidgetId)
@@ -38,7 +43,8 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
     private fun setupInvalidWidget(
         context: Context,
         appWidgetManager: AppWidgetManager,
-        appWidgetId: Int) {
+        appWidgetId: Int
+    ) {
         RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
             setTextViewText(R.id.nameTextView, "Invalid Task List")
             appWidgetManager.updateAppWidget(appWidgetId, this)
@@ -76,6 +82,18 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
 
     override fun onDisabled(context: Context?) {
         job.cancel()
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == CONFIGURE_UPDATE) {
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val widgetId = intent.getIntExtra(CONFIGURE_APP_WIDGET_ID, -1)
+            if (widgetId != -1) {
+                onUpdate(context, appWidgetManager, intArrayOf(widgetId))
+            }
+        } else {
+            super.onReceive(context, intent)
+        }
     }
 }
 

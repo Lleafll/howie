@@ -2,7 +2,6 @@ package com.example.howie
 
 import android.app.Activity
 import android.appwidget.AppWidgetManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -11,8 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_widget_configure.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class WidgetConfigureActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,8 +27,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
                     val taskListId = taskListIds[selectedIndex]
                     val widgetId = getAppWidgetId()
                     repository.insert(WidgetSettings(widgetId, taskListId))
-                    val widgetSettings: Flow<WidgetSettings?> =
-                        repository.getWidgetSettings(widgetId)
+                    val widgetSettings = repository.getWidgetSettings(widgetId)
                     widgetSettings.collect { updatedWidgetSettings ->
                         if (updatedWidgetSettings != null) {
                             updateWidget(widgetId)
@@ -61,10 +59,10 @@ class WidgetConfigureActivity : AppCompatActivity() {
         })
     }
 
-    private fun updateWidget(appWidgetId: Int) {
-        val context: Context = this
-        val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
-        HowieAppWidgetProvider().onUpdate(context, appWidgetManager, intArrayOf(appWidgetId))
+    private fun updateWidget(widgetId: Int) {
+        val intent = Intent(CONFIGURE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
+        intent.putExtra(CONFIGURE_APP_WIDGET_ID, widgetId)
+        sendBroadcast(intent)
     }
 
     private fun setResultToCanceled() {
