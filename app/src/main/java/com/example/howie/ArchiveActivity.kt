@@ -34,16 +34,6 @@ class ArchiveActivity : AppCompatActivity() {
     }
 
     private fun setupColors() {
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                window.statusBarColor =
-                    ContextCompat.getColor(applicationContext, R.color.statusBarColorDark)
-                window.navigationBarColor =
-                    ContextCompat.getColor(applicationContext, R.color.navigationBarColorDark)
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                window.statusBarColor = Color.WHITE
-            }
-        }
+        setupActivityColors(resources, window, applicationContext)
     }
 }

@@ -8,7 +8,6 @@
         <item name="windowNoTitle">true</item>
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentNavigation">?attr/isLightTheme</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 

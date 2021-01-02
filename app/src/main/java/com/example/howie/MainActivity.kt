@@ -33,18 +33,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setupColors() {
+        setupActivityColors(resources, window, applicationContext)
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_YES -> {
                 tab_layout.setBackgroundColor(
                     ContextCompat.getColor(applicationContext, R.color.tabColorDark)
                 )
-                window.statusBarColor =
-                    ContextCompat.getColor(applicationContext, R.color.statusBarColorDark)
-                window.navigationBarColor =
-                    ContextCompat.getColor(applicationContext, R.color.navigationBarColorDark)
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                window.statusBarColor = Color.WHITE
             }
         }
     }
