@@ -12,4 +12,7 @@ interface WidgetSettingsDao {
 
     @Insert
     suspend fun insert(widgetSettings: WidgetSettings)
+
+    @Query("DELETE FROM WidgetSettings WHERE widgetId = :widgetId")
+    suspend fun delete(widgetId: Int)
 }

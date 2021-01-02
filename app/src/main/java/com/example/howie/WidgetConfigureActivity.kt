@@ -60,7 +60,6 @@ class WidgetConfigureActivity : AppCompatActivity() {
 
     private fun updateWidget(widgetId: Int) {
         val intent = Intent(CONFIGURE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
-        intent.putExtra(CONFIGURE_APP_WIDGET_ID, widgetId)
         sendBroadcast(intent)
     }
 

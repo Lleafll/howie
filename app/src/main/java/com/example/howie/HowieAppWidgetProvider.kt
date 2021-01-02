@@ -3,6 +3,7 @@ package com.example.howie
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 const val CONFIGURE_UPDATE = "com.example.howie.CONFIGURE_UPDATE"
-const val CONFIGURE_APP_WIDGET_ID = "AppWidgetID"
 
 class HowieAppWidgetProvider : AppWidgetProvider() {
     private val job = SupervisorJob()
@@ -91,13 +91,18 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         job.cancel()
     }
 
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        val repository = WidgetSettingsRepository.getInstance(context)
+        appWidgetIds.forEach { repository.delete(it) }
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == CONFIGURE_UPDATE) {
+        if (intent.action == DATABASE_UPDATE || intent.action == CONFIGURE_UPDATE) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val widgetId = intent.getIntExtra(CONFIGURE_APP_WIDGET_ID, -1)
-            if (widgetId != -1) {
-                onUpdate(context, appWidgetManager, intArrayOf(widgetId))
-            }
+            val appWidgetIds = appWidgetManager.getAppWidgetIds(
+                ComponentName(context, HowieAppWidgetProvider::class.java)
+            )
+            onUpdate(context, appWidgetManager, appWidgetIds)
         } else {
             super.onReceive(context, intent)
         }

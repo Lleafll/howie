@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
 const val SHOW_TASK_LIST_EXTRA = "showTaskList"
+const val DATABASE_UPDATE = "com.example.howie.DATABASE_UPDATE"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +32,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupDrawer()
         setupColors()
         switchToIntentTaskList(intent)
+        broadcastDatabaseChanges()  // This is hacky but the best way to update the widgets
+    }
+
+    private fun broadcastDatabaseChanges() {
+        val taskManager = TaskManager.getInstance(applicationContext)
+        taskManager.tasks.observe(this, Observer {
+            val intent = Intent(DATABASE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
+            sendBroadcast(intent)
+        })
     }
 
     override fun onNewIntent(intent: Intent) {

@@ -42,6 +42,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.example.howie.CONFIGURE_UPDATE" />
+                <action android:name="com.example.howie.DATABASE_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
