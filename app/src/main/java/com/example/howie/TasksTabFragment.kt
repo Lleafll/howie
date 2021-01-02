@@ -86,7 +86,7 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
         view.setHeaderText(headerText)
         val taskAdapter = TaskAdapter {
             val intent = Intent(activity!!.applicationContext, TaskActivity::class.java)
-            intent.putExtra("taskId", it)
+            intent.putExtra(TASK_ID, it)
             startActivity(intent)
         }
         view.setAdapter(taskAdapter)
