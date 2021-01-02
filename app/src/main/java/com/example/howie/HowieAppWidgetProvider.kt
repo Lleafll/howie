@@ -1,5 +1,6 @@
 package com.example.howie
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
@@ -57,7 +58,11 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int
     ) {
+        val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java).let { intent ->
+            PendingIntent.getActivity(context, 0, intent, 0)
+        }
         RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
+            setOnClickPendingIntent(R.id.background, pendingIntent)
             taskManager.countDoTasks(taskListId).collect { countDoTasks ->
                 setTextViewText(R.id.doTextView, toText(countDoTasks))
                 taskManager.countDecideTasks(taskListId).collect { countDecideTasks ->
