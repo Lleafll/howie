@@ -29,4 +29,6 @@
     <string name="delete_list">Delete List</string>
     <string name="move_to_different_list">Move to different list</string>
     <string name="expand_toggle_button">Expand Toggle Button</string>
+    <string name="create">Create</string>
+    <string name="uninitialized">Uninitialized</string>
 </resources>

@@ -39,6 +39,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.howie.MainActivity" />
         </activity>
+        <activity android:name=".WidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name="HowieAppWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/howie_appwidget_info" />
+        </receiver>
     </application>
 
 </manifest>
