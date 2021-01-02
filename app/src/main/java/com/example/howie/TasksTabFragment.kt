@@ -1,20 +1,15 @@
 package com.example.howie
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.expandable_task_list_view.*
-import kotlinx.android.synthetic.main.expandable_task_list_view.view.*
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {

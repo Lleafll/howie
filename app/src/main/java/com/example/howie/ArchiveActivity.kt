@@ -1,16 +1,11 @@
 package com.example.howie
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_archive.*
-import kotlinx.android.synthetic.main.activity_archive.toolbar
-import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
 class ArchiveActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

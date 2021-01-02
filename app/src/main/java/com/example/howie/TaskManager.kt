@@ -3,14 +3,14 @@ package com.example.howie
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.switchMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import androidx.lifecycle.Transformations.switchMap
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 
 class TaskManager(
     private val taskDao: TaskDao, private val taskListDao: TaskListDao
@@ -41,7 +41,7 @@ class TaskManager(
     val currentTaskList: LiveData<TaskList> =
         switchMap(taskListIdLiveData) { taskListDao.getTaskList(it) }
     val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
-    val currentTaskCounts = switchMap(taskListIdLiveData){getTaskCounts(it)}
+    val currentTaskCounts: LiveData<List<Int>> = switchMap(taskListIdLiveData){getTaskCounts(it)}
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
