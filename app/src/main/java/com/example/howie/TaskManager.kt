@@ -38,6 +38,12 @@ class TaskManager(
     val currentTaskList: LiveData<TaskList> =
         switchMap(taskListIdLiveData) { taskListDao.getTaskList(it) }
     val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
+    val countCurrentDoTasks = switchMap(taskListIdLiveData) { countDoTasks(it).asLiveData() }
+    val countCurrentDecideTasks =
+        switchMap(taskListIdLiveData) { countDecideTasks(it).asLiveData() }
+    val countCurrentDelegateTasks =
+        switchMap(taskListIdLiveData) { countDelegateTasks(it).asLiveData() }
+    val countCurrentDropTasks = switchMap(taskListIdLiveData) { countDropTasks(it).asLiveData() }
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
@@ -107,14 +113,6 @@ class TaskManager(
     fun countDelegateTasks(taskListId: Long) = taskDao.countDelegateTasks(taskListId)
 
     fun countDropTasks(taskListId: Long) = taskDao.countDropTasks(taskListId)
-
-    fun countCurrentDoTasks() = countDoTasks(currentTaskListId).asLiveData()
-
-    fun countCurrentDecideTasks() = countDecideTasks(currentTaskListId).asLiveData()
-
-    fun countCurrentDelegateTasks() = countDelegateTasks(currentTaskListId).asLiveData()
-
-    fun countCurrentDropTasks() = countDropTasks(currentTaskListId).asLiveData()
 
     companion object {
         private var instance: TaskManager? = null
