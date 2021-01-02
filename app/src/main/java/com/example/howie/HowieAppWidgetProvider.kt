@@ -22,39 +22,53 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
     ) {
         taskManager = TaskManager.getInstance(context)
         coroutineScope.launch {
-            val taskListId = 0L
             appWidgetIds.forEach { appWidgetId ->
-                RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
-                    taskManager.countDoTasks(taskListId).collect { countDoTasks ->
-                        setTextViewText(R.id.doTextView, toText(countDoTasks))
-                        taskManager.countDecideTasks(taskListId).collect { countDecideTasks ->
-                            setTextViewText(R.id.decideTextView, toText(countDecideTasks))
-                            taskManager.countDelegateTasks(taskListId)
-                                .collect { countDelegateTasks ->
-                                    setTextViewText(
-                                        R.id.delegateTextView, toText(countDelegateTasks)
-                                    )
-                                    taskManager.countDropTasks(taskListId)
-                                        .collect { countDropTasks ->
-                                            setTextViewText(
-                                                R.id.dropTextView,
-                                                toText(countDropTasks)
-                                            )
-                                            taskManager.getTaskList(taskListId)
-                                                .collect { taskList ->
-                                                    setTextViewText(
-                                                        R.id.nameTextView,
-                                                        taskList.name
-                                                    )
-                                                    appWidgetManager.updateAppWidget(
-                                                        appWidgetId,
-                                                        this
-                                                    )
-                                                }
+                val repository = WidgetSettingsRepository.getInstance(context)
+                repository.getWidgetSettings(appWidgetId).collect {
+                    if (it != null) {
+                        setupWidget(context, it.taskListId, appWidgetManager, appWidgetId)
+                    } else {
+                        setupInvalidWidget(context, appWidgetManager, appWidgetId)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupInvalidWidget(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int) {
+        RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
+            setTextViewText(R.id.nameTextView, "Invalid Task List")
+            appWidgetManager.updateAppWidget(appWidgetId, this)
+        }
+    }
+
+    private suspend fun setupWidget(
+        context: Context,
+        taskListId: Long,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int
+    ) {
+        RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
+            taskManager.countDoTasks(taskListId).collect { countDoTasks ->
+                setTextViewText(R.id.doTextView, toText(countDoTasks))
+                taskManager.countDecideTasks(taskListId).collect { countDecideTasks ->
+                    setTextViewText(R.id.decideTextView, toText(countDecideTasks))
+                    taskManager.countDelegateTasks(taskListId)
+                        .collect { countDelegateTasks ->
+                            setTextViewText(R.id.delegateTextView, toText(countDelegateTasks))
+                            taskManager.countDropTasks(taskListId)
+                                .collect { countDropTasks ->
+                                    setTextViewText(R.id.dropTextView, toText(countDropTasks))
+                                    taskManager.getTaskList(taskListId)
+                                        .collect { taskList ->
+                                            setTextViewText(R.id.nameTextView, taskList.name)
+                                            appWidgetManager.updateAppWidget(appWidgetId, this)
                                         }
                                 }
                         }
-                    }
                 }
             }
         }

@@ -27,6 +27,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
                     val selectedIndex = taskListSelection.selectedItemPosition
                     val taskListId = taskListIds[selectedIndex]
                     val widgetId = getAppWidgetId()
+                    repository.insert(WidgetSettings(widgetId, taskListId))
                     val widgetSettings: Flow<WidgetSettings?> =
                         repository.getWidgetSettings(widgetId)
                     widgetSettings.collect { updatedWidgetSettings ->
@@ -34,7 +35,6 @@ class WidgetConfigureActivity : AppCompatActivity() {
                             updateWidget(widgetId)
                         }
                     }
-                    repository.insert(WidgetSettings(widgetId, taskListId))
                 }
                 val resultValue = buildIntent()
                 setResult(Activity.RESULT_OK, resultValue)
@@ -45,14 +45,12 @@ class WidgetConfigureActivity : AppCompatActivity() {
             }
         }
         val taskManager = TaskManager.getInstance(applicationContext)
-        taskManager.taskLists.observeOnce(this, Observer {
+        taskManager.taskLists.observe(this, Observer {
             val nameList = mutableListOf<String>()
             it.map { taskList -> taskList.name }
             for (taskList in it) {
-                if (taskList.id != taskManager.currentTaskListId) {
-                    nameList.add(taskList.name)
-                    taskListIds.add(taskList.id)
-                }
+                nameList.add(taskList.name)
+                taskListIds.add(taskList.id)
             }
             val adapter = ArrayAdapter<String>(
                 this,
