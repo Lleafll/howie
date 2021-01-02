@@ -74,9 +74,10 @@ class TaskManager(
 
     fun deleteCurrentTaskList() = viewModelScope.launch {
         if (currentTaskListId != 0L) {
-            taskListDao.delete(currentTaskListId)
-            taskDao.deleteTaskListTasks(currentTaskListId)
+            val taskListId = currentTaskListId
             switchToTaskList(0L)
+            taskListDao.delete(taskListId)
+            taskDao.deleteTaskListTasks(taskListId)
         }
     }
 
