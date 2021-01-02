@@ -24,19 +24,26 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
         val taskManager = TaskManager.getInstance(view.context)
-        val observerFactory = { position: Int, lowerText: String ->
-            Observer { tasks: List<Task> ->
-                val upperText = if (tasks.isNotEmpty()) tasks.size.toString() else "✓"
-                tabLayout.getTabAt(position)!!.text = "$upperText\n$lowerText"
-            }
-        }
-        taskManager.doTasks.observe(this, observerFactory(0, "Do"))
-        taskManager.decideTasks.observe(this, observerFactory(1, "Decide"))
-        taskManager.delegateTasks.observe(this, observerFactory(2, "Delegate"))
-        taskManager.dropTasks.observe(this, observerFactory(3, "Drop"))
+        taskManager.currentTaskCounts.observe(this, Observer {
+            setTab(0, it, tabLayout, "Do")
+            setTab(1, it, tabLayout, "Decide")
+            setTab(2, it, tabLayout, "Delegate")
+            setTab(3, it, tabLayout, "Drop")
+        })
         taskManager.lastInsertedTaskCategory.observe(this, Observer {
             tabLayout.getTabAt(it.ordinal)?.select()
         })
+    }
+
+    private fun setTab(
+        position: Int,
+        taskCountList: List<Int>,
+        tabLayout: TabLayout,
+        lowerText: String
+    ) {
+        val taskCount = taskCountList[position]
+        val upperText = if (taskCount != 0) taskCount.toString() else "✓"
+        tabLayout.getTabAt(position)!!.text = "$upperText\n$lowerText"
     }
 }
 

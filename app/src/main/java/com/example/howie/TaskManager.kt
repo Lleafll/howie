@@ -41,6 +41,7 @@ class TaskManager(
     val currentTaskList: LiveData<TaskList> =
         switchMap(taskListIdLiveData) { taskListDao.getTaskList(it) }
     val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
+    val currentTaskCounts = switchMap(taskListIdLiveData){getTaskCounts(it)}
 
     fun add(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
