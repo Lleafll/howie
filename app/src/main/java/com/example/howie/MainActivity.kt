@@ -18,6 +18,7 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
+const val SHOW_TASK_LIST_EXTRA = "showTaskList"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +31,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupToolBar()
         setupDrawer()
         setupColors()
+        switchToIntentTaskList(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        switchToIntentTaskList(intent)
+    }
+
+    private fun switchToIntentTaskList(intent: Intent) {
+        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, taskManager.currentTaskListId)
+        if (taskListId != taskManager.currentTaskListId) {
+            val itemId = buildNavigationItemId(taskListId)
+            switchTaskList(nav_view.menu.findItem(itemId))
+        }
     }
 
     private fun setupColors() {
@@ -113,7 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             nav_view.menu.removeGroup(R.id.list_groups)
             for (taskList in it) {
                 taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
-                    val itemId = R.id.action_add_list + taskList.id.toInt() + 1
+                    val itemId = buildNavigationItemId(taskList.id)
                     val name = buildDrawerItemName(taskList, taskCounts)
                     val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
                     if (taskManager.currentTaskListId == taskList.id) {
@@ -130,16 +146,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         taskManager.taskLists.observeOnce(this, Observer {
             for (taskList in it) {
                 taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
-                    val itemId = R.id.action_add_list + taskList.id.toInt() + 1
+                    val itemId = buildNavigationItemId(taskList.id)
                     val item = nav_view.menu.findItem(itemId)
                     if (item != null) {
                         item.title = buildDrawerItemName(taskList, taskCounts)
                     }
                 })
             }
-            nav_view.setNavigationItemSelectedListener(this)
         })
     }
+
+    private fun buildNavigationItemId(taskListId: Long) =
+        R.id.action_add_list + taskListId.toInt() + 1
 
     private fun buildDrawerItemName(taskList: TaskList, taskCounts: List<Int>): String {
         return "${taskList.name} (" +
@@ -156,18 +174,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val taskManager = TaskManager.getInstance(applicationContext)
         if (item.itemId == R.id.action_add_list) {
+            val taskManager = TaskManager.getInstance(applicationContext)
             taskManager.addTaskList("New Task List")
         } else {
-            for (i in 0 until nav_view.menu.size) {
-                nav_view.menu.getItem(i).isChecked = false
-            }
-            item.isChecked = true
-            val itemId = item.itemId - R.id.action_add_list - 1
-            taskManager.switchToTaskList(itemId.toLong())
+            switchTaskList(item)
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun switchTaskList(item: MenuItem) {
+        for (i in 0 until nav_view.menu.size) {
+            nav_view.menu.getItem(i).isChecked = false
+        }
+        item.isChecked = true
+        val taskManager = TaskManager.getInstance(applicationContext)
+        val itemId = item.itemId - R.id.action_add_list - 1
+        taskManager.switchToTaskList(itemId.toLong())
     }
 }
