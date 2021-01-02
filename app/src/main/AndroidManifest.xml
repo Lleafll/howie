@@ -19,13 +19,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddTaskActivity"
-            android:parentActivityName="com.example.howie.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.howie.MainActivity" />
-        </activity>
-        <activity
             android:name=".TaskActivity"
             android:parentActivityName="com.example.howie.MainActivity">
             <meta-data
