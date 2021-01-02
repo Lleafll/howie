@@ -13,11 +13,12 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_task.*
-import java.lang.Exception
 import java.time.LocalDate
 
 private const val DUE_DATE_ID = 0
 private const val SNOOZED_DATE_ID = 1
+const val TASK_ID = "taskId"
+const val TASK_CATEGORY = "task_category"
 
 class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     MoveTaskFragment.MoveTaskFragmentListener {
@@ -34,14 +35,26 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        taskId = intent.getIntExtra("taskId", -1)
+        taskId = intent.getIntExtra(TASK_ID, -1)
         if (taskId != -1) {
             taskLiveData = taskManager.getTask(taskId!!)
             taskLiveData!!.observe(this, Observer { task ->
                 setTask(task)
             })
         } else {
-            setTask(Task("", taskManager.currentTaskListId, Importance.IMPORTANT))
+            val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
+                0 -> Task("", taskManager.currentTaskListId, Importance.IMPORTANT, LocalDate.now())
+                1 -> Task("", taskManager.currentTaskListId)
+                2 -> Task(
+                    "",
+                    taskManager.currentTaskListId,
+                    Importance.UNIMPORTANT,
+                    LocalDate.now()
+                )
+                3 -> Task("", taskManager.currentTaskListId, Importance.UNIMPORTANT)
+                else -> Task("", taskManager.currentTaskListId, Importance.IMPORTANT)
+            }
+            setTask(task)
             taskNameEditText.requestFocus()
             window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }

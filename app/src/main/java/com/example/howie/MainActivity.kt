@@ -24,15 +24,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        add_task_button.setOnClickListener {
-            val intent = Intent(applicationContext, TaskActivity::class.java)
-            startActivity(intent)
-        }
+        setupTaskButton()
         setupToolBar()
         setupDrawer()
         setupColors()
         switchToIntentTaskList(intent)
         broadcastDatabaseChanges()  // This is hacky but the best way to update the widgets
+    }
+
+    private fun setupTaskButton() {
+        add_task_button.setOnClickListener {
+            val intent = Intent(applicationContext, TaskActivity::class.java)
+            intent.putExtra(TASK_CATEGORY, tab_layout.selectedTabPosition)
+            startActivity(intent)
+        }
     }
 
     private fun broadcastDatabaseChanges() {
