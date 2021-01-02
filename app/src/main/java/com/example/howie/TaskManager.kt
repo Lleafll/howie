@@ -28,7 +28,7 @@ class TaskManager(
     val archive = toFlowWhichIsUpdatedOnChange { taskDao.getArchive(it) }
     val taskLists = taskListDao.getAllTaskLists()
     val currentTaskList = toFlowWhichIsUpdatedOnChange { taskListDao.getTaskList(it) }
-    val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
+    val lastInsertedTaskCategory = MutableStateFlow(TaskCategory.DO)
 
     private fun <T> toFlowWhichIsUpdatedOnChange(func: (Long) -> Flow<T>): Flow<T> {
         return flow {
@@ -79,8 +79,8 @@ class TaskManager(
         taskListDao.rename(currentTaskListId, newName)
     }
 
-    fun getTaskCounts(taskListId: Long): LiveData<List<Int>> {
-        val taskCounts = MutableLiveData<List<Int>>()
+    fun getTaskCounts(taskListId: Long): Flow<List<Int>> {
+        val taskCounts = MutableStateFlow<List<Int>>(listOf())
         viewModelScope.launch {
             val values: Flow<Int> = flow {
                 emit(countDoTasks(taskListId).first())
