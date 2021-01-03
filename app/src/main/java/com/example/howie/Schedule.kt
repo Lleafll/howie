@@ -21,6 +21,7 @@ data class NextDayOfMonth(val dayOfMonth: Int) {
 }
 
 class Schedule {
+    // kotlin/Java do not support unions, so we set one of the members to an actual object and the others to null
     val inXTimeUnits: InXTimeUnits?
     val nextWeekDay: NextWeekDay?
     val nextDayOfMonth: NextDayOfMonth?
