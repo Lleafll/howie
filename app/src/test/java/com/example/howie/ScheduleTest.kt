@@ -8,24 +8,24 @@ class ScheduleTest {
     @Test
     fun `construct from InXTimeUnits`() {
         val schedule = Schedule(ScheduleInXTimeUnits(5, TimeUnit.DAY))
-        assertEquals(ScheduleInXTimeUnits(5, TimeUnit.DAY), schedule.inXTimeUnits)
-        assertNull(schedule.nextWeekDay)
-        assertNull(schedule.nextDayOfMonth)
+        assertEquals(ScheduleInXTimeUnits(5, TimeUnit.DAY), schedule.scheduleInXTimeUnits)
+        assertNull(schedule.scheduleForNextWeekDay)
+        assertNull(schedule.scheduleForScheduleForNextDayOfMonth)
     }
 
     @Test
     fun `construct from NextWeekDay`() {
-        val schedule = Schedule(NextWeekDay(WeekDay.SATURDAY))
-        assertNull(schedule.inXTimeUnits)
-        assertEquals(NextWeekDay(WeekDay.SATURDAY), schedule.nextWeekDay)
-        assertNull(schedule.nextDayOfMonth)
+        val schedule = Schedule(ScheduleForNextWeekDay(WeekDay.SATURDAY))
+        assertNull(schedule.scheduleInXTimeUnits)
+        assertEquals(ScheduleForNextWeekDay(WeekDay.SATURDAY), schedule.scheduleForNextWeekDay)
+        assertNull(schedule.scheduleForScheduleForNextDayOfMonth)
     }
 
     @Test
     fun `construct from NextDayOfMonth`() {
-        val schedule = Schedule(NextDayOfMonth(10))
-        assertNull(schedule.inXTimeUnits)
-        assertNull(schedule.nextWeekDay)
-        assertEquals(NextDayOfMonth(10), schedule.nextDayOfMonth)
+        val schedule = Schedule(ScheduleForNextDayOfMonth(10))
+        assertNull(schedule.scheduleInXTimeUnits)
+        assertNull(schedule.scheduleForNextWeekDay)
+        assertEquals(ScheduleForNextDayOfMonth(10), schedule.scheduleForScheduleForNextDayOfMonth)
     }
 }

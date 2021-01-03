@@ -27,9 +27,13 @@ fun ScheduleInXTimeUnits.scheduleNext(date: LocalDate): LocalDate {
     }
 }
 
-data class NextWeekDay(val weekDay: WeekDay)
+data class ScheduleForNextWeekDay(val weekDay: WeekDay)
 
-data class NextDayOfMonth(val dayOfMonth: Int) {
+fun ScheduleForNextWeekDay.scheduleNext(date: LocalDate): LocalDate {
+    // TODO: Implement
+}
+
+data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) {
     init {
         if (!((dayOfMonth >= 1) && (dayOfMonth <= 31))) {
             error("dayOfMonth ($dayOfMonth) not >= 1 and <= 31")
@@ -39,25 +43,25 @@ data class NextDayOfMonth(val dayOfMonth: Int) {
 
 class Schedule {
     // kotlin/Java do not support unions, so we set one of the members to an actual object and the others to null
-    val inXTimeUnits: ScheduleInXTimeUnits?
-    val nextWeekDay: NextWeekDay?
-    val nextDayOfMonth: NextDayOfMonth?
+    val scheduleInXTimeUnits: ScheduleInXTimeUnits?
+    val scheduleForNextWeekDay: ScheduleForNextWeekDay?
+    val scheduleForScheduleForNextDayOfMonth: ScheduleForNextDayOfMonth?
 
     constructor(inXTimeUnits: ScheduleInXTimeUnits) {
-        this.inXTimeUnits = inXTimeUnits
-        nextWeekDay = null
-        nextDayOfMonth = null
+        this.scheduleInXTimeUnits = inXTimeUnits
+        scheduleForNextWeekDay = null
+        scheduleForScheduleForNextDayOfMonth = null
     }
 
-    constructor(nextWeekDay: NextWeekDay) {
-        inXTimeUnits = null
-        this.nextWeekDay = nextWeekDay
-        nextDayOfMonth = null
+    constructor(scheduleForNextWeekDay: ScheduleForNextWeekDay) {
+        scheduleInXTimeUnits = null
+        this.scheduleForNextWeekDay = scheduleForNextWeekDay
+        scheduleForScheduleForNextDayOfMonth = null
     }
 
-    constructor(nextDayOfMonth: NextDayOfMonth) {
-        inXTimeUnits = null
-        nextWeekDay = null
-        this.nextDayOfMonth = nextDayOfMonth
+    constructor(scheduleForNextDayOfMonth: ScheduleForNextDayOfMonth) {
+        scheduleInXTimeUnits = null
+        scheduleForNextWeekDay = null
+        this.scheduleForScheduleForNextDayOfMonth = scheduleForNextDayOfMonth
     }
 }
