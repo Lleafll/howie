@@ -3,6 +3,7 @@ package com.example.howie
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.time.DayOfWeek
 
 class ScheduleTest {
     @Test
@@ -15,9 +16,9 @@ class ScheduleTest {
 
     @Test
     fun `construct from NextWeekDay`() {
-        val schedule = Schedule(ScheduleForNextWeekDay(WeekDay.SATURDAY))
+        val schedule = Schedule(ScheduleForNextWeekDay(DayOfWeek.SATURDAY))
         assertNull(schedule.scheduleInXTimeUnits)
-        assertEquals(ScheduleForNextWeekDay(WeekDay.SATURDAY), schedule.scheduleForNextWeekDay)
+        assertEquals(ScheduleForNextWeekDay(DayOfWeek.SATURDAY), schedule.scheduleForNextWeekDay)
         assertNull(schedule.scheduleForScheduleForNextDayOfMonth)
     }
 

@@ -1,13 +1,10 @@
 package com.example.howie
 
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 enum class TimeUnit {
     DAY, WEEK, MONTH, YEAR
-}
-
-enum class WeekDay {
-    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 }
 
 data class ScheduleInXTimeUnits(val quantity: Long, val timeUnit: TimeUnit) {
@@ -27,7 +24,7 @@ fun ScheduleInXTimeUnits.scheduleNext(date: LocalDate): LocalDate {
     }
 }
 
-data class ScheduleForNextWeekDay(val weekDay: WeekDay)
+data class ScheduleForNextWeekDay(val weekDay: DayOfWeek)
 
 fun ScheduleForNextWeekDay.scheduleNext(date: LocalDate): LocalDate {
     return LocalDate.ofEpochDay(0)

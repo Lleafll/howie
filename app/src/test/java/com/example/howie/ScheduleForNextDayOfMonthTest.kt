@@ -18,7 +18,7 @@ class ScheduleForNextDayOfMonthTest {
         ScheduleForNextDayOfMonth(32)
     }
 
-    @Test()
+    @Test
     fun `construction does not throw for 1 to 31`() {
         for (i in 1..31) {
             ScheduleForNextDayOfMonth(i)
