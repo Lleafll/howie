@@ -40,7 +40,11 @@ data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) {
 }
 
 fun ScheduleForNextDayOfMonth.scheduleNext(date: LocalDate): LocalDate {
-    return date.plusMonths(1).withDayOfMonth(dayOfMonth)
+    return if (date.dayOfMonth >= dayOfMonth) {
+        date.plusMonths(1).withDayOfMonth(dayOfMonth)
+    } else {
+        date.withDayOfMonth(dayOfMonth)
+    }
 }
 
 class Schedule {
