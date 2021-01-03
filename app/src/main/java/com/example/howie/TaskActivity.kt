@@ -176,6 +176,12 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             finish()
             true
         }
+        R.id.action_unarchive -> {
+            taskLiveData?.removeObservers(this)
+            taskManager.unarchive(taskId!!)
+            finish()
+            true
+        }
         R.id.action_delete -> {
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Delete Task?")
