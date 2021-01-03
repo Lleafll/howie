@@ -171,7 +171,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         R.id.action_archive -> {
             taskLiveData?.removeObservers(this)
             taskManager.doArchive(taskId!!)
-            buildIntent(TASK_ARCHIVED_RETURN_CODE)
+            val data = buildIntent(TASK_ARCHIVED_RETURN_CODE)
+            data.putExtra(ARCHIVED_TASK_CODE, taskId!!)
             finish()
             true
         }

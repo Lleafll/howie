@@ -24,6 +24,7 @@ const val DATABASE_UPDATE = "com.example.howie.DATABASE_UPDATE"
 const val TASK_REQUEST_CODE = 1
 const val TASK_RETURN_CODE = "TaskReturnCode"
 const val DELETED_TASK_CODE = "DeletedTask"
+const val ARCHIVED_TASK_CODE = "ArchivedTask"
 const val TASK_DELETED_RETURN_CODE = 0
 const val TASK_ARCHIVED_RETURN_CODE = 1
 const val TASK_MOVED_RETURN_CODE = 2
@@ -234,17 +235,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun handleTaskActivityReturn(returnCode: Int, data: Intent) {
+        val layout = findViewById<CoordinatorLayout>(R.id.main_coordinator_layout)
         val text = when (returnCode) {
             TASK_DELETED_RETURN_CODE -> "Task Deleted"
             TASK_ARCHIVED_RETURN_CODE -> "Task Archived"
             TASK_MOVED_RETURN_CODE -> "Task Moved"
             else -> "NOTIFICATION"
         }
-        val snackbar = Snackbar.make(
-            findViewById<CoordinatorLayout>(R.id.main_coordinator_layout),
-            text,
-            Snackbar.LENGTH_SHORT
-        )
+        val duration = when (returnCode) {
+            TASK_DELETED_RETURN_CODE -> Snackbar.LENGTH_LONG
+            TASK_ARCHIVED_RETURN_CODE -> Snackbar.LENGTH_LONG
+            else -> Snackbar.LENGTH_SHORT
+        }
+        val snackbar = Snackbar.make(layout, text, duration)
         when (returnCode) {
             TASK_DELETED_RETURN_CODE -> {
                 snackbar.setAction("UNDO") {
@@ -252,6 +255,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         ?: throw Exception("Deleted task missing from returned intent")
                     val taskManager = TaskManager.getInstance(applicationContext)
                     taskManager.add(task)
+                }
+            }
+            TASK_ARCHIVED_RETURN_CODE -> {
+                snackbar.setAction("UNDO") {
+                    val taskId = data.getIntExtra(ARCHIVED_TASK_CODE, -1)
+                    if (taskId == -1) {
+                        throw Exception("Archived task id missing from returned intent")
+                    }
+                    val taskManager = TaskManager.getInstance(applicationContext)
+                    taskManager.unarchive(taskId)
                 }
             }
         }
