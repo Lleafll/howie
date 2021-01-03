@@ -58,6 +58,10 @@ class TaskManager(
         taskDao.doArchive(id)
     }
 
+    fun unarchive(id: Int) = viewModelScope.launch {
+        taskDao.unarchive(id)
+    }
+
     fun delete(id: Int) = viewModelScope.launch { taskDao.delete(id) }
 
     fun getTask(id: Int) = taskDao.getTask(id)

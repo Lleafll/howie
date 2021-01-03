@@ -8,17 +8,26 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
 const val SHOW_TASK_LIST_EXTRA = "showTaskList"
 const val DATABASE_UPDATE = "com.example.howie.DATABASE_UPDATE"
+const val TASK_REQUEST_CODE = 1
+const val TASK_RETURN_CODE = "TaskReturnCode"
+const val DELETED_TASK_CODE = "DeletedTask"
+const val ARCHIVED_TASK_CODE = "ArchivedTask"
+const val TASK_DELETED_RETURN_CODE = 0
+const val TASK_ARCHIVED_RETURN_CODE = 1
+const val TASK_MOVED_RETURN_CODE = 2
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -206,5 +215,59 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val taskManager = TaskManager.getInstance(applicationContext)
         val itemId = item.itemId - R.id.action_add_list - 1
         taskManager.switchToTaskList(itemId.toLong())
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == TASK_REQUEST_CODE) {
+            if (data == null) {
+                return
+            }
+            if (resultCode == RESULT_OK) {
+                val returnCode = data.getIntExtra(TASK_RETURN_CODE, -1)
+                if (returnCode == -1) {
+                    throw Exception("Supply TASK_RETURN_CODE data when exiting TaskActivity")
+                }
+                handleTaskActivityReturn(returnCode, data)
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    private fun handleTaskActivityReturn(returnCode: Int, data: Intent) {
+        val layout = findViewById<CoordinatorLayout>(R.id.main_coordinator_layout)
+        val text = when (returnCode) {
+            TASK_DELETED_RETURN_CODE -> "Task Deleted"
+            TASK_ARCHIVED_RETURN_CODE -> "Task Archived"
+            TASK_MOVED_RETURN_CODE -> "Task Moved"
+            else -> "NOTIFICATION"
+        }
+        val duration = when (returnCode) {
+            TASK_DELETED_RETURN_CODE -> Snackbar.LENGTH_LONG
+            TASK_ARCHIVED_RETURN_CODE -> Snackbar.LENGTH_LONG
+            else -> Snackbar.LENGTH_SHORT
+        }
+        val snackbar = Snackbar.make(layout, text, duration)
+        when (returnCode) {
+            TASK_DELETED_RETURN_CODE -> {
+                snackbar.setAction("UNDO") {
+                    val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
+                        ?: throw Exception("Deleted task missing from returned intent")
+                    val taskManager = TaskManager.getInstance(applicationContext)
+                    taskManager.add(task)
+                }
+            }
+            TASK_ARCHIVED_RETURN_CODE -> {
+                snackbar.setAction("UNDO") {
+                    val taskId = data.getIntExtra(ARCHIVED_TASK_CODE, -1)
+                    if (taskId == -1) {
+                        throw Exception("Archived task id missing from returned intent")
+                    }
+                    val taskManager = TaskManager.getInstance(applicationContext)
+                    taskManager.unarchive(taskId)
+                }
+            }
+        }
+        snackbar.show()
     }
 }

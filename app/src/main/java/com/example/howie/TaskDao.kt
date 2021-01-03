@@ -1,7 +1,10 @@
 package com.example.howie
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 private const val isImportant = "(importance = 0)"
@@ -84,6 +87,9 @@ interface TaskDao {
 
     @Query("UPDATE task SET archived = $today WHERE id = :id")
     suspend fun doArchive(id: Int)
+
+    @Query("UPDATE task SET archived = NULL WHERE id = :id")
+    suspend fun unarchive(id: Int)
 
     @Query("UPDATE task SET taskListId = :taskListId WHERE id = :id")
     suspend fun moveToTaskList(id: Int, taskListId: Long)

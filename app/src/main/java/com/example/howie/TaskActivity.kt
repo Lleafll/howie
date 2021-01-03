@@ -1,5 +1,6 @@
 package com.example.howie
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -111,7 +112,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         setDateFields(snoozedTextDate, snoozeSwitch, task.snoozed)
     }
 
-    private fun getTask() = Task(
+    private fun buildTaskFromFields() = Task(
         taskNameEditText.text.toString(),
         taskManager.currentTaskListId,
         if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
@@ -155,14 +156,14 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_update -> {
             taskLiveData?.removeObservers(this)
-            val task = getTask()
+            val task = buildTaskFromFields()
             task.id = taskId!!
             taskManager.update(task)
             finish()
             true
         }
         R.id.action_save -> {
-            val task = getTask()
+            val task = buildTaskFromFields()
             taskManager.add(task)
             finish()
             true
@@ -170,6 +171,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         R.id.action_archive -> {
             taskLiveData?.removeObservers(this)
             taskManager.doArchive(taskId!!)
+            val data = buildIntent(TASK_ARCHIVED_RETURN_CODE)
+            data.putExtra(ARCHIVED_TASK_CODE, taskId!!)
             finish()
             true
         }
@@ -177,9 +180,13 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Delete Task?")
                 .setPositiveButton("Yes") { _, _ ->
-                    taskLiveData?.removeObservers(this)
-                    taskManager.delete(taskId!!)
-                    finish()
+                    taskLiveData?.observe(this, Observer {task ->
+                        taskLiveData!!.removeObservers(this)
+                        taskManager.delete(taskId!!)
+                        val data = buildIntent(TASK_DELETED_RETURN_CODE)
+                        data.putExtra(DELETED_TASK_CODE, task)
+                        finish()
+                    })
                 }
                 .setNegativeButton("No") { dialog, _ ->
                     dialog.dismiss()
@@ -202,7 +209,15 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
     }
 
+    private fun buildIntent(code: Int): Intent {
+        val intent = Intent()
+        intent.putExtra(TASK_RETURN_CODE, code)
+        setResult(RESULT_OK, intent)
+        return intent
+    }
+
     override fun onTaskMoved() {
+        buildIntent(TASK_MOVED_RETURN_CODE)
         finish()
     }
 }
