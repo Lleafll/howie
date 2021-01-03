@@ -39,6 +39,10 @@ data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) {
     }
 }
 
+fun ScheduleForNextDayOfMonth.scheduleNext(date: LocalDate): LocalDate {
+    return LocalDate.ofEpochDay(0)
+}
+
 class Schedule {
     // kotlin/Java do not support unions, so we set one of the members to an actual object and the others to null
     val scheduleInXTimeUnits: ScheduleInXTimeUnits?

@@ -1,6 +1,9 @@
 package com.example.howie
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDate
+import java.time.Month
 
 class ScheduleForNextDayOfMonthTest {
     @Test(expected = IllegalStateException::class)
@@ -23,5 +26,14 @@ class ScheduleForNextDayOfMonthTest {
         for (i in 1..31) {
             ScheduleForNextDayOfMonth(i)
         }
+    }
+
+    @Test
+    fun `scheduleNext to next `() {
+        val schedule = ScheduleForNextDayOfMonth(1)
+        assertEquals(
+            LocalDate.of(2020, Month.FEBRUARY, 1),
+            schedule.scheduleNext(LocalDate.of(2020, Month.JANUARY, 1))
+        )
     }
 }
