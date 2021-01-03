@@ -30,7 +30,7 @@ fun ScheduleInXTimeUnits.scheduleNext(date: LocalDate): LocalDate {
 data class ScheduleForNextWeekDay(val weekDay: WeekDay)
 
 fun ScheduleForNextWeekDay.scheduleNext(date: LocalDate): LocalDate {
-    // TODO: Implement
+    return LocalDate.ofEpochDay(0)
 }
 
 data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) {
