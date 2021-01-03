@@ -14,7 +14,7 @@ data class NextWeekDay(val weekDay: WeekDay)
 
 data class NextDayOfMonth(val dayOfMonth: Int) {
     init {
-        if (BuildConfig.DEBUG && !((dayOfMonth > 0) && (dayOfMonth <= 31))) {
+        if (BuildConfig.DEBUG && !((dayOfMonth >= 1) && (dayOfMonth <= 31))) {
             error("Assertion failed")
         }
     }
