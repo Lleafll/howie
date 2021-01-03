@@ -29,7 +29,7 @@ class ScheduleForNextDayOfMonthTest {
     }
 
     @Test
-    fun `scheduleNext to next `() {
+    fun `scheduleNext to next first day of the month`() {
         val schedule = ScheduleForNextDayOfMonth(1)
         assertEquals(
             LocalDate.of(2020, Month.FEBRUARY, 1),
