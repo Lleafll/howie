@@ -45,4 +45,13 @@ class ScheduleForNextDayOfMonthTest {
             schedule.scheduleNext(LocalDate.of(2020, Month.JANUARY, 1))
         )
     }
+
+    @Test
+    fun `scheduleNext for day in next month which would be invalid`() {
+        val schedule = ScheduleForNextDayOfMonth(31)
+        assertEquals(
+            LocalDate.of(2020, Month.FEBRUARY, 29),
+            schedule.scheduleNext(LocalDate.of(2020, Month.JANUARY, 31))
+        )
+    }
 }
