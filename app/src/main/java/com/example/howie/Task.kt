@@ -1,9 +1,11 @@
 package com.example.howie
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 
 enum class Importance {
@@ -29,6 +31,7 @@ class Converters {
     fun toLong(date: LocalDate?): Long? = date?.toEpochDay()
 }
 
+@Parcelize
 @Entity
 @TypeConverters(Converters::class)
 data class Task(
@@ -39,7 +42,7 @@ data class Task(
     val snoozed: LocalDate? = null,
     val completed: LocalDate? = null,
     val archived: LocalDate? = null
-) {
+) : Parcelable {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }
