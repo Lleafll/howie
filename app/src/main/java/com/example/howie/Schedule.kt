@@ -68,3 +68,9 @@ class Schedule {
         this.scheduleForScheduleForNextDayOfMonth = scheduleForNextDayOfMonth
     }
 }
+
+fun Schedule.scheduleNext(date: LocalDate): LocalDate {
+    return scheduleInXTimeUnits?.scheduleNext(date)
+        ?: scheduleForNextWeekDay?.scheduleNext(date)
+        ?: scheduleForScheduleForNextDayOfMonth!!.scheduleNext(date)
+}
