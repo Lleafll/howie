@@ -36,4 +36,13 @@ class ScheduleForNextDayOfMonthTest {
             schedule.scheduleNext(LocalDate.of(2020, Month.JANUARY, 1))
         )
     }
+
+    @Test
+    fun `scheduleNext to day which is in the current month`() {
+        val schedule = ScheduleForNextDayOfMonth(5)
+        assertEquals(
+            LocalDate.of(2020, Month.JANUARY, 5),
+            schedule.scheduleNext(LocalDate.of(2020, Month.JANUARY, 1))
+        )
+    }
 }
