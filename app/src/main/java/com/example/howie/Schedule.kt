@@ -2,6 +2,7 @@ package com.example.howie
 
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 enum class TimeUnit {
     DAY, WEEK, MONTH, YEAR
@@ -27,7 +28,7 @@ fun ScheduleInXTimeUnits.scheduleNext(date: LocalDate): LocalDate {
 data class ScheduleForNextWeekDay(val weekDay: DayOfWeek)
 
 fun ScheduleForNextWeekDay.scheduleNext(date: LocalDate): LocalDate {
-    return LocalDate.ofEpochDay(0)
+    return date.with(TemporalAdjusters.next(weekDay))
 }
 
 data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) {
