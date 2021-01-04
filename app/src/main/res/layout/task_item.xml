@@ -18,13 +18,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="36dp"
-            android:maxLines="1"
+            android:ellipsize="marquee"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="This is a really long text that will likely get cut off" />
 
         <TextView
             android:id="@+id/due_text_view"
