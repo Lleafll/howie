@@ -36,7 +36,7 @@
                 android:ems="10"
                 android:hint="@string/edit_name_of_task"
                 android:importantForAutofill="no"
-                android:inputType="text"
+                android:inputType="textMultiLine|text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
