@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(version = 10, entities = (arrayOf(Task::class, TaskList::class, WidgetSettings::class)))
+@Database(version = 11, entities = (arrayOf(Task::class, TaskList::class, WidgetSettings::class)))
 abstract class TasksDatabase : RoomDatabase() {
     abstract fun getTaskDao(): TaskDao
     abstract fun getTaskListDao(): TaskListDao
@@ -29,7 +29,8 @@ object TasksDatabaseSingleton {
                 MIGRATION_6_7,
                 MIGRATION_7_8,
                 MIGRATION_8_9,
-                MIGRATION_9_10
+                MIGRATION_9_10,
+                MIGRATION_10_11
             )
                 .addCallback(atLeastOneTaskListCallback)
                 .build()
@@ -73,6 +74,27 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
 val MIGRATION_9_10 = object : Migration(9, 10) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("CREATE TABLE WidgetSettings (widgetId INTEGER NOT NULL DEFAULT 0, taskListId INTEGER NOT NULL, PRIMARY KEY(widgetId))")
+    }
+}
+
+val MIGRATION_10_11 = object : Migration(10, 11) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        addScheduleInXTimeUnits(database)
+        addForNextWeekDay(database)
+        addForNextDayOfMonth(database)
+    }
+
+    private fun addScheduleInXTimeUnits(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE Task ADD scheduleinXquantity INTEGER")
+        database.execSQL("ALTER TABLE Task ADD scheduleinXtimeUnit INTEGER")
+    }
+
+    private fun addForNextWeekDay(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE Task ADD scheduleforNextWeekDayweekDay INTEGER")
+    }
+
+    private fun addForNextDayOfMonth(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE Task ADD scheduleforNextDayOfMonthdayOfMonth INTEGER")
     }
 }
 

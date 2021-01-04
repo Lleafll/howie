@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Spinner
+        android:id="@+id/schedule_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/schedule_options"
+        app:layout_constraintBottom_toBottomOf="@+id/scheduleInXTimeUnitsView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/scheduleInXTimeUnitsView" />
+
+    <com.example.howie.ScheduleInXTimeUnitsView
+        android:id="@+id/scheduleInXTimeUnitsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/schedule_spinner"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.howie.ScheduleForNextWeekDayView
+        android:id="@+id/scheduleForNextWeekDayView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/schedule_spinner"
+        app:layout_constraintStart_toEndOf="@+id/schedule_spinner"
+        app:layout_constraintTop_toTopOf="@+id/schedule_spinner" />
+
+    <com.example.howie.ScheduleForNextDayOfMonthView
+        android:id="@+id/scheduleForNextDayOfMonthView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/schedule_spinner"
+        app:layout_constraintStart_toEndOf="@+id/schedule_spinner"
+        app:layout_constraintTop_toTopOf="@+id/schedule_spinner" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

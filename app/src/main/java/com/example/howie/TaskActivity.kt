@@ -65,6 +65,9 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         dueSwitch.setOnCheckedChangeListener { _, isChecked ->
             dueTextDate.isVisible = isChecked
         }
+        scheduleSwitch.setOnCheckedChangeListener { _, isChecked ->
+            schedule_view.isVisible = isChecked
+        }
         val onClickListenerFactory = { dateId: Int ->
             { view: View ->
                 val textView = view as TextView
@@ -110,6 +113,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
         setDateFields(dueTextDate, dueSwitch, task.due)
         setDateFields(snoozedTextDate, snoozeSwitch, task.snoozed)
+        setScheduleFields(task.schedule, scheduleSwitch, schedule_view)
     }
 
     private fun buildTaskFromFields() = Task(
@@ -117,7 +121,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         taskManager.currentTaskListId,
         if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
         readDate(dueSwitch, dueTextDate),
-        readDate(snoozeSwitch, snoozedTextDate)
+        readDate(snoozeSwitch, snoozedTextDate),
+        readSchedule(scheduleSwitch, schedule_view)
     )
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -128,6 +133,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         val unarchiveItem = menu.findItem(R.id.action_unarchive)
         val deleteItem = menu.findItem(R.id.action_delete)
         val moveToTaskList = menu.findItem(R.id.action_move_to_different_list)
+        val scheduleItem = menu.findItem(R.id.action_schedule)
         if (taskLiveData == null) {
             saveItem.isVisible = true
             updateItem.isVisible = false
@@ -135,11 +141,13 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             archiveItem.isVisible = false
             unarchiveItem.isVisible = false
             moveToTaskList.isVisible = false
+            scheduleItem.isVisible = false
         } else {
             saveItem.isVisible = false
             updateItem.isVisible = true
             deleteItem.isVisible = true
             moveToTaskList.isVisible = true
+            scheduleItem.isVisible = true
             taskLiveData!!.observe(this, Observer { task ->
                 if (task.archived == null) {
                     archiveItem.isVisible = true
@@ -186,7 +194,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Delete Task?")
                 .setPositiveButton("Yes") { _, _ ->
-                    taskLiveData?.observe(this, Observer {task ->
+                    taskLiveData?.observe(this, Observer { task ->
                         taskLiveData!!.removeObservers(this)
                         taskManager.delete(taskId!!)
                         val data = buildIntent(TASK_DELETED_RETURN_CODE)
@@ -210,6 +218,18 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             dialog.show(supportFragmentManager, "moveTaskDialog")
             true
         }
+        R.id.action_schedule -> {
+            val task = buildTaskFromFields()
+            if (task.schedule != null) {
+                taskLiveData?.removeObservers(this)
+                val nextDate = task.schedule.scheduleNext(LocalDate.now())
+                val updatedTask = task.copy(snoozed = nextDate, due = nextDate)
+                updatedTask.id = taskId!!
+                taskManager.update(updatedTask)
+                finish()
+            }
+            true
+        }
         else -> {
             super.onOptionsItemSelected(item)
         }
@@ -228,22 +248,44 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     }
 }
 
-private fun setDateFields(picker: TextView, switch: SwitchCompat, date: LocalDate?) {
-    if (date != null) {
-        switch.isChecked = true
-        picker.isVisible = true
-        picker.text = date.toString()
-    } else {
-        switch.isChecked = false
-        picker.isVisible = false
-        picker.text = LocalDate.now().toString()
-    }
+private fun setDateFields(
+    picker: TextView, switch: SwitchCompat, date: LocalDate?
+) = if (date != null) {
+    switch.isChecked = true
+    picker.isVisible = true
+    picker.text = date.toString()
+} else {
+    switch.isChecked = false
+    picker.isVisible = false
+    picker.text = LocalDate.now().toString()
 }
 
-private fun readDate(switch: SwitchCompat, picker: TextView): LocalDate? {
-    return if (!switch.isChecked) {
+
+private fun readDate(switch: SwitchCompat, picker: TextView): LocalDate? =
+    if (!switch.isChecked) {
         null
     } else {
         LocalDate.parse(picker.text)
     }
+
+private fun setScheduleFields(
+    schedule: Schedule?,
+    switch: SwitchCompat,
+    scheduleView: ScheduleView
+) {
+    if (schedule == null) {
+        switch.isChecked = false
+    } else {
+        switch.isChecked = true
+        scheduleView.setSchedule(schedule)
+    }
+}
+
+private fun readSchedule(
+    switch: SwitchCompat,
+    scheduleView: ScheduleView
+): Schedule? = if (switch.isChecked) {
+    scheduleView.getSchedule()
+} else {
+    null
 }

@@ -29,7 +29,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
                     val widgetSettings = repository.getWidgetSettings(widgetId)
                     widgetSettings.collect { updatedWidgetSettings ->
                         if (updatedWidgetSettings != null) {
-                            updateWidget(widgetId)
+                            updateWidget()
                         }
                     }
                 }
@@ -58,7 +58,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
         })
     }
 
-    private fun updateWidget(widgetId: Int) {
+    private fun updateWidget() {
         val intent = Intent(CONFIGURE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
         sendBroadcast(intent)
     }

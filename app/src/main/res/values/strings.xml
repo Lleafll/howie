@@ -31,4 +31,27 @@
     <string name="expand_toggle_button">Expand Toggle Button</string>
     <string name="create">Create</string>
     <string name="uninitialized">Uninitialized</string>
+    <string name="input_field_for_time_unit_quantity">0</string>
+    <string-array name="time_units">
+        <item>Day(s)</item>
+        <item>Week(s)</item>
+        <item>Month(s)</item>
+        <item>Year(s)</item>
+    </string-array>
+    <string name="schedule">Schedule</string>
+    <string name="_0">0</string>
+    <string-array name="week_days">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+    <string-array name="schedule_options">
+        <item>In</item>
+        <item>Week Day</item>
+        <item>Day of Month</item>
+    </string-array>
 </resources>
