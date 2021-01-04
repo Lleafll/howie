@@ -7,16 +7,13 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_schedule_in_x_time_units.view.*
 
-class ScheduleInXTimeUnitsView(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+class ScheduleInXTimeUnitsView(context: Context, attrs: AttributeSet? = null) :
+    LinearLayout(context, attrs) {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_schedule_in_x_time_units, this)
         ArrayAdapter.createFromResource(
-            getContext(),
+            context,
             R.array.time_units,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
