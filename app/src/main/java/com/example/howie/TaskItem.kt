@@ -1,6 +1,7 @@
 package com.example.howie
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
@@ -95,10 +96,15 @@ class TaskItem : LinearLayout {
 
     private fun collapse() {
         bottom_layout.isVisible = false
+        name_text_view.isSingleLine = true
+        name_text_view.ellipsize= TextUtils.TruncateAt.MARQUEE
     }
 
     private fun expand() {
         bottom_layout.isVisible = true
+        name_text_view.isSingleLine = false
+        name_text_view.maxLines = 3
+        name_text_view.ellipsize= TextUtils.TruncateAt.END
     }
 }
 
