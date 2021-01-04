@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.isVisible
@@ -191,22 +190,13 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             true
         }
         R.id.action_delete -> {
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("Delete Task?")
-                .setPositiveButton("Yes") { _, _ ->
-                    taskLiveData?.observe(this, Observer { task ->
-                        taskLiveData!!.removeObservers(this)
-                        taskManager.delete(taskId!!)
-                        val data = buildIntent(TASK_DELETED_RETURN_CODE)
-                        data.putExtra(DELETED_TASK_CODE, task)
-                        finish()
-                    })
-                }
-                .setNegativeButton("No") { dialog, _ ->
-                    dialog.dismiss()
-                }
-            val alert = builder.create()
-            alert.show()
+            taskLiveData?.observe(this, Observer { task ->
+                taskLiveData!!.removeObservers(this)
+                taskManager.delete(taskId!!)
+                val data = buildIntent(TASK_DELETED_RETURN_CODE)
+                data.putExtra(DELETED_TASK_CODE, task)
+                finish()
+            })
             true
         }
         R.id.action_move_to_different_list -> {
