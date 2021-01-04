@@ -7,15 +7,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class TaskAdapter(private val clickListener: (Int) -> Unit) :
+class TaskAdapter(private val editListener: (Int) -> Unit) :
     ListAdapter<Task, TaskAdapter.TaskViewHolder>(TasksComparator()) {
 
-    class TaskViewHolder(view: View, private val clickListener: (Int) -> Unit) :
-        RecyclerView.ViewHolder(view), View.OnClickListener {
+    class TaskViewHolder(view: View, clickListener: (Int) -> Unit) :
+        RecyclerView.ViewHolder(view) {
         val taskItem: TaskItem = view.findViewById(R.id.taskItem)
 
         init {
-            view.setOnClickListener(this)
+            taskItem.setEditListener(clickListener)
         }
 
         companion object {
@@ -24,10 +24,6 @@ class TaskAdapter(private val clickListener: (Int) -> Unit) :
                     .inflate(R.layout.task_row_item, parent, false)
                 return TaskViewHolder(view, clickListener)
             }
-        }
-
-        override fun onClick(v: View?) {
-            clickListener(taskItem.task.id)
         }
     }
 
@@ -40,7 +36,7 @@ class TaskAdapter(private val clickListener: (Int) -> Unit) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder =
-        TaskViewHolder.create(parent, clickListener)
+        TaskViewHolder.create(parent, editListener)
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         holder.taskItem.task = getItem(position)

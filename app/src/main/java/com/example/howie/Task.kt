@@ -77,3 +77,12 @@ fun taskCategory(task: Task): TaskCategory = if (task.importance == Importance.I
         TaskCategory.DROP
     }
 }
+
+fun Task.scheduleNext(): Task? = if (schedule == null) {
+    null
+} else {
+    val newDate = schedule.scheduleNext(LocalDate.now())
+    val newTask = copy(due = newDate, snoozed = newDate)
+    newTask.id = id
+    newTask
+}
