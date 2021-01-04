@@ -3,7 +3,9 @@ package com.example.howie
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.task_item.view.*
 import java.time.LocalDate
@@ -53,9 +55,9 @@ class TaskItem : LinearLayout {
         set(value) {
             field = value
             name_text_view.text = value.name
-            due_text_view.text = toDateString("", value.due)
-            snoozed_text_view.text = toDateString("\u23F0 ", value.snoozed)
-            archived_text_view.text = toDateString("\uD83D\uDDC3 ", value.archived)
+            setDateString(due_text_view, value.due)
+            setDateString(snoozed_text_view, value.snoozed)
+            setDateString(archived_text_view, value.archived)
             if (field.snoozed == null || field.snoozed!! <= LocalDate.now()) {
                 snooze_to_tomorrow.isVisible = true
                 remove_snooze.isVisible = false
@@ -97,21 +99,22 @@ class TaskItem : LinearLayout {
     private fun collapse() {
         bottom_layout.isVisible = false
         name_text_view.isSingleLine = true
-        name_text_view.ellipsize= TextUtils.TruncateAt.MARQUEE
+        name_text_view.ellipsize = TextUtils.TruncateAt.MARQUEE
     }
 
     private fun expand() {
         bottom_layout.isVisible = true
         name_text_view.isSingleLine = false
         name_text_view.maxLines = 3
-        name_text_view.ellipsize= TextUtils.TruncateAt.END
+        name_text_view.ellipsize = TextUtils.TruncateAt.END
     }
 }
 
-private fun toDateString(prefix: String, date: LocalDate?): String {
-    return if (date == null) {
-        ""
+private fun setDateString(view: TextView, date: LocalDate?) {
+    if (date == null) {
+        view.visibility = View.INVISIBLE
     } else {
-        prefix + date.toString()
+        view.isVisible = true
+        view.text = date.toString()
     }
 }

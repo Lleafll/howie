@@ -33,34 +33,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:gravity="center"
         android:maxLines="1"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_text_view" />
+        app:layout_constraintTop_toBottomOf="@+id/name_text_view"
+        tools:text="2222-22-22" />
 
     <TextView
         android:id="@+id/snoozed_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:gravity="center"
         android:maxLines="1"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        app:drawableLeftCompat="@drawable/outline_alarm_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_text_view" />
+        app:layout_constraintTop_toBottomOf="@+id/name_text_view"
+        tools:text="2222-22-22" />
 
     <TextView
         android:id="@+id/archived_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:gravity="center"
         android:maxLines="1"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        app:drawableLeftCompat="@drawable/outline_archive_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_text_view" />
+        app:layout_constraintTop_toBottomOf="@+id/name_text_view"
+        tools:text="2222-22-22" />
 
     <LinearLayout
         android:id="@+id/bottom_layout"
@@ -68,7 +77,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/snoozed_text_view">
+        app:layout_constraintTop_toBottomOf="@+id/snoozed_text_view"
+        tools:visibility="visible">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/snooze_to_tomorrow"
