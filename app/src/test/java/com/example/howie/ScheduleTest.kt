@@ -13,7 +13,7 @@ class ScheduleTest {
         val schedule = Schedule(ScheduleInXTimeUnits(5, TimeUnit.DAY))
         assertEquals(ScheduleInXTimeUnits(5, TimeUnit.DAY), schedule.scheduleInXTimeUnits)
         assertNull(schedule.scheduleForNextWeekDay)
-        assertNull(schedule.scheduleForScheduleForNextDayOfMonth)
+        assertNull(schedule.scheduleForNextDayOfMonth)
     }
 
     @Test
@@ -21,7 +21,7 @@ class ScheduleTest {
         val schedule = Schedule(ScheduleForNextWeekDay(DayOfWeek.SATURDAY))
         assertNull(schedule.scheduleInXTimeUnits)
         assertEquals(ScheduleForNextWeekDay(DayOfWeek.SATURDAY), schedule.scheduleForNextWeekDay)
-        assertNull(schedule.scheduleForScheduleForNextDayOfMonth)
+        assertNull(schedule.scheduleForNextDayOfMonth)
     }
 
     @Test
@@ -29,7 +29,7 @@ class ScheduleTest {
         val schedule = Schedule(ScheduleForNextDayOfMonth(10))
         assertNull(schedule.scheduleInXTimeUnits)
         assertNull(schedule.scheduleForNextWeekDay)
-        assertEquals(ScheduleForNextDayOfMonth(10), schedule.scheduleForScheduleForNextDayOfMonth)
+        assertEquals(ScheduleForNextDayOfMonth(10), schedule.scheduleForNextDayOfMonth)
     }
 
     @Test
