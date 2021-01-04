@@ -51,6 +51,13 @@
                 android:title="@string/action_delete"
                 app:showAsAction="never" />
 
+            <item
+                android:id="@+id/action_schedule"
+                android:icon="@drawable/outline_schedule_24"
+                android:orderInCategory="101"
+                android:title="@string/schedule"
+                app:showAsAction="never" />
+
         </menu>
 
     </item>

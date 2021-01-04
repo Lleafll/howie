@@ -133,6 +133,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         val unarchiveItem = menu.findItem(R.id.action_unarchive)
         val deleteItem = menu.findItem(R.id.action_delete)
         val moveToTaskList = menu.findItem(R.id.action_move_to_different_list)
+        val scheduleItem = menu.findItem(R.id.action_schedule)
         if (taskLiveData == null) {
             saveItem.isVisible = true
             updateItem.isVisible = false
@@ -140,11 +141,13 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             archiveItem.isVisible = false
             unarchiveItem.isVisible = false
             moveToTaskList.isVisible = false
+            scheduleItem.isVisible = false
         } else {
             saveItem.isVisible = false
             updateItem.isVisible = true
             deleteItem.isVisible = true
             moveToTaskList.isVisible = true
+            scheduleItem.isVisible = true
             taskLiveData!!.observe(this, Observer { task ->
                 if (task.archived == null) {
                     archiveItem.isVisible = true
@@ -213,6 +216,18 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             arguments.putInt("taskId", taskId!!)
             dialog.arguments = arguments
             dialog.show(supportFragmentManager, "moveTaskDialog")
+            true
+        }
+        R.id.action_schedule -> {
+            val task = buildTaskFromFields()
+            if (task.schedule != null) {
+                taskLiveData?.removeObservers(this)
+                val nextDate = task.schedule.scheduleNext(LocalDate.now())
+                val updatedTask = task.copy(snoozed = nextDate, due = nextDate)
+                updatedTask.id = taskId!!
+                taskManager.update(updatedTask)
+                finish()
+            }
             true
         }
         else -> {
