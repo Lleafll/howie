@@ -51,9 +51,9 @@ data class Task(
     val importance: Importance = Importance.IMPORTANT,
     val due: LocalDate? = null,
     val snoozed: LocalDate? = null,
+    @Embedded val schedule: Schedule? = null,
     val completed: LocalDate? = null,
-    val archived: LocalDate? = null,
-    @Embedded val schedule: Schedule? = null
+    val archived: LocalDate? = null
 ) : Parcelable {
     @IgnoredOnParcel
     @PrimaryKey(autoGenerate = true)

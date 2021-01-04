@@ -113,18 +113,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
         setDateFields(dueTextDate, dueSwitch, task.due)
         setDateFields(snoozedTextDate, snoozeSwitch, task.snoozed)
-        setScheduleFields(task.schedule)
-    }
-
-    private fun setScheduleFields(schedule: Schedule?) {
-        if (schedule == null) {
-            scheduleSwitch.isChecked = false
-        } else {
-            scheduleSwitch.isChecked = true
-            if (schedule.scheduleInXTimeUnits != null) {
-                schedule_view.setSchedule(schedule.scheduleInXTimeUnits!!)
-            }
-        }
+        setScheduleFields(task.schedule, scheduleSwitch, schedule_view)
     }
 
     private fun buildTaskFromFields() = Task(
@@ -132,7 +121,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         taskManager.currentTaskListId,
         if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
         readDate(dueSwitch, dueTextDate),
-        readDate(snoozeSwitch, snoozedTextDate)
+        readDate(snoozeSwitch, snoozedTextDate),
+        readSchedule(scheduleSwitch, schedule_view)
     )
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -243,22 +233,46 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     }
 }
 
-private fun setDateFields(picker: TextView, switch: SwitchCompat, date: LocalDate?) {
-    if (date != null) {
-        switch.isChecked = true
-        picker.isVisible = true
-        picker.text = date.toString()
-    } else {
-        switch.isChecked = false
-        picker.isVisible = false
-        picker.text = LocalDate.now().toString()
-    }
+private fun setDateFields(
+    picker: TextView, switch: SwitchCompat, date: LocalDate?
+) = if (date != null) {
+    switch.isChecked = true
+    picker.isVisible = true
+    picker.text = date.toString()
+} else {
+    switch.isChecked = false
+    picker.isVisible = false
+    picker.text = LocalDate.now().toString()
 }
 
-private fun readDate(switch: SwitchCompat, picker: TextView): LocalDate? {
-    return if (!switch.isChecked) {
+
+private fun readDate(switch: SwitchCompat, picker: TextView): LocalDate? =
+    if (!switch.isChecked) {
         null
     } else {
         LocalDate.parse(picker.text)
     }
+
+private fun setScheduleFields(
+    schedule: Schedule?,
+    switch: SwitchCompat,
+    scheduleView: ScheduleInXTimeUnitsView
+) {
+    if (schedule == null) {
+        switch.isChecked = false
+    } else {
+        switch.isChecked = true
+        if (schedule.scheduleInXTimeUnits != null) {
+            scheduleView.setSchedule(schedule.scheduleInXTimeUnits!!)
+        }
+    }
+}
+
+private fun readSchedule(
+    switch: SwitchCompat,
+    scheduleView: ScheduleInXTimeUnitsView
+): Schedule? = if (switch.isChecked) {
+    Schedule(scheduleView.getSchedule())
+} else {
+    null
 }
