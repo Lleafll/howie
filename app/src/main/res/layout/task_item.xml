@@ -73,12 +73,21 @@
         android:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/snooze_one_day_button"
+            android:id="@+id/snooze_to_tomorrow"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:icon="@drawable/outline_plus_one_24"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_snooze"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:icon="@drawable/outline_alarm_off_24"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton

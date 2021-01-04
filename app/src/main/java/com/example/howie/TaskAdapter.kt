@@ -6,21 +6,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.task_item.view.*
 
 class TaskAdapter(private val editListener: (Int) -> Unit) :
     ListAdapter<Task, TaskAdapter.TaskViewHolder>(TasksComparator()) {
 
-    class TaskViewHolder(view: View, private val clickListener: (Int) -> Unit) :
-        RecyclerView.ViewHolder(view), View.OnClickListener {
+    class TaskViewHolder(view: View, clickListener: (Int) -> Unit) :
+        RecyclerView.ViewHolder(view) {
         val taskItem: TaskItem = view.findViewById(R.id.taskItem)
 
         init {
-            view.setOnClickListener(this)
-            // TODO: Move to TaskItem?
-            taskItem.edit_button.setOnClickListener {
-                clickListener(taskItem.task.id)
-            }
+            taskItem.setEditListener(clickListener)
         }
 
         companion object {
@@ -29,10 +24,6 @@ class TaskAdapter(private val editListener: (Int) -> Unit) :
                     .inflate(R.layout.task_row_item, parent, false)
                 return TaskViewHolder(view, clickListener)
             }
-        }
-
-        override fun onClick(v: View?) {
-            taskItem.toggle()
         }
     }
 
