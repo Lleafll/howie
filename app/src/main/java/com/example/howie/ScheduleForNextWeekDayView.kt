@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.view_schedule_for_next_day_of_week.view.*
 import java.time.DayOfWeek
 
-class ScheduleForNextWeekDayView (context: Context, attrs: AttributeSet? = null) :
+class ScheduleForNextWeekDayView(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs) {
 
     init {

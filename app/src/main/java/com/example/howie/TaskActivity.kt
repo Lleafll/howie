@@ -256,23 +256,21 @@ private fun readDate(switch: SwitchCompat, picker: TextView): LocalDate? =
 private fun setScheduleFields(
     schedule: Schedule?,
     switch: SwitchCompat,
-    scheduleView: ScheduleInXTimeUnitsView
+    scheduleView: ScheduleView
 ) {
     if (schedule == null) {
         switch.isChecked = false
     } else {
         switch.isChecked = true
-        if (schedule.scheduleInXTimeUnits != null) {
-            scheduleView.setSchedule(schedule.scheduleInXTimeUnits!!)
-        }
+        scheduleView.setSchedule(schedule)
     }
 }
 
 private fun readSchedule(
     switch: SwitchCompat,
-    scheduleView: ScheduleInXTimeUnitsView
+    scheduleView: ScheduleView
 ): Schedule? = if (switch.isChecked) {
-    Schedule(scheduleView.getSchedule())
+    scheduleView.getSchedule()
 } else {
     null
 }
