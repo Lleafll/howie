@@ -113,6 +113,18 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
         setDateFields(dueTextDate, dueSwitch, task.due)
         setDateFields(snoozedTextDate, snoozeSwitch, task.snoozed)
+        setScheduleFields(task.schedule)
+    }
+
+    private fun setScheduleFields(schedule: Schedule?) {
+        if (schedule == null) {
+            scheduleSwitch.isChecked = false
+        } else {
+            scheduleSwitch.isChecked = true
+            if (schedule.scheduleInXTimeUnits != null) {
+                schedule_view.setSchedule(schedule.scheduleInXTimeUnits!!)
+            }
+        }
     }
 
     private fun buildTaskFromFields() = Task(
@@ -189,7 +201,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Delete Task?")
                 .setPositiveButton("Yes") { _, _ ->
-                    taskLiveData?.observe(this, Observer {task ->
+                    taskLiveData?.observe(this, Observer { task ->
                         taskLiveData!!.removeObservers(this)
                         taskManager.delete(taskId!!)
                         val data = buildIntent(TASK_DELETED_RETURN_CODE)
