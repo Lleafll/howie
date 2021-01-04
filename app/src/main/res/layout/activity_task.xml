@@ -101,14 +101,14 @@
                 android:id="@+id/dueTextDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:clickable="true"
                 android:ems="10"
                 android:importantForAutofill="no"
                 android:textAlignment="center"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="@+id/dueSwitch"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/dueSwitch"
                 app:layout_constraintTop_toTopOf="@+id/dueSwitch" />
 
             <androidx.appcompat.widget.SwitchCompat
@@ -135,14 +135,14 @@
                 android:id="@+id/snoozedTextDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:clickable="true"
                 android:ems="10"
                 android:importantForAutofill="no"
                 android:textAlignment="center"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="@+id/snoozeSwitch"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/snoozeSwitch"
                 app:layout_constraintTop_toTopOf="@+id/snoozeSwitch" />
 
             <androidx.appcompat.widget.SwitchCompat
@@ -169,10 +169,10 @@
                 android:id="@+id/schedule_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/scheduleSwitch"
                 app:layout_constraintEnd_toStartOf="@+id/scheduleSwitch"
-                app:layout_constraintStart_toEndOf="@+id/scheduleLabel"
                 app:layout_constraintTop_toTopOf="@+id/scheduleSwitch" />
 
             <androidx.appcompat.widget.SwitchCompat
