@@ -2,8 +2,8 @@ package com.example.howie
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.task_item.view.*
 import java.time.LocalDate
 
@@ -22,20 +22,33 @@ class TaskItem : LinearLayout {
             due_text_view.text = toDateString("", value.due)
             snoozed_text_view.text = toDateString("\u23F0 ", value.snoozed)
             archived_text_view.text = toDateString("\uD83D\uDDC3 ", value.archived)
+            if (task.archived != null) {
+                reschedule_button.isVisible = false
+                archive_button.isVisible = false
+                unarchive_button.isVisible = true
+            } else if (value.schedule != null) {
+                reschedule_button.isVisible = true
+                archive_button.isVisible = false
+                unarchive_button.isVisible = false
+            } else {
+                reschedule_button.isVisible = false
+                archive_button.isVisible = true
+                unarchive_button.isVisible = false
+            }
         }
 
-    fun toggle() = if (bottom_layout.visibility == View.VISIBLE) {
+    fun toggle() = if (bottom_layout.isVisible) {
         collapse()
     } else {
         expand()
     }
 
     fun collapse() {
-        bottom_layout.visibility = View.GONE
+        bottom_layout.isVisible = false
     }
 
     fun expand() {
-        bottom_layout.visibility = View.VISIBLE
+        bottom_layout.isVisible = true
     }
 }
 
