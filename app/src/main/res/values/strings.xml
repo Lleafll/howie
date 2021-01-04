@@ -31,4 +31,11 @@
     <string name="expand_toggle_button">Expand Toggle Button</string>
     <string name="create">Create</string>
     <string name="uninitialized">Uninitialized</string>
+    <string name="input_field_for_time_unit_quantity">Input field for time unit quantity</string>
+    <string-array name="time_units">
+        <item>Day(s)</item>
+        <item>Week(s)</item>
+        <item>Month(s)</item>
+        <item>Year(s)</item>
+    </string-array>
 </resources>
