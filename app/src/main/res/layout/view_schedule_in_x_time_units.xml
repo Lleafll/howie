@@ -6,7 +6,7 @@
 
 
     <EditText
-        android:id="@+id/editTextNumber"
+        android:id="@+id/quantity_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -17,6 +17,7 @@
         tools:text="3" />
 
     <Spinner
+        android:id="@+id/time_unit_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:entries="@array/time_units" />
