@@ -1,6 +1,7 @@
 package com.example.howie
 
 import android.content.Context
+import android.text.Editable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
@@ -28,7 +29,13 @@ class ScheduleInXTimeUnitsView(context: Context, attrs: AttributeSet? = null) :
     }
 
     fun getSchedule() = ScheduleInXTimeUnits(
-        quantity_field.text.toString().toLong(),
+        convertTextToValidQuantity(quantity_field.text),
         TimeUnit.values()[time_unit_spinner.selectedItemPosition]
     )
+}
+
+private fun convertTextToValidQuantity(text: Editable): Long = try {
+    text.toString().toLong().coerceAtLeast(1)
+} catch (e: NumberFormatException) {
+    1
 }
