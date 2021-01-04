@@ -37,7 +37,7 @@ class ExpandableTasksView(context: Context, attrs: AttributeSet?) :
         expandIndicator.setImageIcon(
             Icon.createWithResource(
                 context,
-                if (shouldExpand) android.R.drawable.arrow_down_float else android.R.drawable.arrow_up_float
+                if (shouldExpand) R.drawable.outline_expand_less_24 else R.drawable.outline_expand_more_24
             )
         )
     }

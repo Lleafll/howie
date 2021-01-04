@@ -41,6 +41,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/header"
-        app:srcCompat="@android:drawable/arrow_down_float" />
+        app:srcCompat="@drawable/outline_expand_less_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
