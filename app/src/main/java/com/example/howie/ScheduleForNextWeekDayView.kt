@@ -15,7 +15,7 @@ class ScheduleForNextWeekDayView(context: Context, attrs: AttributeSet? = null) 
         LayoutInflater.from(context).inflate(R.layout.view_schedule_for_next_day_of_week, this)
         ArrayAdapter.createFromResource(
             context,
-            R.array.time_units,
+            R.array.week_days,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

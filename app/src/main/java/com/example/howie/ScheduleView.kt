@@ -3,10 +3,11 @@ package com.example.howie
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.view_schedule.view.*
-import kotlinx.android.synthetic.main.view_schedule_for_next_day_of_week.view.*
 
 class ScheduleView(context: Context, attrs: AttributeSet? = null) :
     ConstraintLayout(context, attrs) {
@@ -19,21 +20,46 @@ class ScheduleView(context: Context, attrs: AttributeSet? = null) :
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            day_of_week_spinner.adapter = adapter
+            schedule_spinner.adapter = adapter
+        }
+        schedule_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                hideAllViews()
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                hideAllViews()
+                when (position) {
+                    0 -> scheduleInXTimeUnitsView.visibility = View.VISIBLE
+                    1 -> scheduleForNextWeekDayView.visibility = View.VISIBLE
+                    2 -> scheduleForNextDayOfMonthView.visibility = View.VISIBLE
+                }
+            }
+
+            private fun hideAllViews() {
+                scheduleInXTimeUnitsView.visibility = View.INVISIBLE
+                scheduleForNextWeekDayView.visibility = View.INVISIBLE
+                scheduleForNextDayOfMonthView.visibility = View.INVISIBLE
+            }
         }
     }
 
     fun setSchedule(schedule: Schedule) = when {
         schedule.scheduleInXTimeUnits != null -> {
-            day_of_week_spinner.setSelection(0)
+            schedule_spinner.setSelection(0)
             scheduleInXTimeUnitsView.setSchedule(schedule.scheduleInXTimeUnits!!)
         }
         schedule.scheduleForNextWeekDay != null -> {
-            day_of_week_spinner.setSelection(1)
+            schedule_spinner.setSelection(1)
             scheduleForNextWeekDayView.setSchedule(schedule.scheduleForNextWeekDay!!)
         }
         schedule.scheduleForNextDayOfMonth != null -> {
-            day_of_week_spinner.setSelection(2)
+            schedule_spinner.setSelection(2)
             scheduleForNextDayOfMonthView.setSchedule(schedule.scheduleForNextDayOfMonth!!)
         }
         else -> {
@@ -41,7 +67,7 @@ class ScheduleView(context: Context, attrs: AttributeSet? = null) :
         }
     }
 
-    fun getSchedule(): Schedule = when (day_of_week_spinner.selectedItemPosition) {
+    fun getSchedule(): Schedule = when (schedule_spinner.selectedItemPosition) {
         0 -> Schedule(scheduleInXTimeUnitsView.getSchedule())
         1 -> Schedule(scheduleForNextWeekDayView.getSchedule())
         2 -> Schedule(scheduleForNextDayOfMonthView.getSchedule())
