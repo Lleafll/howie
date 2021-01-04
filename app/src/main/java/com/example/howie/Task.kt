@@ -1,11 +1,10 @@
 package com.example.howie
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
+import androidx.room.*
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 enum class Importance {
@@ -29,6 +28,18 @@ class Converters {
 
     @TypeConverter
     fun toLong(date: LocalDate?): Long? = date?.toEpochDay()
+
+    @TypeConverter
+    fun toTimeUnit(index: Int) = TimeUnit.values()[index]
+
+    @TypeConverter
+    fun toInt(timeUnit: TimeUnit) = timeUnit.ordinal
+
+    @TypeConverter
+    fun toDayOfWeek(index: Int) = DayOfWeek.values()[index]
+
+    @TypeConverter
+    fun toInt(dayOfWeek: DayOfWeek) = dayOfWeek.ordinal
 }
 
 @Parcelize
@@ -41,8 +52,10 @@ data class Task(
     val due: LocalDate? = null,
     val snoozed: LocalDate? = null,
     val completed: LocalDate? = null,
-    val archived: LocalDate? = null
+    val archived: LocalDate? = null,
+    @Embedded val schedule: Schedule? = null
 ) : Parcelable {
+    @IgnoredOnParcel
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }

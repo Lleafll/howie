@@ -1,8 +1,11 @@
 package com.example.howie
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 
-data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) {
+@Parcelize
+data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) : Parcelable {
     init {
         if (!((dayOfMonth >= 1) && (dayOfMonth <= 31))) {
             error("dayOfMonth ($dayOfMonth) not >= 1 and <= 31")
