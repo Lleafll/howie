@@ -22,18 +22,22 @@ class TaskItem : LinearLayout {
             due_text_view.text = toDateString("", value.due)
             snoozed_text_view.text = toDateString("\u23F0 ", value.snoozed)
             archived_text_view.text = toDateString("\uD83D\uDDC3 ", value.archived)
-            if (task.archived != null) {
-                reschedule_button.isVisible = false
-                archive_button.isVisible = false
-                unarchive_button.isVisible = true
-            } else if (value.schedule != null) {
-                reschedule_button.isVisible = true
-                archive_button.isVisible = false
-                unarchive_button.isVisible = false
-            } else {
-                reschedule_button.isVisible = false
-                archive_button.isVisible = true
-                unarchive_button.isVisible = false
+            when {
+                value.archived != null -> {
+                    reschedule_button.isVisible = false
+                    archive_button.isVisible = false
+                    unarchive_button.isVisible = true
+                }
+                value.schedule != null -> {
+                    reschedule_button.isVisible = true
+                    archive_button.isVisible = false
+                    unarchive_button.isVisible = false
+                }
+                else -> {
+                    reschedule_button.isVisible = false
+                    archive_button.isVisible = true
+                    unarchive_button.isVisible = false
+                }
             }
         }
 
