@@ -13,8 +13,9 @@ class ScheduleForNextDayOfMonthView(context: Context, attrs: AttributeSet? = nul
         LayoutInflater.from(context).inflate(R.layout.view_schedule_for_next_day_of_month, this)
     }
 
-    fun setSchedule(schedule: ScheduleForNextDayOfMonth) =
-        day_of_month_field.setText(schedule.dayOfMonth)
+    fun setSchedule(schedule: ScheduleForNextDayOfMonth) {
+        day_of_month_field.setText(schedule.dayOfMonth.toString())
+    }
 
     fun getSchedule() = ScheduleForNextDayOfMonth(day_of_month_field.text.toString().toInt())
 }
