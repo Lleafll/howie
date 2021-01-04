@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:hint="@string/_0"
+        android:hint="@string/_1"
         android:importantForAutofill="no"
         android:inputType="number"
         android:maxLength="2"

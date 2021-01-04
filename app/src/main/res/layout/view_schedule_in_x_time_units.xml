@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:hint="@string/input_field_for_time_unit_quantity"
+        android:hint="@string/_1"
         android:importantForAutofill="no"
         android:inputType="number"
         android:maxLength="3"

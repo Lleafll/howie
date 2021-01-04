@@ -1,6 +1,7 @@
 package com.example.howie
 
 import android.content.Context
+import android.text.Editable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -17,5 +18,12 @@ class ScheduleForNextDayOfMonthView(context: Context, attrs: AttributeSet? = nul
         day_of_month_field.setText(schedule.dayOfMonth.toString())
     }
 
-    fun getSchedule() = ScheduleForNextDayOfMonth(day_of_month_field.text.toString().toInt())
+    fun getSchedule() =
+        ScheduleForNextDayOfMonth(convertTextToValidDayOfMonth(day_of_month_field.text))
+}
+
+private fun convertTextToValidDayOfMonth(text: Editable): Int = try {
+    text.toString().toInt().coerceIn(1, 31)
+} catch (e: NumberFormatException) {
+    1
 }
