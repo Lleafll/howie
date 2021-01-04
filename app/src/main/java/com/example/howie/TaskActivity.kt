@@ -65,6 +65,9 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         dueSwitch.setOnCheckedChangeListener { _, isChecked ->
             dueTextDate.isVisible = isChecked
         }
+        scheduleSwitch.setOnCheckedChangeListener { _, isChecked ->
+            schedule_view.isVisible = isChecked
+        }
         val onClickListenerFactory = { dateId: Int ->
             { view: View ->
                 val textView = view as TextView

@@ -166,11 +166,13 @@
                 app:layout_constraintTop_toTopOf="@+id/scheduleSwitch" />
 
             <com.example.howie.ScheduleInXTimeUnitsView
+                android:id="@+id/schedule_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/scheduleSwitch"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/scheduleSwitch"
+                app:layout_constraintStart_toEndOf="@+id/scheduleLabel"
                 app:layout_constraintTop_toTopOf="@+id/scheduleSwitch" />
 
             <androidx.appcompat.widget.SwitchCompat
