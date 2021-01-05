@@ -27,6 +27,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     }
     private var taskId: Int? = null
     private var taskLiveData: LiveData<Task>? = null
+    private var currentTaskListId: Long? = null  // TODO(Refactor)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,21 +43,19 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 setTask(task)
             })
         } else {
-            val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
-                0 -> Task("", taskManager.currentTaskListId, Importance.IMPORTANT, LocalDate.now())
-                1 -> Task("", taskManager.currentTaskListId)
-                2 -> Task(
-                    "",
-                    taskManager.currentTaskListId,
-                    Importance.UNIMPORTANT,
-                    LocalDate.now()
-                )
-                3 -> Task("", taskManager.currentTaskListId, Importance.UNIMPORTANT)
-                else -> Task("", taskManager.currentTaskListId, Importance.IMPORTANT)
-            }
-            setTask(task)
-            taskNameEditText.requestFocus()
-            window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            taskManager.currentTaskListId.observeOnce(this, Observer { taskListId ->
+                currentTaskListId = taskListId
+                val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
+                    0 -> Task("", taskListId, Importance.IMPORTANT, LocalDate.now())
+                    1 -> Task("", taskListId)
+                    2 -> Task("", taskListId, Importance.UNIMPORTANT, LocalDate.now())
+                    3 -> Task("", taskListId, Importance.UNIMPORTANT)
+                    else -> Task("", taskListId, Importance.IMPORTANT)
+                }
+                setTask(task)
+                taskNameEditText.requestFocus()
+                window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            })
         }
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             snoozedTextDate.isVisible = isChecked
@@ -117,7 +116,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
 
     private fun buildTaskFromFields() = Task(
         taskNameEditText.text.toString(),
-        taskManager.currentTaskListId,
+        currentTaskListId ?: 0,
         if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
         readDate(dueSwitch, dueTextDate),
         readDate(snoozeSwitch, snoozedTextDate),

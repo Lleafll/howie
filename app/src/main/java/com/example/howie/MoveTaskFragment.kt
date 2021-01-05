@@ -38,10 +38,8 @@ class MoveTaskFragment : DialogFragment() {
             val nameList = mutableListOf<String>()
             it.map { taskList -> taskList.name }
             for (taskList in it) {
-                if (taskList.id != taskManager.currentTaskListId) {
-                    nameList.add(taskList.name)
-                    taskListIds.add(taskList.id)
-                }
+                nameList.add(taskList.name)
+                taskListIds.add(taskList.id)
             }
             val adapter = ArrayAdapter<String>(
                 requireActivity(),

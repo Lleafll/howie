@@ -138,13 +138,17 @@ private fun MainActivity.buildDrawerContent(
                 .observe(this, Observer { taskCounts ->
                     val itemId = buildNavigationItemId(taskList.id)
                     val name = buildDrawerItemName(taskList, taskCounts)
-                    val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
-                    if (taskManager.currentTaskListId == taskList.id) {
-                        item.isChecked = true
-                    }
+                    nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
                 })
         }
         nav_view.setNavigationItemSelectedListener(this)
+        taskManager.currentTaskListId.observeOnce(this, Observer { id ->
+            val itemId = buildNavigationItemId(id)
+            val item = nav_view.menu.findItem(itemId)
+            if (item != null) {
+                item.isChecked = true  // TODO(Check why item can be null here)
+            }
+        })
     })
 }
 
@@ -241,14 +245,16 @@ private fun switchTaskList(item: MenuItem, nax_view: NavigationView, taskManager
     taskManager.switchToTaskList(itemId.toLong())
 }
 
-private fun switchToIntentTaskList(
+private fun MainActivity.switchToIntentTaskList(
     intent: Intent, taskManager: TaskManager, navigationView: NavigationView
 ) {
-    val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, taskManager.currentTaskListId)
-    if (taskListId != taskManager.currentTaskListId) {
-        val itemId = buildNavigationItemId(taskListId)
-        switchTaskList(navigationView.menu.findItem(itemId), navigationView, taskManager)
-    }
+    taskManager.currentTaskListId.observeOnce(this, Observer { currentTaskListId ->
+        val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, currentTaskListId)
+        if (taskListId != currentTaskListId) {
+            val itemId = buildNavigationItemId(taskListId)
+            switchTaskList(navigationView.menu.findItem(itemId), navigationView, taskManager)
+        }
+    })
 }
 
 private fun MainActivity.setupColors() {

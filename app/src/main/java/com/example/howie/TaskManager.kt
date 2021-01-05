@@ -1,133 +1,85 @@
 package com.example.howie
 
 import android.app.Application
-import androidx.lifecycle.*
-import androidx.lifecycle.Transformations.switchMap
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.toList
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class TaskManager(application: Application) : AndroidViewModel(application) {
-    private val taskDao: TaskDao
-    private val taskListDao: TaskListDao
+    private val repository: TasksRepository
 
     init {
         val database = TasksDatabaseSingleton.getDatabase(application.applicationContext)
-        taskDao = database.getTaskDao()
-        taskListDao = database.getTaskListDao()
+        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }
 
-    var currentTaskListId = 0L
-        private set
-    private val taskListIdLiveData = defaultTaskListId(currentTaskListId)
-    val tasks: LiveData<List<Task>> = taskDao.getAllTasks()
-    val doTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDoTasks(it) }
-    val snoozedDoTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDoTasks(it) }
-    val decideTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDecideTasks(it) }
-    val snoozedDecideTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDecideTasks(it) }
-    val delegateTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDelegateTasks(it) }
-    val snoozedDelegateTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDelegateTasks(it) }
-    val dropTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getDropTasks(it) }
-    val snoozedDropTasks: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getSnoozedDropTasks(it) }
-    val archive: LiveData<List<Task>> =
-        switchMap(taskListIdLiveData) { taskDao.getArchive(it) }
-    val taskLists = taskListDao.getAllTaskLists()
-    val currentTaskList: LiveData<TaskList> =
-        switchMap(taskListIdLiveData) { taskListDao.getTaskList(it) }
-    val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
-    val countCurrentDoTasks = switchMap(taskListIdLiveData) { countDoTasks(it).asLiveData() }
-    val countCurrentDecideTasks =
-        switchMap(taskListIdLiveData) { countDecideTasks(it).asLiveData() }
-    val countCurrentDelegateTasks =
-        switchMap(taskListIdLiveData) { countDelegateTasks(it).asLiveData() }
-    val countCurrentDropTasks = switchMap(taskListIdLiveData) { countDropTasks(it).asLiveData() }
+    val tasks = repository.tasks
+    val doTasks = repository.doTasks
+    val snoozedDoTasks = repository.snoozedDoTasks
+    val decideTasks = repository.decideTasks
+    val snoozedDecideTasks = repository.snoozedDecideTasks
+    val delegateTasks = repository.delegateTasks
+    val snoozedDelegateTasks = repository.snoozedDelegateTasks
+    val dropTasks = repository.dropTasks
+    val snoozedDropTasks = repository.snoozedDropTasks
+    val archive = repository.archive
+    val taskLists = repository.taskLists
+    val currentTaskList = repository.currentTaskList
+    val currentTaskListId = repository.currentTaskListId
+    val lastInsertedTaskCategory = repository.lastInsertedTaskCategory
+    val countCurrentDoTasks = repository.countCurrentDoTasks
+    val countCurrentDecideTasks = repository.countCurrentDecideTasks
+    val countCurrentDelegateTasks = repository.countCurrentDelegateTasks
+    val countCurrentDropTasks = repository.countCurrentDropTasks
 
     fun add(task: Task) = viewModelScope.launch {
-        taskDao.insert(task)
-        lastInsertedTaskCategory.value = taskCategory(task)
+        repository.add(task)
     }
 
     fun update(task: Task) = viewModelScope.launch {
-        taskDao.update(task)
+        repository.update(task)
     }
 
     fun doArchive(id: Int) = viewModelScope.launch {
-        taskDao.doArchive(id)
+        repository.doArchive(id)
     }
 
     fun unarchive(id: Int) = viewModelScope.launch {
-        taskDao.unarchive(id)
+        repository.unarchive(id)
     }
 
-    fun delete(id: Int) = viewModelScope.launch { taskDao.delete(id) }
-
-    fun getTask(id: Int) = taskDao.getTask(id)
-
-    fun getTaskList(id: Long) = taskListDao.getTaskListFlow(id)
-
-    fun switchToTaskList(newTaskListId: Long) {
-        currentTaskListId = newTaskListId
-        lastInsertedTaskCategory.value = TaskCategory.DO
-        taskListIdLiveData.value = newTaskListId
+    fun delete(id: Int) = viewModelScope.launch {
+        repository.delete(id)
     }
+
+    fun getTask(id: Int) = repository.getTask(id)
+
+    fun getTaskList(id: Long) = repository.getTaskList(id)
+
+    fun switchToTaskList(newTaskListId: Long) = repository.switchToTaskList(newTaskListId)
 
     fun addTaskList(name: String) = viewModelScope.launch {
-        val id = taskListDao.insert(TaskList(name))
-        switchToTaskList(id)
+        repository.addTaskList(name)
     }
 
     fun deleteCurrentTaskList() = viewModelScope.launch {
-        if (currentTaskListId != 0L) {
-            val taskListId = currentTaskListId
-            switchToTaskList(0L)
-            taskListDao.delete(taskListId)
-            taskDao.deleteTaskListTasks(taskListId)
-        }
+        repository.deleteCurrentTaskList()
     }
 
     fun renameCurrentTaskList(newName: String) = viewModelScope.launch {
-        taskListDao.rename(currentTaskListId, newName)
+        repository.renameCurrentTaskList(newName)
     }
 
-    fun getTaskCounts(taskListId: Long): LiveData<List<Int>> {
-        val taskCounts = MutableLiveData<List<Int>>()
-        viewModelScope.launch {
-            val values: Flow<Int> = flow {
-                emit(countDoTasks(taskListId).first())
-                emit(countDecideTasks(taskListId).first())
-                emit(countDelegateTasks(taskListId).first())
-                emit(countDropTasks(taskListId).first())
-            }
-            taskCounts.value = values.toList()
-        }
-        return taskCounts
-    }
+    fun getTaskCounts(taskListId: Long) = repository.getTaskCounts(taskListId)
 
     fun moveToList(taskId: Int, taskListId: Long) = viewModelScope.launch {
-        taskDao.moveToTaskList(taskId, taskListId)
+        repository.moveToList(taskId, taskListId)
     }
-
-    fun countDoTasks(taskListId: Long) = taskDao.countDoTasks(taskListId)
-
-    fun countDecideTasks(taskListId: Long) = taskDao.countDecideTasks(taskListId)
-
-    fun countDelegateTasks(taskListId: Long) = taskDao.countDelegateTasks(taskListId)
-
-    fun countDropTasks(taskListId: Long) = taskDao.countDropTasks(taskListId)
 
     companion object {
         private var instance: TaskManager? = null
 
+        @Deprecated("Use a proper ViewModel")
         fun getInstance(application: Application): TaskManager {
             if (instance == null) {
                 instance = TaskManager(application)
@@ -135,12 +87,7 @@ class TaskManager(application: Application) : AndroidViewModel(application) {
             return instance!!
         }
 
+        @Deprecated("Use a proper ViewModel")
         fun getInstance() = instance!!
     }
-}
-
-private fun defaultTaskListId(value: Long): MutableLiveData<Long> {
-    val taskListId = MutableLiveData<Long>()
-    taskListId.value = value
-    return taskListId
 }

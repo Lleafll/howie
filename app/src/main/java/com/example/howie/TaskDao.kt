@@ -1,6 +1,5 @@
 package com.example.howie
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -35,37 +34,37 @@ private const val fromDropTasks =
 @Dao
 interface TaskDao {
     @Query("$select FROM task")
-    fun getAllTasks(): LiveData<List<Task>>
+    fun getAllTasks(): Flow<List<Task>>
 
     @Query("$select $fromDoTasks $orderByDue")
-    fun getDoTasks(taskListId: Long): LiveData<List<Task>>
+    fun getDoTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
-    fun getSnoozedDoTasks(taskListId: Long): LiveData<List<Task>>
+    fun getSnoozedDoTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select $fromDecideTasks $orderByDue")
-    fun getDecideTasks(taskListId: Long): LiveData<List<Task>>
+    fun getDecideTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select FROM task WHERE $isOnList AND $isImportant AND $isNotDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
-    fun getSnoozedDecideTasks(taskListId: Long): LiveData<List<Task>>
+    fun getSnoozedDecideTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select $fromDelegateTasks $orderByDue")
-    fun getDelegateTasks(taskListId: Long): LiveData<List<Task>>
+    fun getDelegateTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
-    fun getSnoozedDelegateTasks(taskListId: Long): LiveData<List<Task>>
+    fun getSnoozedDelegateTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select $fromDropTasks $orderByDue")
-    fun getDropTasks(taskListId: Long): LiveData<List<Task>>
+    fun getDropTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select FROM task WHERE $isOnList AND $isUnimportant AND $isNotDue AND $isSnoozed AND $isNotArchived $orderBySnoozed")
-    fun getSnoozedDropTasks(taskListId: Long): LiveData<List<Task>>
+    fun getSnoozedDropTasks(taskListId: Long): Flow<List<Task>>
 
     @Query("$select FROM task WHERE id = :id")
-    fun getTask(id: Int): LiveData<Task>
+    fun getTask(id: Int): Flow<Task>
 
     @Query("$select FROM task WHERE $isOnList AND $isArchived $orderByArchived")
-    fun getArchive(taskListId: Long): LiveData<List<Task>>
+    fun getArchive(taskListId: Long): Flow<List<Task>>
 
     @Query("$count $fromDoTasks")
     fun countDoTasks(taskListId: Long): Flow<Int>

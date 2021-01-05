@@ -78,7 +78,7 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
                             taskDao.countDropTasks(taskListId)
                                 .collect { countDropTasks ->
                                     setTextViewText(R.id.dropTextView, toText(countDropTasks))
-                                    taskListDao.getTaskListFlow(taskListId).collect { taskList ->
+                                    taskListDao.getTaskList(taskListId).collect { taskList ->
                                         setTextViewText(R.id.nameTextView, taskList.name)
                                         appWidgetManager.updateAppWidget(appWidgetId, this)
                                     }
