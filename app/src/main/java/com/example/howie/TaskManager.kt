@@ -8,17 +8,15 @@ import kotlinx.coroutines.launch
 
 const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
 
-class TaskManager(application: Application) : AndroidViewModel(application) {
-    private val repository: TasksRepository
+class TaskManager(application: Application, private val repository: TasksRepository) :
+    AndroidViewModel(application) {
 
-    init {
+    constructor(application: Application) : this(application, {
         val database = TasksDatabaseSingleton.getDatabase(application.applicationContext)
-        val preferences = application.getSharedPreferences(
-            HOWIE_SHARED_PREFERENCES_KEY,
-            Context.MODE_PRIVATE
-        )
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao(), preferences)
-    }
+        val preferences =
+            application.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+        TasksRepository(database.getTaskDao(), database.getTaskListDao(), preferences)
+    }())
 
     val tasks = repository.tasks
     val doTasks = repository.doTasks
