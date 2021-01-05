@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.isVisible
@@ -22,9 +23,7 @@ const val TASK_CATEGORY = "task_category"
 
 class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     MoveTaskFragment.MoveTaskFragmentListener {
-    private val taskManager: TaskManager by lazy {
-        TaskManager.getInstance(application)
-    }
+    private val taskManager: TaskManager by viewModels { TaskManagerFactory(application) }
     private var taskId: Int? = null
     private var taskLiveData: LiveData<Task>? = null
     private var currentTaskListId: Long? = null  // TODO(Refactor)

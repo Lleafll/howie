@@ -7,17 +7,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import androidx.lifecycle.asLiveData
 
 const val CONFIGURE_UPDATE = "com.example.howie.CONFIGURE_UPDATE"
 
 class HowieAppWidgetProvider : AppWidgetProvider() {
-    private val job = SupervisorJob()
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
     private lateinit var repository: TasksRepository
 
     override fun onUpdate(
@@ -32,14 +26,12 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
             context.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
         )
         val repository = WidgetSettingsRepository.getInstance(context)
-        coroutineScope.launch {
-            appWidgetIds.forEach { appWidgetId ->
-                repository.getWidgetSettings(appWidgetId).collect {
-                    if (it != null) {
-                        setupWidget(context, it.taskListId, appWidgetManager, appWidgetId)
-                    } else {
-                        setupInvalidWidget(context, appWidgetManager, appWidgetId)
-                    }
+        appWidgetIds.forEach { appWidgetId ->
+            repository.getWidgetSettings(appWidgetId).asLiveData().observeForever() {
+                if (it != null) {
+                    setupWidget(context, it.taskListId, appWidgetManager, appWidgetId)
+                } else {
+                    setupInvalidWidget(context, appWidgetManager, appWidgetId)
                 }
             }
         }
@@ -81,10 +73,6 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
                 }
             }
         }
-    }
-
-    override fun onDisabled(context: Context?) {
-        job.cancel()
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {

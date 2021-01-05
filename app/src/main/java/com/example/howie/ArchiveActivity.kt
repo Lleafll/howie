@@ -2,12 +2,15 @@ package com.example.howie
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_archive.*
 
 class ArchiveActivity : AppCompatActivity() {
+    private val taskManager: TaskManager by viewModels { TaskManagerFactory(application) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_archive)
@@ -22,9 +25,7 @@ class ArchiveActivity : AppCompatActivity() {
             startActivity(intent)
         }
         archive_view.adapter = taskAdapter
-        val taskManager = TaskManager.getInstance(application)
-        val tasks = taskManager.archive
-        tasks.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
+        taskManager.archive.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
         setupColors()
     }
 

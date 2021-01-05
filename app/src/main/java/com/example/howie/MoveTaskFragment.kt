@@ -7,9 +7,11 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
 class MoveTaskFragment : DialogFragment() {
+    private val taskManager: TaskManager by viewModels { TaskManagerFactory(requireActivity().application) }
     private lateinit var listener: MoveTaskFragmentListener
 
     interface MoveTaskFragmentListener {
@@ -17,7 +19,6 @@ class MoveTaskFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val taskManager = TaskManager.getInstance(requireActivity().application)
         val taskListIds = mutableListOf<Long>()
         val messageBoxBuilder =
             AlertDialog.Builder(requireActivity()).setView(R.layout.fragment_move_task)

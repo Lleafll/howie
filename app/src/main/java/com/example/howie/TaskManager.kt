@@ -91,8 +91,5 @@ class TaskManager(application: Application) : AndroidViewModel(application) {
             }
             return instance!!
         }
-
-        @Deprecated("Use a proper ViewModel")
-        fun getInstance() = instance!!
     }
 }

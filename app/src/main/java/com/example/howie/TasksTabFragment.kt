@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -13,12 +14,13 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
+    private val taskManager: TaskManager by viewModels { TaskManagerFactory(requireActivity().application) }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewPager: ViewPager2 = view.findViewById(R.id.pager)
         viewPager.adapter = TasksTabAdapter(this)
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
-        val taskManager = TaskManager.getInstance(requireActivity().application)
         taskManager.countCurrentDoTasks.observe(viewLifecycleOwner, Observer {
             setTab(0, it, tabLayout, "Do")
         })
@@ -56,8 +58,9 @@ class TasksTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 }
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
+    private val taskManager: TaskManager by viewModels { TaskManagerFactory(requireActivity().application) }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val taskManager = TaskManager.getInstance(requireActivity().application)
         val position = requireArguments().getInt("position", 4)
         val unsnoozedTasks = when (position) {
             0 -> taskManager.doTasks

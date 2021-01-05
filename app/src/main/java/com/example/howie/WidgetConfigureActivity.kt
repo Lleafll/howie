@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class WidgetConfigureActivity : AppCompatActivity() {
+    private val taskManager: TaskManager by viewModels { TaskManagerFactory(application) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_widget_configure)
@@ -41,7 +44,6 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(it)
             }
         }
-        val taskManager = TaskManager.getInstance(application)
         taskManager.taskLists.observe(this, Observer {
             val nameList = mutableListOf<String>()
             it.map { taskList -> taskList.name }

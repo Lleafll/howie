@@ -1,5 +1,6 @@
 package com.example.howie
 
+import android.app.Activity
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -16,7 +17,7 @@ class TaskItem : LinearLayout {
 
     init {
         inflate(context, R.layout.task_item, this)
-        val taskManager = TaskManager.getInstance()
+        val taskManager = TaskManager.getInstance((context as Activity).application)
         snooze_to_tomorrow.setOnClickListener {
             val updatedTask = task.copy(snoozed = LocalDate.now().plusDays(1))
             updatedTask.id = task.id
