@@ -7,6 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 
+const val TASK_LIST_ID_ARGUMENT = "taskListId"
+
 class RenameTaskListFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val messageBoxBuilder =
@@ -15,7 +17,8 @@ class RenameTaskListFragment : DialogFragment() {
                 .setPositiveButton("Ok") { _, _ ->
                     val textEdit: TextInputEditText = dialog!!.findViewById(R.id.new_task_list_name)
                     val taskManager = TaskManager.getInstance(requireActivity().application)
-                    taskManager.renameCurrentTaskList(textEdit.text.toString())
+                    val taskListId = requireArguments().getLong(TASK_LIST_ID_ARGUMENT)
+                    taskManager.renameTaskList(taskListId, textEdit.text.toString())
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

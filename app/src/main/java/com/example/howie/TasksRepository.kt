@@ -1,5 +1,6 @@
 package com.example.howie
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,10 +14,16 @@ data class TaskCounts(
     val dropCount: Int
 )
 
-class TasksRepository(private val taskDao: TaskDao, private val taskListDao: TaskListDao) {
+private const val currentTaskListIdKey = "currentTaskListId"
+
+class TasksRepository(
+    private val taskDao: TaskDao,
+    private val taskListDao: TaskListDao,
+    private val preferences: SharedPreferences
+) {
     val tasks = taskDao.getAllTasks().asLiveData()
-    private var currentTaskListIdValue = 0L
-    val currentTaskListId = defaultTaskListId(currentTaskListIdValue)
+    private val currentTaskListIdMutable = defaultTaskListId(preferences)
+    val currentTaskListId: LiveData<Long> = currentTaskListIdMutable
     val doTasks = switchMap(currentTaskListId) { taskDao.getDoTasks(it).asLiveData() }
     val snoozedDoTasks =
         switchMap(currentTaskListId) { taskDao.getSnoozedDoTasks(it).asLiveData() }
@@ -50,9 +57,12 @@ class TasksRepository(private val taskDao: TaskDao, private val taskListDao: Tas
     fun getTask(id: Int) = taskDao.getTask(id).asLiveData()
     fun getTaskList(id: Long) = taskListDao.getTaskList(id).asLiveData()
     fun switchToTaskList(newTaskListId: Long) {
-        currentTaskListIdValue = newTaskListId
+        currentTaskListIdMutable.value = newTaskListId
         lastInsertedTaskCategory.value = TaskCategory.DO
-        currentTaskListId.value = newTaskListId
+        with(preferences.edit()) {
+            putLong(currentTaskListIdKey, newTaskListId)
+            apply()
+        }
     }
 
     suspend fun addTaskList(name: String) {
@@ -60,57 +70,56 @@ class TasksRepository(private val taskDao: TaskDao, private val taskListDao: Tas
         switchToTaskList(id)
     }
 
-    suspend fun deleteCurrentTaskList() {
-        if (currentTaskListIdValue != 0L) {
-            val taskListId = currentTaskListIdValue
-            switchToTaskList(0L)
-            taskListDao.delete(taskListId)
-            taskDao.deleteTaskListTasks(taskListId)
+    suspend fun deleteTaskList(taskListId: Long) {
+        if (taskListId == 0L) {
+            return
         }
+        switchToTaskList(0L)
+        taskListDao.delete(taskListId)
+        taskDao.deleteTaskListTasks(taskListId)
     }
 
-    suspend fun renameCurrentTaskList(newName: String) {
-        taskListDao.rename(currentTaskListIdValue, newName)
-    }
-
-    fun getTaskCounts(taskListId: Long): LiveData<TaskCounts> {
-        val taskCounts = MediatorLiveData<TaskCounts>()
-        var doCount: Int? = null
-        var decideCount: Int? = null
-        var delegateCount: Int? = null
-        var dropCount: Int? = null
-        val assignCounts = {
-            if (doCount != null && decideCount != null && delegateCount != null && dropCount != null) {
-                taskCounts.value =
-                    TaskCounts(doCount!!, decideCount!!, delegateCount!!, dropCount!!)
-            }
-        }
-        taskCounts.addSource(countDoTasks(taskListId)) {
-            doCount = it
-            assignCounts()
-        }
-        taskCounts.addSource(countDecideTasks(taskListId)) {
-            decideCount = it
-            assignCounts()
-        }
-        taskCounts.addSource(countDelegateTasks(taskListId)) {
-            delegateCount = it
-            assignCounts()
-        }
-        taskCounts.addSource(countDropTasks(taskListId)) {
-            dropCount = it
-            assignCounts()
-        }
-        return taskCounts
-    }
-
-    suspend fun moveToList(taskId: Int, taskListId: Long) {
+    suspend fun moveToList(taskId: Int, taskListId: Long) =
         taskDao.moveToTaskList(taskId, taskListId)
+
+    suspend fun renameTaskList(taskListId: Long, newName: String) {
+        taskListDao.rename(taskListId, newName)
     }
 }
 
-private fun defaultTaskListId(value: Long): MutableLiveData<Long> {
+private fun defaultTaskListId(preferences: SharedPreferences): MutableLiveData<Long> {
     val taskListId = MutableLiveData<Long>()
-    taskListId.value = value
+    taskListId.value = preferences.getLong(currentTaskListIdKey, 0)
     return taskListId
+}
+
+fun TasksRepository.getTaskCounts(taskListId: Long): LiveData<TaskCounts> {
+    val taskCounts = MediatorLiveData<TaskCounts>()
+    var doCount: Int? = null
+    var decideCount: Int? = null
+    var delegateCount: Int? = null
+    var dropCount: Int? = null
+    val assignCounts = {
+        if (doCount != null && decideCount != null && delegateCount != null && dropCount != null) {
+            taskCounts.value =
+                TaskCounts(doCount!!, decideCount!!, delegateCount!!, dropCount!!)
+        }
+    }
+    taskCounts.addSource(countDoTasks(taskListId)) {
+        doCount = it
+        assignCounts()
+    }
+    taskCounts.addSource(countDecideTasks(taskListId)) {
+        decideCount = it
+        assignCounts()
+    }
+    taskCounts.addSource(countDelegateTasks(taskListId)) {
+        delegateCount = it
+        assignCounts()
+    }
+    taskCounts.addSource(countDropTasks(taskListId)) {
+        dropCount = it
+        assignCounts()
+    }
+    return taskCounts
 }

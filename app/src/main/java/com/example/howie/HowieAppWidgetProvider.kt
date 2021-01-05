@@ -26,7 +26,11 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         val database = TasksDatabaseSingleton.getDatabase(context)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
+        repository = TasksRepository(
+            database.getTaskDao(),
+            database.getTaskListDao(),
+            context.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+        )
         val repository = WidgetSettingsRepository.getInstance(context)
         coroutineScope.launch {
             appWidgetIds.forEach { appWidgetId ->

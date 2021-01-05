@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
                 R.id.action_rename -> {
-                    onRenameClick()
+                    onRenameClick(viewModel)
                     true
                 }
                 R.id.action_delete -> {
@@ -268,20 +268,27 @@ private fun MainActivity.setupColors() {
     }
 }
 
-private fun MainActivity.onRenameClick() {
-    val dialog = RenameTaskListFragment()
-    dialog.show(supportFragmentManager, "renameTask")
+private fun MainActivity.onRenameClick(taskManager: TaskManager) {
+    taskManager.currentTaskListId.observeOnce(this, Observer { taskListId ->
+        val dialog = RenameTaskListFragment()
+        val arguments = Bundle()
+        arguments.putLong(TASK_LIST_ID_ARGUMENT, taskListId)
+        dialog.arguments = arguments
+        dialog.show(supportFragmentManager, "renameTask")
+    })
 }
 
 private fun MainActivity.onDeleteClick(taskManager: TaskManager) {
-    val builder = AlertDialog.Builder(this)
-    builder.setMessage("Delete Task List?")
-        .setPositiveButton("Yes") { _, _ ->
-            taskManager.deleteCurrentTaskList()
-        }
-        .setNegativeButton("No") { dialog, _ ->
-            dialog.dismiss()
-        }
-    val alert = builder.create()
-    alert.show()
+    taskManager.currentTaskListId.observeOnce(this, Observer { taskListId ->
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Delete Task List?")
+            .setPositiveButton("Yes") { _, _ ->
+                taskManager.deleteTaskList(taskListId)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
+    })
 }

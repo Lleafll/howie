@@ -1,16 +1,23 @@
 package com.example.howie
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+
+const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
 
 class TaskManager(application: Application) : AndroidViewModel(application) {
     private val repository: TasksRepository
 
     init {
         val database = TasksDatabaseSingleton.getDatabase(application.applicationContext)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
+        val preferences = application.getSharedPreferences(
+            HOWIE_SHARED_PREFERENCES_KEY,
+            Context.MODE_PRIVATE
+        )
+        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao(), preferences)
     }
 
     val tasks = repository.tasks
@@ -54,20 +61,18 @@ class TaskManager(application: Application) : AndroidViewModel(application) {
 
     fun getTask(id: Int) = repository.getTask(id)
 
-    fun getTaskList(id: Long) = repository.getTaskList(id)
-
     fun switchToTaskList(newTaskListId: Long) = repository.switchToTaskList(newTaskListId)
 
     fun addTaskList(name: String) = viewModelScope.launch {
         repository.addTaskList(name)
     }
 
-    fun deleteCurrentTaskList() = viewModelScope.launch {
-        repository.deleteCurrentTaskList()
+    fun deleteTaskList(taskListId: Long) = viewModelScope.launch {
+        repository.deleteTaskList(taskListId)
     }
 
-    fun renameCurrentTaskList(newName: String) = viewModelScope.launch {
-        repository.renameCurrentTaskList(newName)
+    fun renameTaskList(taskListId: Long, newName: String) = viewModelScope.launch {
+        repository.renameTaskList(taskListId, newName)
     }
 
     fun getTaskCounts(taskListId: Long) = repository.getTaskCounts(taskListId)
