@@ -187,12 +187,12 @@ private fun MainActivity.updateDrawerContent(
 private fun buildNavigationItemId(taskListId: Long) =
     R.id.action_add_list + taskListId.toInt() + 1
 
-private fun buildDrawerItemName(taskList: TaskList, taskCounts: List<Int>): String {
+private fun buildDrawerItemName(taskList: TaskList, taskCounts: TaskCounts): String {
     return "${taskList.name} (" +
-            "${countToString(taskCounts[0])}/" +
-            "${countToString(taskCounts[1])}/" +
-            "${countToString(taskCounts[2])}/" +
-            "${countToString(taskCounts[3])})"
+            "${countToString(taskCounts.doCount)}/" +
+            "${countToString(taskCounts.decideCount)}/" +
+            "${countToString(taskCounts.delegateCount)}/" +
+            "${countToString(taskCounts.dropCount)})"
 }
 
 private fun countToString(count: Int) = when (count) {

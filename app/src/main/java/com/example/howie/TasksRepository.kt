@@ -6,6 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.switchMap
 import androidx.lifecycle.asLiveData
 
+data class TaskCounts(
+    val doCount: Int,
+    val decideCount: Int,
+    val delegateCount: Int,
+    val dropCount: Int
+)
+
 class TasksRepository(private val taskDao: TaskDao, private val taskListDao: TaskListDao) {
     val tasks = taskDao.getAllTasks().asLiveData()
     private var currentTaskListIdValue = 0L
@@ -66,15 +73,16 @@ class TasksRepository(private val taskDao: TaskDao, private val taskListDao: Tas
         taskListDao.rename(currentTaskListIdValue, newName)
     }
 
-    fun getTaskCounts(taskListId: Long): LiveData<List<Int>> {
-        val taskCounts = MediatorLiveData<List<Int>>()
+    fun getTaskCounts(taskListId: Long): LiveData<TaskCounts> {
+        val taskCounts = MediatorLiveData<TaskCounts>()
         var doCount: Int? = null
         var decideCount: Int? = null
         var delegateCount: Int? = null
         var dropCount: Int? = null
         val assignCounts = {
             if (doCount != null && decideCount != null && delegateCount != null && dropCount != null) {
-                taskCounts.value = listOf(doCount!!, decideCount!!, delegateCount!!, dropCount!!)
+                taskCounts.value =
+                    TaskCounts(doCount!!, decideCount!!, delegateCount!!, dropCount!!)
             }
         }
         taskCounts.addSource(countDoTasks(taskListId)) {
