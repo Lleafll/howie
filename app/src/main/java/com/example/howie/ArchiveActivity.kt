@@ -22,7 +22,7 @@ class ArchiveActivity : AppCompatActivity() {
             startActivity(intent)
         }
         archive_view.adapter = taskAdapter
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         val tasks = taskManager.archive
         tasks.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
         setupColors()

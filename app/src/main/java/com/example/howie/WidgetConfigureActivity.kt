@@ -41,7 +41,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(it)
             }
         }
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         taskManager.taskLists.observe(this, Observer {
             val nameList = mutableListOf<String>()
             it.map { taskList -> taskList.name }

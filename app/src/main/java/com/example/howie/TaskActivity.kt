@@ -23,7 +23,7 @@ const val TASK_CATEGORY = "task_category"
 class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     MoveTaskFragment.MoveTaskFragmentListener {
     private val taskManager: TaskManager by lazy {
-        TaskManager.getInstance(applicationContext)
+        TaskManager.getInstance(application)
     }
     private var taskId: Int? = null
     private var taskLiveData: LiveData<Task>? = null

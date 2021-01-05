@@ -18,20 +18,20 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         viewPager.adapter = TasksTabAdapter(this)
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
-        val taskManager = TaskManager.getInstance(view.context)
-        taskManager.countCurrentDoTasks.observe(this, Observer {
+        val taskManager = TaskManager.getInstance(requireActivity().application)
+        taskManager.countCurrentDoTasks.observe(viewLifecycleOwner, Observer {
             setTab(0, it, tabLayout, "Do")
         })
-        taskManager.countCurrentDecideTasks.observe(this, Observer {
+        taskManager.countCurrentDecideTasks.observe(viewLifecycleOwner, Observer {
             setTab(1, it, tabLayout, "Decide")
         })
-        taskManager.countCurrentDelegateTasks.observe(this, Observer {
+        taskManager.countCurrentDelegateTasks.observe(viewLifecycleOwner, Observer {
             setTab(2, it, tabLayout, "Delegate")
         })
-        taskManager.countCurrentDropTasks.observe(this, Observer {
+        taskManager.countCurrentDropTasks.observe(viewLifecycleOwner, Observer {
             setTab(3, it, tabLayout, "Drop")
         })
-        taskManager.lastInsertedTaskCategory.observe(this, Observer {
+        taskManager.lastInsertedTaskCategory.observe(viewLifecycleOwner, Observer {
             tabLayout.getTabAt(it.ordinal)?.select()
         })
     }
@@ -57,8 +57,8 @@ class TasksTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val taskManager = TaskManager.getInstance(activity!!.applicationContext)
-        val position = arguments!!.getInt("position", 4)
+        val taskManager = TaskManager.getInstance(requireActivity().application)
+        val position = requireArguments().getInt("position", 4)
         val unsnoozedTasks = when (position) {
             0 -> taskManager.doTasks
             1 -> taskManager.decideTasks
@@ -85,12 +85,12 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
     ) {
         view.setHeaderText(headerText)
         val taskAdapter = TaskAdapter {
-            val intent = Intent(activity!!.applicationContext, TaskActivity::class.java)
+            val intent = Intent(requireActivity().applicationContext, TaskActivity::class.java)
             intent.putExtra(TASK_ID, it)
-            activity!!.startActivityForResult(intent, TASK_REQUEST_CODE)
+            requireActivity().startActivityForResult(intent, TASK_REQUEST_CODE)
         }
         view.setAdapter(taskAdapter)
-        tasks.observe(this, Observer {
+        tasks.observe(viewLifecycleOwner, Observer {
             if (it.isEmpty()) {
                 view.visibility = View.GONE
             } else {

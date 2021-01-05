@@ -1,6 +1,6 @@
 package com.example.howie
 
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.*
 import androidx.lifecycle.Transformations.switchMap
 import kotlinx.coroutines.flow.Flow
@@ -9,9 +9,16 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
-class TaskManager(
-    private val taskDao: TaskDao, private val taskListDao: TaskListDao
-) : ViewModel() {
+class TaskManager(application: Application) : AndroidViewModel(application) {
+    private val taskDao: TaskDao
+    private val taskListDao: TaskListDao
+
+    init {
+        val database = TasksDatabaseSingleton.getDatabase(application.applicationContext)
+        taskDao = database.getTaskDao()
+        taskListDao = database.getTaskListDao()
+    }
+
     var currentTaskListId = 0L
         private set
     private val taskListIdLiveData = defaultTaskListId(currentTaskListId)
@@ -121,13 +128,14 @@ class TaskManager(
     companion object {
         private var instance: TaskManager? = null
 
-        fun getInstance(applicationContext: Context): TaskManager {
+        fun getInstance(application: Application): TaskManager {
             if (instance == null) {
-                val database = TasksDatabaseSingleton.getDatabase(applicationContext)
-                instance = TaskManager(database.getTaskDao(), database.getTaskListDao())
+                instance = TaskManager(application)
             }
             return instance!!
         }
+
+        fun getInstance() = instance!!
     }
 }
 

@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +31,8 @@ const val TASK_ARCHIVED_RETURN_CODE = 1
 const val TASK_MOVED_RETURN_CODE = 2
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    private val viewModel: TaskManager by viewModels { TaskManagerFactory(application) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun broadcastDatabaseChanges() {
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         taskManager.tasks.observe(this, Observer {
             val intent = Intent(DATABASE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
             sendBroadcast(intent)
@@ -63,7 +66,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun switchToIntentTaskList(intent: Intent) {
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, taskManager.currentTaskListId)
         if (taskListId != taskManager.currentTaskListId) {
             val itemId = buildNavigationItemId(taskListId)
@@ -103,7 +106,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         taskManager.currentTaskList.observe(this, Observer {
             toolbar.title = it.name
         })
@@ -118,7 +121,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setMessage("Delete Task List?")
             .setPositiveButton("Yes") { _, _ ->
-                TaskManager.getInstance(applicationContext).deleteCurrentTaskList()
+                TaskManager.getInstance(application).deleteCurrentTaskList()
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -138,7 +141,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         // TODO: Causes really ugly race conditions
         taskManager.taskLists.observe(this, Observer {
             buildDrawerContent()
@@ -147,7 +150,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun buildDrawerContent() {
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         taskManager.taskLists.observeOnce(this, Observer {
             nav_view.menu.removeGroup(R.id.list_groups)
             for (taskList in it) {
@@ -165,7 +168,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun updateDrawerContent() {
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         taskManager.taskLists.observeOnce(this, Observer {
             for (taskList in it) {
                 taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
@@ -198,7 +201,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_add_list) {
-            val taskManager = TaskManager.getInstance(applicationContext)
+            val taskManager = TaskManager.getInstance(application)
             taskManager.addTaskList("New Task List")
         } else {
             switchTaskList(item)
@@ -212,7 +215,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             nav_view.menu.getItem(i).isChecked = false
         }
         item.isChecked = true
-        val taskManager = TaskManager.getInstance(applicationContext)
+        val taskManager = TaskManager.getInstance(application)
         val itemId = item.itemId - R.id.action_add_list - 1
         taskManager.switchToTaskList(itemId.toLong())
     }
@@ -253,7 +256,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 snackbar.setAction("UNDO") {
                     val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
                         ?: throw Exception("Deleted task missing from returned intent")
-                    val taskManager = TaskManager.getInstance(applicationContext)
+                    val taskManager = TaskManager.getInstance(application)
                     taskManager.add(task)
                 }
             }
@@ -263,7 +266,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (taskId == -1) {
                         throw Exception("Archived task id missing from returned intent")
                     }
-                    val taskManager = TaskManager.getInstance(applicationContext)
+                    val taskManager = TaskManager.getInstance(application)
                     taskManager.unarchive(taskId)
                 }
             }

@@ -10,11 +10,11 @@ import com.google.android.material.textfield.TextInputEditText
 class RenameTaskListFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val messageBoxBuilder =
-            AlertDialog.Builder(activity!!).setView(R.layout.fragment_rename_task_list)
+            AlertDialog.Builder(requireActivity()).setView(R.layout.fragment_rename_task_list)
                 .setMessage("Rename List")
                 .setPositiveButton("Ok") { _, _ ->
                     val textEdit: TextInputEditText = dialog!!.findViewById(R.id.new_task_list_name)
-                    val taskManager = TaskManager.getInstance(activity!!.applicationContext)
+                    val taskManager = TaskManager.getInstance(requireActivity().application)
                     taskManager.renameCurrentTaskList(textEdit.text.toString())
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
