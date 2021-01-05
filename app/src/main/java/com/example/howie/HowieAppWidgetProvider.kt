@@ -18,8 +18,7 @@ const val CONFIGURE_UPDATE = "com.example.howie.CONFIGURE_UPDATE"
 class HowieAppWidgetProvider : AppWidgetProvider() {
     private val job = SupervisorJob()
     private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
-    private lateinit var taskDao: TaskDao
-    private lateinit var taskListDao: TaskListDao
+    private lateinit var repository: TasksRepository
 
     override fun onUpdate(
         context: Context,
@@ -27,8 +26,7 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         val database = TasksDatabaseSingleton.getDatabase(context)
-        taskDao = database.getTaskDao()
-        taskListDao = database.getTaskListDao()
+        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
         val repository = WidgetSettingsRepository.getInstance(context)
         coroutineScope.launch {
             appWidgetIds.forEach { appWidgetId ->
@@ -54,7 +52,7 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    private suspend fun setupWidget(
+    private fun setupWidget(
         context: Context,
         taskListId: Long,
         appWidgetManager: AppWidgetManager,
@@ -68,22 +66,14 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         }
         RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
             setOnClickPendingIntent(R.id.background, pendingIntent)
-            taskDao.countDoTasks(taskListId).collect { countDoTasks ->
-                setTextViewText(R.id.doTextView, toText(countDoTasks))
-                taskDao.countDecideTasks(taskListId).collect { countDecideTasks ->
-                    setTextViewText(R.id.decideTextView, toText(countDecideTasks))
-                    taskDao.countDelegateTasks(taskListId)
-                        .collect { countDelegateTasks ->
-                            setTextViewText(R.id.delegateTextView, toText(countDelegateTasks))
-                            taskDao.countDropTasks(taskListId)
-                                .collect { countDropTasks ->
-                                    setTextViewText(R.id.dropTextView, toText(countDropTasks))
-                                    taskListDao.getTaskList(taskListId).collect { taskList ->
-                                        setTextViewText(R.id.nameTextView, taskList.name)
-                                        appWidgetManager.updateAppWidget(appWidgetId, this)
-                                    }
-                                }
-                        }
+            repository.getTaskCounts(taskListId).observeForever { taskCounts ->
+                setTextViewText(R.id.doTextView, toText(taskCounts.doCount))
+                setTextViewText(R.id.decideTextView, toText(taskCounts.decideCount))
+                setTextViewText(R.id.delegateTextView, toText(taskCounts.delegateCount))
+                setTextViewText(R.id.dropTextView, toText(taskCounts.dropCount))
+                repository.getTaskList(taskListId).observeForever { taskList ->
+                    setTextViewText(R.id.nameTextView, taskList.name)
+                    appWidgetManager.updateAppWidget(appWidgetId, this)
                 }
             }
         }
