@@ -53,8 +53,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun broadcastDatabaseChanges() {
-        val taskManager = TaskManager.getInstance(application)
-        taskManager.tasks.observe(this, Observer {
+        viewModel.tasks.observe(this, Observer {
             val intent = Intent(DATABASE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
             sendBroadcast(intent)
         })
@@ -66,9 +65,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun switchToIntentTaskList(intent: Intent) {
-        val taskManager = TaskManager.getInstance(application)
-        val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, taskManager.currentTaskListId)
-        if (taskListId != taskManager.currentTaskListId) {
+        val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, viewModel.currentTaskListId)
+        if (taskListId != viewModel.currentTaskListId) {
             val itemId = buildNavigationItemId(taskListId)
             switchTaskList(nav_view.menu.findItem(itemId))
         }
@@ -106,8 +104,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-        val taskManager = TaskManager.getInstance(application)
-        taskManager.currentTaskList.observe(this, Observer {
+        viewModel.currentTaskList.observe(this, Observer {
             toolbar.title = it.name
         })
     }
@@ -121,7 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setMessage("Delete Task List?")
             .setPositiveButton("Yes") { _, _ ->
-                TaskManager.getInstance(application).deleteCurrentTaskList()
+                viewModel.deleteCurrentTaskList()
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -141,24 +138,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
-        val taskManager = TaskManager.getInstance(application)
         // TODO: Causes really ugly race conditions
-        taskManager.taskLists.observe(this, Observer {
+        viewModel.taskLists.observe(this, Observer {
             buildDrawerContent()
         })
-        taskManager.tasks.observe(this, Observer { updateDrawerContent() })
+        viewModel.tasks.observe(this, Observer { updateDrawerContent() })
     }
 
     private fun buildDrawerContent() {
-        val taskManager = TaskManager.getInstance(application)
-        taskManager.taskLists.observeOnce(this, Observer {
+        viewModel.taskLists.observeOnce(this, Observer {
             nav_view.menu.removeGroup(R.id.list_groups)
             for (taskList in it) {
-                taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
+                viewModel.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
                     val itemId = buildNavigationItemId(taskList.id)
                     val name = buildDrawerItemName(taskList, taskCounts)
                     val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
-                    if (taskManager.currentTaskListId == taskList.id) {
+                    if (viewModel.currentTaskListId == taskList.id) {
                         item.isChecked = true
                     }
                 })
@@ -168,10 +163,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun updateDrawerContent() {
-        val taskManager = TaskManager.getInstance(application)
-        taskManager.taskLists.observeOnce(this, Observer {
+        viewModel.taskLists.observeOnce(this, Observer {
             for (taskList in it) {
-                taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
+                viewModel.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
                     val itemId = buildNavigationItemId(taskList.id)
                     val item = nav_view.menu.findItem(itemId)
                     if (item != null) {
@@ -201,8 +195,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_add_list) {
-            val taskManager = TaskManager.getInstance(application)
-            taskManager.addTaskList("New Task List")
+            viewModel.addTaskList("New Task List")
         } else {
             switchTaskList(item)
         }
@@ -215,9 +208,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             nav_view.menu.getItem(i).isChecked = false
         }
         item.isChecked = true
-        val taskManager = TaskManager.getInstance(application)
         val itemId = item.itemId - R.id.action_add_list - 1
-        taskManager.switchToTaskList(itemId.toLong())
+        viewModel.switchToTaskList(itemId.toLong())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -256,8 +248,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 snackbar.setAction("UNDO") {
                     val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
                         ?: throw Exception("Deleted task missing from returned intent")
-                    val taskManager = TaskManager.getInstance(application)
-                    taskManager.add(task)
+                    viewModel.add(task)
                 }
             }
             TASK_ARCHIVED_RETURN_CODE -> {
@@ -266,8 +257,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (taskId == -1) {
                         throw Exception("Archived task id missing from returned intent")
                     }
-                    val taskManager = TaskManager.getInstance(application)
-                    taskManager.unarchive(taskId)
+                    viewModel.unarchive(taskId)
                 }
             }
         }
