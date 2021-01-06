@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupToolBar()
         setupDrawer(findViewById(R.id.drawer_layout), viewModel)
         setupColors()
-        switchToIntentTaskList(intent, viewModel, nav_view)
         broadcastDatabaseChanges(viewModel)  // This is hacky but the best way to update the widgets
     }
 
@@ -72,14 +71,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        switchToIntentTaskList(intent, viewModel, nav_view)
+        val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, -1L)
+        if (taskListId != -1L) {
+            viewModel.switchToTaskList(taskListId)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_add_list) {
             viewModel.addTaskList("New Task List")
         } else {
-            switchTaskList(item, viewModel)
+            val itemId = item.itemId - R.id.action_add_list - 1
+            viewModel.switchToTaskList(itemId.toLong())
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
@@ -202,23 +205,6 @@ private fun handleTaskActivityReturn(
         }
     }
     snackbar.show()
-}
-
-private fun switchTaskList(item: MenuItem, taskManager: TaskManager) {
-    val itemId = item.itemId - R.id.action_add_list - 1
-    taskManager.switchToTaskList(itemId.toLong())
-}
-
-private fun MainActivity.switchToIntentTaskList(
-    intent: Intent, taskManager: TaskManager, navigationView: NavigationView
-) {
-    taskManager.currentTaskListId.observeOnce(this, { currentTaskListId ->
-        val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, currentTaskListId)
-        if (taskListId != currentTaskListId) {
-            val itemId = buildNavigationItemId(taskListId)
-            switchTaskList(navigationView.menu.findItem(itemId), taskManager)
-        }
-    })
 }
 
 private fun MainActivity.setupColors() {
