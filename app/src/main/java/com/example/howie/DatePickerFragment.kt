@@ -17,10 +17,10 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dateString = arguments!!.getString("date")
+        val dateString = requireArguments().getString("date")
         val date = LocalDate.parse(dateString)
         val datePickerDialog = DatePickerDialog(
-            activity!!,
+            requireActivity(),
             this,
             date.year,
             date.monthValue - 1,
@@ -31,7 +31,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     }
 
     override fun onDateSet(picker: DatePicker?, year: Int, month: Int, day: Int) {
-        val id = arguments!!.getInt("dateId", -1)
+        val id = requireArguments().getInt("dateId", -1)
         listener.onDateChanged(id, LocalDate.of(year, month + 1, day))
     }
 
