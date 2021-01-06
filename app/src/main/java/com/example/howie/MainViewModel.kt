@@ -35,7 +35,6 @@ class MainViewModel(application: Application, private val repository: TasksRepos
     val snoozedDelegateTasks = repository.snoozedDelegateTasks
     val dropTasks = repository.dropTasks
     val snoozedDropTasks = repository.snoozedDropTasks
-    val archive = repository.archive
     val taskLists = repository.taskLists
     val currentTaskList = repository.currentTaskList
     val currentTaskListId = repository.currentTaskListId
