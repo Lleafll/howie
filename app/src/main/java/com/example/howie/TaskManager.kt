@@ -13,7 +13,8 @@ const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
 data class TaskListNameAndCount(
     val id: Long,
     val name: String,
-    val count: TaskCounts
+    val count: TaskCounts,
+    val isCurrent: Boolean
 )
 
 class TaskManager(application: Application, private val repository: TasksRepository) :
@@ -87,13 +88,15 @@ class TaskManager(application: Application, private val repository: TasksReposit
         repository.moveToList(taskId, taskListId)
     }
 
+
     fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
         val liveData = MediatorLiveData<List<TaskListNameAndCount>>()
         var taskLists: List<TaskList>? = null
         var tasks: List<Task>? = null
+        var currentTaskListId: Long? = null
         val setLiveData = {
-            if (taskLists != null && tasks != null) {
-                liveData.value = getTaskListNameAndCounts(tasks!!, taskLists!!)
+            if (taskLists != null && tasks != null && currentTaskListId != null) {
+                liveData.value = getTaskListNameAndCounts(tasks!!, taskLists!!, currentTaskListId!!)
             }
         }
         liveData.addSource(repository.taskLists) {
@@ -102,6 +105,10 @@ class TaskManager(application: Application, private val repository: TasksReposit
         }
         liveData.addSource(repository.tasks) {
             tasks = it
+            setLiveData()
+        }
+        liveData.addSource(repository.currentTaskListId) {
+            currentTaskListId = it
             setLiveData()
         }
         return liveData
@@ -122,7 +129,8 @@ class TaskManager(application: Application, private val repository: TasksReposit
 
 private fun getTaskListNameAndCounts(
     tasks: List<Task>,
-    tasksLists: List<TaskList>
+    tasksLists: List<TaskList>,
+    currentTaskListId: Long
 ): List<TaskListNameAndCount> {
     return tasksLists.map { taskList ->
         TaskListNameAndCount(
@@ -130,7 +138,8 @@ private fun getTaskListNameAndCounts(
             taskList.name,
             getTaskCounts(tasks.filter { task ->
                 task.archived == null
-            }, taskList.id)
+            }, taskList.id),
+            taskList.id == currentTaskListId
         )
     }
 }

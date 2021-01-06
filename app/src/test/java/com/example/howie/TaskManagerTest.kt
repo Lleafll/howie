@@ -53,9 +53,10 @@ class TaskManagerTest {
         val repository = mockk<TasksRepository>(relaxed = true)
         val taskManager = TaskManager(application, repository)
         every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
+        every { repository.currentTaskListId } returns MutableLiveData(123)
         val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
         taskListNamesAndCounts.observeForever {
-            assertEquals(listOf(TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0))), it)
+            assertEquals(listOf(TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0), true)), it)
         }
     }
 
@@ -70,12 +71,13 @@ class TaskManagerTest {
                 TaskList("DEF", 456)
             )
         )
+        every { repository.currentTaskListId } returns MutableLiveData(123)
         val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
         taskListNamesAndCounts.observeForever {
             assertEquals(
                 listOf(
-                    TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0)),
-                    TaskListNameAndCount(456, "DEF", TaskCounts(0, 0, 0, 0))
+                    TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0), true),
+                    TaskListNameAndCount(456, "DEF", TaskCounts(0, 0, 0, 0), false)
                 ), it
             )
         }
@@ -87,6 +89,7 @@ class TaskManagerTest {
         val repository = mockk<TasksRepository>(relaxed = true)
         val taskManager = TaskManager(application, repository)
         every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
+        every { repository.currentTaskListId } returns MutableLiveData(123)
         every { repository.tasks } returns MutableLiveData(
             listOf(
                 // 1 Do task
@@ -102,7 +105,7 @@ class TaskManagerTest {
         )
         val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
         taskListNamesAndCounts.observeForever {
-            assertEquals(listOf(TaskListNameAndCount(123, "ABC", TaskCounts(1, 2, 3, 0))), it)
+            assertEquals(listOf(TaskListNameAndCount(123, "ABC", TaskCounts(1, 2, 3, 0), true)), it)
         }
     }
 }

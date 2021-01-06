@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -67,7 +66,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-        viewModel.currentTaskList.observe(this, Observer {
+        viewModel.currentTaskList.observe(this, {
             toolbar.title = it.name
         })
     }
@@ -120,40 +119,26 @@ private fun MainActivity.setupDrawer(drawer: DrawerLayout, taskManager: TaskMana
     )
     drawer.addDrawerListener(toggle)
     toggle.syncState()
-    // TODO: Causes really ugly race conditions
-    taskManager.taskLists.observe(this, Observer {
-        buildDrawerContent(taskManager, nav_view)
+    taskManager.getTaskListNamesAndCounts().observe(this, { taskListNamesAndCounts ->
+        buildDrawerContent(nav_view, taskListNamesAndCounts)
     })
-    taskManager.tasks.observe(this, Observer { updateDrawerContent(taskManager, nav_view) })
 }
 
-private fun MainActivity.buildDrawerContent(
-    taskManager: TaskManager,
-    nav_view: NavigationView
+private fun buildDrawerContent(
+    nav_view: NavigationView,
+    taskListNamesAndCounts: List<TaskListNameAndCount>
 ) {
-    taskManager.taskLists.observeOnce(this, Observer {
-        nav_view.menu.removeGroup(R.id.list_groups)
-        for (taskList in it) {
-            taskManager.getTaskCounts(taskList.id)
-                .observe(this, Observer { taskCounts ->
-                    val itemId = buildNavigationItemId(taskList.id)
-                    val name = buildDrawerItemName(taskList, taskCounts)
-                    nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
-                })
-        }
-        nav_view.setNavigationItemSelectedListener(this)
-        taskManager.currentTaskListId.observeOnce(this, Observer { id ->
-            val itemId = buildNavigationItemId(id)
-            val item = nav_view.menu.findItem(itemId)
-            if (item != null) {
-                item.isChecked = true  // TODO(Check why item can be null here)
-            }
-        })
-    })
+    nav_view.menu.removeGroup(R.id.list_groups)
+    taskListNamesAndCounts.forEach { taskListNameAndCount ->
+        val itemId = buildNavigationItemId(taskListNameAndCount.id)
+        val name = buildDrawerItemName(taskListNameAndCount.name, taskListNameAndCount.count)
+        val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
+        item.isChecked = taskListNameAndCount.isCurrent
+    }
 }
 
 private fun MainActivity.broadcastDatabaseChanges(taskManager: TaskManager) {
-    taskManager.tasks.observe(this, Observer {
+    taskManager.tasks.observe(this, {
         val intent = Intent(DATABASE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
         sendBroadcast(intent)
     })
@@ -167,28 +152,11 @@ private fun MainActivity.setupTaskButton(button: FloatingActionButton, tabLayout
     }
 }
 
-private fun MainActivity.updateDrawerContent(
-    taskManager: TaskManager,
-    nav_view: NavigationView
-) {
-    taskManager.taskLists.observeOnce(this, Observer {
-        for (taskList in it) {
-            taskManager.getTaskCounts(taskList.id).observe(this, Observer { taskCounts ->
-                val itemId = buildNavigationItemId(taskList.id)
-                val item = nav_view.menu.findItem(itemId)
-                if (item != null) {
-                    item.title = buildDrawerItemName(taskList, taskCounts)
-                }
-            })
-        }
-    })
-}
-
 private fun buildNavigationItemId(taskListId: Long) =
     R.id.action_add_list + taskListId.toInt() + 1
 
-private fun buildDrawerItemName(taskList: TaskList, taskCounts: TaskCounts): String {
-    return "${taskList.name} (" +
+private fun buildDrawerItemName(name: String, taskCounts: TaskCounts): String {
+    return "$name (" +
             "${countToString(taskCounts.doCount)}/" +
             "${countToString(taskCounts.decideCount)}/" +
             "${countToString(taskCounts.delegateCount)}/" +
@@ -248,7 +216,7 @@ private fun switchTaskList(item: MenuItem, nax_view: NavigationView, taskManager
 private fun MainActivity.switchToIntentTaskList(
     intent: Intent, taskManager: TaskManager, navigationView: NavigationView
 ) {
-    taskManager.currentTaskListId.observeOnce(this, Observer { currentTaskListId ->
+    taskManager.currentTaskListId.observeOnce(this, { currentTaskListId ->
         val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, currentTaskListId)
         if (taskListId != currentTaskListId) {
             val itemId = buildNavigationItemId(taskListId)
@@ -269,7 +237,7 @@ private fun MainActivity.setupColors() {
 }
 
 private fun MainActivity.onRenameClick(taskManager: TaskManager) {
-    taskManager.currentTaskListId.observeOnce(this, Observer { taskListId ->
+    taskManager.currentTaskListId.observeOnce(this, { taskListId ->
         val dialog = RenameTaskListFragment()
         val arguments = Bundle()
         arguments.putLong(TASK_LIST_ID_ARGUMENT, taskListId)
@@ -279,7 +247,7 @@ private fun MainActivity.onRenameClick(taskManager: TaskManager) {
 }
 
 private fun MainActivity.onDeleteClick(taskManager: TaskManager) {
-    taskManager.currentTaskListId.observeOnce(this, Observer { taskListId ->
+    taskManager.currentTaskListId.observeOnce(this, { taskListId ->
         val builder = AlertDialog.Builder(this)
         builder.setMessage("Delete Task List?")
             .setPositiveButton("Yes") { _, _ ->
