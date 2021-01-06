@@ -11,7 +11,11 @@ import com.google.android.material.textfield.TextInputEditText
 const val TASK_LIST_ID_ARGUMENT = "taskListId"
 
 class RenameTaskListFragment : DialogFragment() {
-    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(requireActivity().application) }
+    private val viewModel: RenameTaskListViewModel by viewModels {
+        TaskManagerFactory(
+            requireActivity().application
+        )
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val messageBoxBuilder =
@@ -20,7 +24,7 @@ class RenameTaskListFragment : DialogFragment() {
                 .setPositiveButton("Ok") { _, _ ->
                     val textEdit: TextInputEditText = dialog!!.findViewById(R.id.new_task_list_name)
                     val taskListId = requireArguments().getLong(TASK_LIST_ID_ARGUMENT)
-                    mainViewModel.renameTaskList(taskListId, textEdit.text.toString())
+                    viewModel.renameTaskList(taskListId, textEdit.text.toString())
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

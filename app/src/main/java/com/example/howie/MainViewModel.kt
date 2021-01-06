@@ -76,10 +76,6 @@ class MainViewModel(application: Application, private val repository: TasksRepos
         repository.deleteTaskList(taskListId)
     }
 
-    fun renameTaskList(taskListId: Long, newName: String) = viewModelScope.launch {
-        repository.renameTaskList(taskListId, newName)
-    }
-
     fun getTaskCounts(taskListId: Long) = repository.getTaskCounts(taskListId)
 
 
