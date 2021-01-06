@@ -17,6 +17,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 import java.util.concurrent.Executors
 
 @ExperimentalCoroutinesApi
@@ -54,7 +55,54 @@ class TaskManagerTest {
         every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
         val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
         taskListNamesAndCounts.observeForever {
-            assertEquals(listOf(TaskListNameAndCount(123, "ABC", 0)), it)
+            assertEquals(listOf(TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0))), it)
+        }
+    }
+
+    @Test
+    fun `getTaskListNamesAndCounts with two lists and no tasks`() {
+        val application = mockk<Application>(relaxed = true)
+        val repository = mockk<TasksRepository>(relaxed = true)
+        val taskManager = TaskManager(application, repository)
+        every { repository.taskLists } returns MutableLiveData(
+            listOf(
+                TaskList("ABC", 123),
+                TaskList("DEF", 456)
+            )
+        )
+        val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
+        taskListNamesAndCounts.observeForever {
+            assertEquals(
+                listOf(
+                    TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0)),
+                    TaskListNameAndCount(456, "DEF", TaskCounts(0, 0, 0, 0))
+                ), it
+            )
+        }
+    }
+
+    @Test
+    fun `getTaskListNamesAndCounts with one list and one count`() {
+        val application = mockk<Application>(relaxed = true)
+        val repository = mockk<TasksRepository>(relaxed = true)
+        val taskManager = TaskManager(application, repository)
+        every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
+        every { repository.tasks } returns MutableLiveData(
+            listOf(
+                // 1 Do task
+                Task("", 123, Importance.IMPORTANT, LocalDate.now()),
+                // 2 Decide tasks
+                Task("", 123, Importance.IMPORTANT),
+                Task("", 123, Importance.IMPORTANT),
+                // 3 Delegate Tasks
+                Task("", 123, Importance.UNIMPORTANT, LocalDate.now()),
+                Task("", 123, Importance.UNIMPORTANT, LocalDate.now()),
+                Task("", 123, Importance.UNIMPORTANT, LocalDate.now())
+            )
+        )
+        val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
+        taskListNamesAndCounts.observeForever {
+            assertEquals(listOf(TaskListNameAndCount(123, "ABC", TaskCounts(1, 2, 3, 0))), it)
         }
     }
 }

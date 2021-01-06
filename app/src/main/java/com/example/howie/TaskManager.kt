@@ -13,7 +13,7 @@ const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
 data class TaskListNameAndCount(
     val id: Long,
     val name: String,
-    val count: Int
+    val count: TaskCounts
 )
 
 class TaskManager(application: Application, private val repository: TasksRepository) :
@@ -89,9 +89,20 @@ class TaskManager(application: Application, private val repository: TasksReposit
 
     fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
         val liveData = MediatorLiveData<List<TaskListNameAndCount>>()
-        liveData.addSource(repository.taskLists) { taskLists ->
-            liveData.value =
-                taskLists.map { taskList -> TaskListNameAndCount(taskList.id, taskList.name, 0) }
+        var taskLists: List<TaskList>? = null
+        var tasks: List<Task>? = null
+        val setLiveData = {
+            if (taskLists != null && tasks != null) {
+                liveData.value = getTaskListNameAndCounts(tasks!!, taskLists!!)
+            }
+        }
+        liveData.addSource(repository.taskLists) {
+            taskLists = it
+            setLiveData()
+        }
+        liveData.addSource(repository.tasks) {
+            tasks = it
+            setLiveData()
         }
         return liveData
     }
@@ -108,3 +119,31 @@ class TaskManager(application: Application, private val repository: TasksReposit
         }
     }
 }
+
+private fun getTaskListNameAndCounts(
+    tasks: List<Task>,
+    tasksLists: List<TaskList>
+): List<TaskListNameAndCount> {
+    return tasksLists.map { taskList ->
+        TaskListNameAndCount(
+            taskList.id,
+            taskList.name,
+            getTaskCounts(tasks.filter { task ->
+                task.archived == null
+            }, taskList.id)
+        )
+    }
+}
+
+private fun getTaskCounts(tasks: List<Task>, taskListId: Long) =
+    getTaskCounts(tasks.filter { it.taskListId == taskListId })
+
+private fun getTaskCounts(tasks: List<Task>) = TaskCounts(
+    count(tasks, TaskCategory.DO),
+    count(tasks, TaskCategory.DECIDE),
+    count(tasks, TaskCategory.DELEGATE),
+    count(tasks, TaskCategory.DROP),
+)
+
+private fun count(tasks: List<Task>, category: TaskCategory) =
+    tasks.count { taskCategory(it) == category }
