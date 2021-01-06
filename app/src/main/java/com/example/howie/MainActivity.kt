@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -80,7 +79,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId == R.id.action_add_list) {
             viewModel.addTaskList("New Task List")
         } else {
-            switchTaskList(item, nav_view, viewModel)
+            switchTaskList(item, viewModel)
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
@@ -122,6 +121,7 @@ private fun MainActivity.setupDrawer(drawer: DrawerLayout, taskManager: TaskMana
     taskManager.getTaskListNamesAndCounts().observe(this, { taskListNamesAndCounts ->
         buildDrawerContent(nav_view, taskListNamesAndCounts)
     })
+    nav_view.setNavigationItemSelectedListener(this)
 }
 
 private fun buildDrawerContent(
@@ -204,11 +204,7 @@ private fun handleTaskActivityReturn(
     snackbar.show()
 }
 
-private fun switchTaskList(item: MenuItem, nax_view: NavigationView, taskManager: TaskManager) {
-    for (i in 0 until nax_view.menu.size) {
-        nax_view.menu.getItem(i).isChecked = false
-    }
-    item.isChecked = true
+private fun switchTaskList(item: MenuItem, taskManager: TaskManager) {
     val itemId = item.itemId - R.id.action_add_list - 1
     taskManager.switchToTaskList(itemId.toLong())
 }
@@ -220,7 +216,7 @@ private fun MainActivity.switchToIntentTaskList(
         val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, currentTaskListId)
         if (taskListId != currentTaskListId) {
             val itemId = buildNavigationItemId(taskListId)
-            switchTaskList(navigationView.menu.findItem(itemId), navigationView, taskManager)
+            switchTaskList(navigationView.menu.findItem(itemId), taskManager)
         }
     })
 }
