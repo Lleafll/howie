@@ -3,10 +3,18 @@ package com.example.howie
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
+
+data class TaskListNameAndCount(
+    val id: Long,
+    val name: String,
+    val count: Int
+)
 
 class TaskManager(application: Application, private val repository: TasksRepository) :
     AndroidViewModel(application) {
@@ -77,6 +85,15 @@ class TaskManager(application: Application, private val repository: TasksReposit
 
     fun moveToList(taskId: Int, taskListId: Long) = viewModelScope.launch {
         repository.moveToList(taskId, taskListId)
+    }
+
+    fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
+        val liveData = MediatorLiveData<List<TaskListNameAndCount>>()
+        liveData.addSource(repository.taskLists) { taskLists ->
+            liveData.value =
+                taskLists.map { taskList -> TaskListNameAndCount(taskList.id, taskList.name, 0) }
+        }
+        return liveData
     }
 
     companion object {
