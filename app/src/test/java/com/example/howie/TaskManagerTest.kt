@@ -3,10 +3,8 @@ package com.example.howie
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import io.mockk.MockKAnnotations
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import androidx.lifecycle.Observer
+import io.mockk.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -107,5 +105,41 @@ class TaskManagerTest {
         taskListNamesAndCounts.observeForever {
             assertEquals(listOf(TaskListNameAndCount(123, "ABC", TaskCounts(1, 2, 3, 0), true)), it)
         }
+    }
+
+    @Test
+    fun `getTaskListNamesAndCounts on currentTaskListId change`() {
+        val application = mockk<Application>()
+        val currentTaskListIdMock = MutableLiveData(123L)
+        val repository = mockk<TasksRepository>(relaxed = true) {
+            every { tasks } returns MutableLiveData(listOf())
+            every { taskLists } returns MutableLiveData(
+                listOf(
+                    TaskList("ABC", 123),
+                    TaskList("DEF", 456)
+                )
+            )
+            every { currentTaskListId } returns currentTaskListIdMock
+        }
+        val taskManager = TaskManager(application, repository)
+        val observer =
+            mockk<Observer<List<TaskListNameAndCount>>> { every { onChanged(any()) } just Runs }
+        taskManager.getTaskListNamesAndCounts().observeForever(observer)
+        currentTaskListIdMock.value = 456
+        verifySequence {
+            observer.onChanged(
+                listOf(
+                    TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0), true),
+                    TaskListNameAndCount(456, "DEF", TaskCounts(0, 0, 0, 0), false)
+                )
+            )
+            observer.onChanged(
+                listOf(
+                    TaskListNameAndCount(123, "ABC", TaskCounts(0, 0, 0, 0), false),
+                    TaskListNameAndCount(456, "DEF", TaskCounts(0, 0, 0, 0), true)
+                )
+            )
+        }
+        confirmVerified(observer)
     }
 }
