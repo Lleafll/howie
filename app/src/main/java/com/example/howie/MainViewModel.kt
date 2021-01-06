@@ -16,7 +16,7 @@ data class TaskListNameAndCount(
     val count: TaskCounts
 )
 
-class TaskManager(application: Application, private val repository: TasksRepository) :
+class MainViewModel(application: Application, private val repository: TasksRepository) :
     AndroidViewModel(application) {
 
     constructor(application: Application) : this(application, {
@@ -109,12 +109,12 @@ class TaskManager(application: Application, private val repository: TasksReposit
     }
 
     companion object {
-        private var instance: TaskManager? = null
+        private var instance: MainViewModel? = null
 
         @Deprecated("Use a proper ViewModel")
-        fun getInstance(application: Application): TaskManager {
+        fun getInstance(application: Application): MainViewModel {
             if (instance == null) {
-                instance = TaskManager(application)
+                instance = MainViewModel(application)
             }
             return instance!!
         }

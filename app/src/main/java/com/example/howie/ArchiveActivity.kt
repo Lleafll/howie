@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_archive.*
 
 class ArchiveActivity : AppCompatActivity() {
-    private val taskManager: TaskManager by viewModels { TaskManagerFactory(application) }
+    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ class ArchiveActivity : AppCompatActivity() {
             startActivity(intent)
         }
         archive_view.adapter = taskAdapter
-        taskManager.archive.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
+        mainViewModel.archive.observe(this, Observer { it.let { taskAdapter.submitList(it) } })
         setupColors()
     }
 

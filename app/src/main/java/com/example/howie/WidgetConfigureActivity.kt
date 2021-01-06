@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class WidgetConfigureActivity : AppCompatActivity() {
-    private val taskManager: TaskManager by viewModels { TaskManagerFactory(application) }
+    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(it)
             }
         }
-        taskManager.taskLists.observe(this, Observer {
+        mainViewModel.taskLists.observe(this, Observer {
             val nameList = mutableListOf<String>()
             it.map { taskList -> taskList.name }
             for (taskList in it) {

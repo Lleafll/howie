@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.util.concurrent.Executors
 
 @ExperimentalCoroutinesApi
-class TaskManagerTest {
+class MainViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
     private val mainThreadSurrogate = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
@@ -42,7 +42,7 @@ class TaskManagerTest {
     fun add() {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
-        val taskManager = TaskManager(application, repository)
+        val taskManager = MainViewModel(application, repository)
         taskManager.doArchive(123)
         coVerify { repository.doArchive(123) }
     }
@@ -51,7 +51,7 @@ class TaskManagerTest {
     fun `getTaskListNamesAndCounts with one list and no tasks`() {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
-        val taskManager = TaskManager(application, repository)
+        val taskManager = MainViewModel(application, repository)
         every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
         every { repository.currentTaskListId } returns MutableLiveData(123)
         val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
@@ -64,7 +64,7 @@ class TaskManagerTest {
     fun `getTaskListNamesAndCounts with two lists and no tasks`() {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
-        val taskManager = TaskManager(application, repository)
+        val taskManager = MainViewModel(application, repository)
         every { repository.taskLists } returns MutableLiveData(
             listOf(
                 TaskList("ABC", 123),
@@ -87,7 +87,7 @@ class TaskManagerTest {
     fun `getTaskListNamesAndCounts with one list and one count`() {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
-        val taskManager = TaskManager(application, repository)
+        val taskManager = MainViewModel(application, repository)
         every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
         every { repository.currentTaskListId } returns MutableLiveData(123)
         every { repository.tasks } returns MutableLiveData(

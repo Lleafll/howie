@@ -17,7 +17,7 @@ class TaskItem : LinearLayout {
 
     init {
         inflate(context, R.layout.task_item, this)
-        val taskManager = TaskManager.getInstance((context as Activity).application)
+        val taskManager = MainViewModel.getInstance((context as Activity).application)
         snooze_to_tomorrow.setOnClickListener {
             val updatedTask = task.copy(snoozed = LocalDate.now().plusDays(1))
             updatedTask.id = task.id

@@ -14,26 +14,26 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
-    private val taskManager: TaskManager by viewModels { TaskManagerFactory(requireActivity().application) }
+    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(requireActivity().application) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewPager: ViewPager2 = view.findViewById(R.id.pager)
         viewPager.adapter = TasksTabAdapter(this)
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
-        taskManager.countCurrentDoTasks.observe(viewLifecycleOwner, Observer {
+        mainViewModel.countCurrentDoTasks.observe(viewLifecycleOwner, Observer {
             setTab(0, it, tabLayout, "Do")
         })
-        taskManager.countCurrentDecideTasks.observe(viewLifecycleOwner, Observer {
+        mainViewModel.countCurrentDecideTasks.observe(viewLifecycleOwner, Observer {
             setTab(1, it, tabLayout, "Decide")
         })
-        taskManager.countCurrentDelegateTasks.observe(viewLifecycleOwner, Observer {
+        mainViewModel.countCurrentDelegateTasks.observe(viewLifecycleOwner, Observer {
             setTab(2, it, tabLayout, "Delegate")
         })
-        taskManager.countCurrentDropTasks.observe(viewLifecycleOwner, Observer {
+        mainViewModel.countCurrentDropTasks.observe(viewLifecycleOwner, Observer {
             setTab(3, it, tabLayout, "Drop")
         })
-        taskManager.lastInsertedTaskCategory.observe(viewLifecycleOwner, Observer {
+        mainViewModel.lastInsertedTaskCategory.observe(viewLifecycleOwner, Observer {
             tabLayout.getTabAt(it.ordinal)?.select()
         })
     }
@@ -58,23 +58,23 @@ class TasksTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 }
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
-    private val taskManager: TaskManager by viewModels { TaskManagerFactory(requireActivity().application) }
+    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(requireActivity().application) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val position = requireArguments().getInt("position", 4)
         val unsnoozedTasks = when (position) {
-            0 -> taskManager.doTasks
-            1 -> taskManager.decideTasks
-            2 -> taskManager.delegateTasks
-            3 -> taskManager.dropTasks
-            else -> taskManager.tasks
+            0 -> mainViewModel.doTasks
+            1 -> mainViewModel.decideTasks
+            2 -> mainViewModel.delegateTasks
+            3 -> mainViewModel.dropTasks
+            else -> mainViewModel.tasks
         }
         val snoozedTasks = when (position) {
-            0 -> taskManager.snoozedDoTasks
-            1 -> taskManager.snoozedDecideTasks
-            2 -> taskManager.snoozedDelegateTasks
-            3 -> taskManager.snoozedDropTasks
-            else -> taskManager.tasks
+            0 -> mainViewModel.snoozedDoTasks
+            1 -> mainViewModel.snoozedDecideTasks
+            2 -> mainViewModel.snoozedDelegateTasks
+            3 -> mainViewModel.snoozedDropTasks
+            else -> mainViewModel.tasks
         }
         setupView(unsnoozed_tasks_view, unsnoozedTasks, "Tasks", true)
         setupView(snoozed_tasks_view, snoozedTasks, "Snoozed Tasks", false)

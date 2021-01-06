@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
 class MoveTaskFragment : DialogFragment() {
-    private val taskManager: TaskManager by viewModels { TaskManagerFactory(requireActivity().application) }
+    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(requireActivity().application) }
     private lateinit var listener: MoveTaskFragmentListener
 
     interface MoveTaskFragmentListener {
@@ -27,14 +27,14 @@ class MoveTaskFragment : DialogFragment() {
                     val spinner: Spinner = dialog!!.findViewById(R.id.task_list_spinner)
                     val taskId = requireArguments().getInt("taskId")
                     val selectedIndex = spinner.selectedItemPosition
-                    taskManager.moveToList(taskId, taskListIds[selectedIndex])
+                    mainViewModel.moveToList(taskId, taskListIds[selectedIndex])
                     listener.onTaskMoved()
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
         val dialog = messageBoxBuilder.create()
-        taskManager.taskLists.observe(this, Observer {
+        mainViewModel.taskLists.observe(this, Observer {
             val spinner: Spinner = this.dialog!!.findViewById(R.id.task_list_spinner)
             val nameList = mutableListOf<String>()
             it.map { taskList -> taskList.name }

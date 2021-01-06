@@ -31,7 +31,7 @@ const val TASK_ARCHIVED_RETURN_CODE = 1
 const val TASK_MOVED_RETURN_CODE = 2
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private val viewModel: TaskManager by viewModels { TaskManagerFactory(application) }
+    private val viewModel: MainViewModel by viewModels { TaskManagerFactory(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 }
 
-private fun MainActivity.setupDrawer(drawer: DrawerLayout, taskManager: TaskManager) {
+private fun MainActivity.setupDrawer(drawer: DrawerLayout, mainViewModel: MainViewModel) {
     val toggle = ActionBarDrawerToggle(
         this,
         drawer,
@@ -121,7 +121,7 @@ private fun MainActivity.setupDrawer(drawer: DrawerLayout, taskManager: TaskMana
     )
     drawer.addDrawerListener(toggle)
     toggle.syncState()
-    taskManager.getTaskListNamesAndCounts().observe(this, { taskListNamesAndCounts ->
+    mainViewModel.getTaskListNamesAndCounts().observe(this, { taskListNamesAndCounts ->
         buildDrawerContent(taskListNamesAndCounts, nav_view.menu)
     })
     nav_view.setNavigationItemSelectedListener(this)
@@ -139,8 +139,8 @@ private fun buildDrawerContent(
     }
 }
 
-private fun MainActivity.broadcastDatabaseChanges(taskManager: TaskManager) {
-    taskManager.tasks.observe(this, {
+private fun MainActivity.broadcastDatabaseChanges(mainViewModel: MainViewModel) {
+    mainViewModel.tasks.observe(this, {
         val intent = Intent(DATABASE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
         sendBroadcast(intent)
     })
@@ -171,7 +171,7 @@ private fun countToString(count: Int) = when (count) {
 }
 
 private fun handleTaskActivityReturn(
-    returnCode: Int, data: Intent, layout: CoordinatorLayout, taskManager: TaskManager
+    returnCode: Int, data: Intent, layout: CoordinatorLayout, mainViewModel: MainViewModel
 ) {
     val text = when (returnCode) {
         TASK_DELETED_RETURN_CODE -> "Task Deleted"
@@ -190,7 +190,7 @@ private fun handleTaskActivityReturn(
             snackbar.setAction("UNDO") {
                 val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
                     ?: throw Exception("Deleted task missing from returned intent")
-                taskManager.add(task)
+                mainViewModel.add(task)
             }
         }
         TASK_ARCHIVED_RETURN_CODE -> {
@@ -199,7 +199,7 @@ private fun handleTaskActivityReturn(
                 if (taskId == -1) {
                     throw Exception("Archived task id missing from returned intent")
                 }
-                taskManager.unarchive(taskId)
+                mainViewModel.unarchive(taskId)
             }
         }
     }
@@ -217,8 +217,8 @@ private fun MainActivity.setupColors() {
     }
 }
 
-private fun MainActivity.onRenameClick(taskManager: TaskManager) {
-    taskManager.currentTaskListId.observeOnce(this, { taskListId ->
+private fun MainActivity.onRenameClick(mainViewModel: MainViewModel) {
+    mainViewModel.currentTaskListId.observeOnce(this, { taskListId ->
         val dialog = RenameTaskListFragment()
         val arguments = Bundle()
         arguments.putLong(TASK_LIST_ID_ARGUMENT, taskListId)
@@ -227,12 +227,12 @@ private fun MainActivity.onRenameClick(taskManager: TaskManager) {
     })
 }
 
-private fun MainActivity.onDeleteClick(taskManager: TaskManager) {
-    taskManager.currentTaskListId.observeOnce(this, { taskListId ->
+private fun MainActivity.onDeleteClick(mainViewModel: MainViewModel) {
+    mainViewModel.currentTaskListId.observeOnce(this, { taskListId ->
         val builder = AlertDialog.Builder(this)
         builder.setMessage("Delete Task List?")
             .setPositiveButton("Yes") { _, _ ->
-                taskManager.deleteTaskList(taskListId)
+                mainViewModel.deleteTaskList(taskListId)
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
