@@ -8,10 +8,9 @@ import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 
 class MoveTaskFragment : DialogFragment() {
-    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(requireActivity().application) }
+    private val viewModel: MoveTaskViewModel by viewModels { TaskManagerFactory(requireActivity().application) }
     private lateinit var listener: MoveTaskFragmentListener
 
     interface MoveTaskFragmentListener {
@@ -27,22 +26,21 @@ class MoveTaskFragment : DialogFragment() {
                     val spinner: Spinner = dialog!!.findViewById(R.id.task_list_spinner)
                     val taskId = requireArguments().getInt("taskId")
                     val selectedIndex = spinner.selectedItemPosition
-                    mainViewModel.moveToList(taskId, taskListIds[selectedIndex])
+                    viewModel.moveToList(taskId, taskListIds[selectedIndex])
                     listener.onTaskMoved()
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
         val dialog = messageBoxBuilder.create()
-        mainViewModel.taskLists.observe(this, Observer {
+        viewModel.taskLists.observe(this, {
             val spinner: Spinner = this.dialog!!.findViewById(R.id.task_list_spinner)
             val nameList = mutableListOf<String>()
-            it.map { taskList -> taskList.name }
             for (taskList in it) {
                 nameList.add(taskList.name)
                 taskListIds.add(taskList.id)
             }
-            val adapter = ArrayAdapter<String>(
+            val adapter = ArrayAdapter(
                 requireActivity(),
                 android.R.layout.simple_spinner_item,
                 nameList

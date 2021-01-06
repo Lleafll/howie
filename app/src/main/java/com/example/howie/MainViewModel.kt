@@ -82,10 +82,6 @@ class MainViewModel(application: Application, private val repository: TasksRepos
 
     fun getTaskCounts(taskListId: Long) = repository.getTaskCounts(taskListId)
 
-    fun moveToList(taskId: Int, taskListId: Long) = viewModelScope.launch {
-        repository.moveToList(taskId, taskListId)
-    }
-
 
     fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
         val liveData = MediatorLiveData<List<TaskListNameAndCount>>()
