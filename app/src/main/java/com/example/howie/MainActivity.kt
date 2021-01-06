@@ -81,8 +81,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId == R.id.action_add_list) {
             viewModel.addTaskList("New Task List")
         } else {
-            val itemId = item.itemId - R.id.action_add_list - 1
-            viewModel.switchToTaskList(itemId.toLong())
+            val taskListId = item.itemId - R.id.action_add_list - 1
+            viewModel.switchToTaskList(taskListId.toLong())
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
@@ -122,21 +122,20 @@ private fun MainActivity.setupDrawer(drawer: DrawerLayout, taskManager: TaskMana
     drawer.addDrawerListener(toggle)
     toggle.syncState()
     taskManager.getTaskListNamesAndCounts().observe(this, { taskListNamesAndCounts ->
-        buildDrawerContent(nav_view, taskListNamesAndCounts)
+        buildDrawerContent(taskListNamesAndCounts, nav_view.menu)
     })
     nav_view.setNavigationItemSelectedListener(this)
 }
 
 private fun buildDrawerContent(
-    nav_view: NavigationView,
-    taskListNamesAndCounts: List<TaskListNameAndCount>
+    taskListNamesAndCounts: List<TaskListNameAndCount>,
+    menu: Menu
 ) {
-    nav_view.menu.removeGroup(R.id.list_groups)
+    menu.removeGroup(R.id.list_groups)
     taskListNamesAndCounts.forEach { taskListNameAndCount ->
         val itemId = buildNavigationItemId(taskListNameAndCount.id)
         val name = buildDrawerItemName(taskListNameAndCount.name, taskListNameAndCount.count)
-        val item = nav_view.menu.add(R.id.list_groups, itemId, Menu.NONE, name)
-        item.isChecked = taskListNameAndCount.isCurrent
+        menu.add(R.id.list_groups, itemId, Menu.NONE, name)
     }
 }
 

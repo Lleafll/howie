@@ -14,6 +14,6 @@
 
     <group
         android:id="@+id/list_groups"
-        android:checkableBehavior="single" />
+        android:checkableBehavior="none" />
 
 </menu>
