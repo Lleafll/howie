@@ -8,11 +8,15 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 const val CONFIGURE_UPDATE = "com.example.howie.CONFIGURE_UPDATE"
 
 class HowieAppWidgetProvider : AppWidgetProvider() {
     private lateinit var repository: TasksRepository
+    private lateinit var widgetSettingsDao: WidgetSettingsDao
 
     override fun onUpdate(
         context: Context,
@@ -25,9 +29,9 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
             database.getTaskListDao(),
             context.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
         )
-        val repository = WidgetSettingsRepository.getInstance(context)
+        widgetSettingsDao = database.getWidgetSettingsDao()
         appWidgetIds.forEach { appWidgetId ->
-            repository.getWidgetSettings(appWidgetId).asLiveData().observeForever() {
+            widgetSettingsDao.getWidgetSettings(appWidgetId).asLiveData().observeForever {
                 if (it != null) {
                     setupWidget(context, it.taskListId, appWidgetManager, appWidgetId)
                 } else {
@@ -76,8 +80,13 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        val repository = WidgetSettingsRepository.getInstance(context)
-        appWidgetIds.forEach { repository.delete(it) }
+        appWidgetIds.forEach {
+            runBlocking {
+                withContext(Dispatchers.IO) {
+                    widgetSettingsDao.delete(it)
+                }
+            }
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {

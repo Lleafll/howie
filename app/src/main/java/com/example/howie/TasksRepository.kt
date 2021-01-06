@@ -40,10 +40,6 @@ class TasksRepository(
     val taskLists = taskListDao.getAllTaskLists().asLiveData()
     val currentTaskList = switchMap(currentTaskListId) { taskListDao.getTaskList(it).asLiveData() }
     val lastInsertedTaskCategory = MutableLiveData<TaskCategory>()
-    val countCurrentDoTasks = switchMap(currentTaskListId) { countDoTasks(it) }
-    val countCurrentDecideTasks = switchMap(currentTaskListId) { countDecideTasks(it) }
-    val countCurrentDelegateTasks = switchMap(currentTaskListId) { countDelegateTasks(it) }
-    val countCurrentDropTasks = switchMap(currentTaskListId) { countDropTasks(it) }
 
     fun countDoTasks(taskListId: Long) = taskDao.countDoTasks(taskListId).asLiveData()
     fun countDecideTasks(taskListId: Long) = taskDao.countDecideTasks(taskListId).asLiveData()

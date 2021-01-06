@@ -31,7 +31,7 @@ const val TASK_ARCHIVED_RETURN_CODE = 1
 const val TASK_MOVED_RETURN_CODE = 2
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private val viewModel: MainViewModel by viewModels { TaskManagerFactory(application) }
+    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

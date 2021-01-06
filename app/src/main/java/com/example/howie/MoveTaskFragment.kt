@@ -10,7 +10,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 
 class MoveTaskFragment : DialogFragment() {
-    private val viewModel: MoveTaskViewModel by viewModels { TaskManagerFactory(requireActivity().application) }
+    private val viewModel: MoveTaskViewModel by viewModels {
+        MoveTaskViewModelFactory(requireActivity().application)
+    }
     private lateinit var listener: MoveTaskFragmentListener
 
     interface MoveTaskFragmentListener {

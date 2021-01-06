@@ -23,7 +23,7 @@ const val TASK_CATEGORY = "task_category"
 
 class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     MoveTaskFragment.MoveTaskFragmentListener {
-    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(application) }
+    private val viewModel: TaskViewModel by viewModels { TaskViewModelFactory(application) }
     private var taskId: Int? = null
     private var taskLiveData: LiveData<Task>? = null
     private var currentTaskListId: Long? = null  // TODO(Refactor)
@@ -37,12 +37,10 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         supportActionBar?.setDisplayShowTitleEnabled(false)
         taskId = intent.getIntExtra(TASK_ID, -1)
         if (taskId != -1) {
-            taskLiveData = mainViewModel.getTask(taskId!!)
-            taskLiveData!!.observe(this, Observer { task ->
-                setTask(task)
-            })
+            taskLiveData = viewModel.getTask(taskId!!)
+            taskLiveData!!.observe(this, { setTask(it) })
         } else {
-            mainViewModel.currentTaskListId.observeOnce(this, Observer { taskListId ->
+            viewModel.currentTaskListId.observeOnce(this, { taskListId ->
                 currentTaskListId = taskListId
                 val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
                     0 -> Task("", taskListId, Importance.IMPORTANT, LocalDate.now())
@@ -145,7 +143,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             deleteItem.isVisible = true
             moveToTaskList.isVisible = true
             scheduleItem.isVisible = true
-            taskLiveData!!.observe(this, Observer { task ->
+            taskLiveData!!.observe(this, { task ->
                 if (task.archived == null) {
                     archiveItem.isVisible = true
                     unarchiveItem.isVisible = false
@@ -163,19 +161,19 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             taskLiveData?.removeObservers(this)
             val task = buildTaskFromFields()
             task.id = taskId!!
-            mainViewModel.update(task)
+            viewModel.update(task)
             finish()
             true
         }
         R.id.action_save -> {
             val task = buildTaskFromFields()
-            mainViewModel.add(task)
+            viewModel.add(task)
             finish()
             true
         }
         R.id.action_archive -> {
             taskLiveData?.removeObservers(this)
-            mainViewModel.doArchive(taskId!!)
+            viewModel.doArchive(taskId!!)
             val data = buildIntent(TASK_ARCHIVED_RETURN_CODE)
             data.putExtra(ARCHIVED_TASK_CODE, taskId!!)
             finish()
@@ -183,14 +181,14 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
         R.id.action_unarchive -> {
             taskLiveData?.removeObservers(this)
-            mainViewModel.unarchive(taskId!!)
+            viewModel.unarchive(taskId!!)
             finish()
             true
         }
         R.id.action_delete -> {
-            taskLiveData?.observe(this, Observer { task ->
+            taskLiveData?.observe(this, { task ->
                 taskLiveData!!.removeObservers(this)
-                mainViewModel.delete(taskId!!)
+                viewModel.delete(taskId!!)
                 val data = buildIntent(TASK_DELETED_RETURN_CODE)
                 data.putExtra(DELETED_TASK_CODE, task)
                 finish()
@@ -213,7 +211,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 val nextDate = task.schedule.scheduleNext(LocalDate.now())
                 val updatedTask = task.copy(snoozed = nextDate, due = nextDate)
                 updatedTask.id = taskId!!
-                mainViewModel.update(updatedTask)
+                viewModel.update(updatedTask)
                 finish()
             }
             true

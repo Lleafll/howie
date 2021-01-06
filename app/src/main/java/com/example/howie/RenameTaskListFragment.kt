@@ -12,9 +12,7 @@ const val TASK_LIST_ID_ARGUMENT = "taskListId"
 
 class RenameTaskListFragment : DialogFragment() {
     private val viewModel: RenameTaskListViewModel by viewModels {
-        TaskManagerFactory(
-            requireActivity().application
-        )
+        RenameTaskListViewModelFactory(requireActivity().application)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

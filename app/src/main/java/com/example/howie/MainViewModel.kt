@@ -27,22 +27,9 @@ class MainViewModel(application: Application, private val repository: TasksRepos
     }())
 
     val tasks = repository.tasks
-    val doTasks = repository.doTasks
-    val snoozedDoTasks = repository.snoozedDoTasks
-    val decideTasks = repository.decideTasks
-    val snoozedDecideTasks = repository.snoozedDecideTasks
-    val delegateTasks = repository.delegateTasks
-    val snoozedDelegateTasks = repository.snoozedDelegateTasks
-    val dropTasks = repository.dropTasks
-    val snoozedDropTasks = repository.snoozedDropTasks
     val taskLists = repository.taskLists
     val currentTaskList = repository.currentTaskList
     val currentTaskListId = repository.currentTaskListId
-    val lastInsertedTaskCategory = repository.lastInsertedTaskCategory
-    val countCurrentDoTasks = repository.countCurrentDoTasks
-    val countCurrentDecideTasks = repository.countCurrentDecideTasks
-    val countCurrentDelegateTasks = repository.countCurrentDelegateTasks
-    val countCurrentDropTasks = repository.countCurrentDropTasks
 
     fun add(task: Task) = viewModelScope.launch {
         repository.add(task)
@@ -64,8 +51,6 @@ class MainViewModel(application: Application, private val repository: TasksRepos
         repository.delete(id)
     }
 
-    fun getTask(id: Int) = repository.getTask(id)
-
     fun switchToTaskList(newTaskListId: Long) = repository.switchToTaskList(newTaskListId)
 
     fun addTaskList(name: String) = viewModelScope.launch {
@@ -75,9 +60,6 @@ class MainViewModel(application: Application, private val repository: TasksRepos
     fun deleteTaskList(taskListId: Long) = viewModelScope.launch {
         repository.deleteTaskList(taskListId)
     }
-
-    fun getTaskCounts(taskListId: Long) = repository.getTaskCounts(taskListId)
-
 
     fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
         val liveData = MediatorLiveData<List<TaskListNameAndCount>>()

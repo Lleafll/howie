@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_archive.*
 
 class ArchiveActivity : AppCompatActivity() {
-    private val viewModel: ArchiveViewModel by viewModels { TaskManagerFactory(application) }
+    private val viewModel: ArchiveViewModel by viewModels { ArchiveViewModelFactory(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

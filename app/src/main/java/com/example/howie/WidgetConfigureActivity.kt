@@ -7,14 +7,12 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_widget_configure.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 class WidgetConfigureActivity : AppCompatActivity() {
-    private val mainViewModel: MainViewModel by viewModels { TaskManagerFactory(application) }
+    private val viewModel: WidgetConfigureViewModel by viewModels {
+        WidgetConfigureViewModelFactory(application)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,19 +21,10 @@ class WidgetConfigureActivity : AppCompatActivity() {
         val taskListIds = mutableListOf<Long>()
         configureToolbar.setOnMenuItemClickListener {
             if (it.itemId == R.id.action_ok) {
-                lifecycleScope.launch {
-                    val repository = WidgetSettingsRepository.getInstance(applicationContext)
-                    val selectedIndex = taskListSelection.selectedItemPosition
-                    val taskListId = taskListIds[selectedIndex]
-                    val widgetId = getAppWidgetId()
-                    repository.insert(WidgetSettings(widgetId, taskListId))
-                    val widgetSettings = repository.getWidgetSettings(widgetId)
-                    widgetSettings.collect { updatedWidgetSettings ->
-                        if (updatedWidgetSettings != null) {
-                            updateWidget()
-                        }
-                    }
-                }
+                val selectedIndex = taskListSelection.selectedItemPosition
+                val taskListId = taskListIds[selectedIndex]
+                val widgetId = getAppWidgetId()
+                viewModel.insert(WidgetSettings(widgetId, taskListId))
                 val resultValue = buildIntent()
                 setResult(Activity.RESULT_OK, resultValue)
                 finish()
@@ -44,20 +33,21 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(it)
             }
         }
-        mainViewModel.taskLists.observe(this, Observer {
+        viewModel.taskLists.observe(this, {
             val nameList = mutableListOf<String>()
             it.map { taskList -> taskList.name }
             for (taskList in it) {
                 nameList.add(taskList.name)
                 taskListIds.add(taskList.id)
             }
-            val adapter = ArrayAdapter<String>(
+            val adapter = ArrayAdapter(
                 this,
                 android.R.layout.simple_spinner_item,
                 nameList
             )
             taskListSelection.adapter = adapter
         })
+        viewModel.widgetSettings.observe(this, { updateWidget() })
     }
 
     private fun updateWidget() {
