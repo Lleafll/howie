@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.howie.Task
-import com.example.howie.database.TaskList
+import com.example.howie.database.TaskListEntity
 import kotlinx.coroutines.launch
 
 const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
@@ -65,15 +65,15 @@ class MainViewModel(application: Application, private val repository: TasksRepos
 
     fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
         val liveData = MediatorLiveData<List<TaskListNameAndCount>>()
-        var taskLists: List<TaskList>? = null
+        var taskListEntities: List<TaskListEntity>? = null
         var tasks: List<Task>? = null
         val setLiveData = {
-            if (taskLists != null && tasks != null) {
-                liveData.value = getTaskListNameAndCounts(tasks!!, taskLists!!)
+            if (taskListEntities != null && tasks != null) {
+                liveData.value = getTaskListNameAndCounts(tasks!!, taskListEntities!!)
             }
         }
         liveData.addSource(repository.taskLists) {
-            taskLists = it
+            taskListEntities = it
             setLiveData()
         }
         liveData.addSource(repository.tasks) {
@@ -98,9 +98,9 @@ class MainViewModel(application: Application, private val repository: TasksRepos
 
 private fun getTaskListNameAndCounts(
     tasks: List<Task>,
-    tasksLists: List<TaskList>
+    tasksListEntities: List<TaskListEntity>
 ): List<TaskListNameAndCount> {
-    return tasksLists.map { taskList ->
+    return tasksListEntities.map { taskList ->
         TaskListNameAndCount(
             taskList.id,
             taskList.name,

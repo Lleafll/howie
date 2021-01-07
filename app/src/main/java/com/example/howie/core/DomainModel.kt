@@ -12,20 +12,37 @@ data class CategorizedTasks(
     val dropTasks: UnarchivedTasks
 )
 
-class DomainModel(
-    val tasks: List<Task>,
-    val taskLists: List<TaskList>,
-    var currentTaskListId: Long
-) {
-    fun setCurrenTaskList(id: Long) {
+data class TaskCounts(
+    val doCount: Int,
+    val decideCount: Int,
+    val delegateCount: Int,
+    val dropCount: Int
+)
+
+data class TaskListInformation(
+    val name: String,
+    val taskCounts: TaskCounts
+)
+
+class DomainModel(val taskLists: List<TaskList>) {
+    fun getTaskListNames() {
         // TODO: Implement
     }
 
-    fun add(task: Task) {
+    fun getTaskListInformation() {
         // TODO: Implement
     }
 
-    fun update(task: Task) {
+    fun getTaskCounts(taskList: Int) = TaskCounts(
+        // TODO: Implement
+        0, 0, 0, 0
+    )
+
+    fun add(taskList: Int, task: Task) {
+        // TODO: Implement
+    }
+
+    fun update(taskList: Int, task: Task) {
         // TODO: Implement
     }
 
@@ -45,11 +62,7 @@ class DomainModel(
         // TODO: Implement
     }
 
-    fun getCurrentArchivedTasks() {
-        // TODO: Implement
-    }
-
-    fun getCurrentTasks(category: TaskCategory, snoozed: Boolean) = CategorizedTasks(
+    fun getCurrentTasks(taskList: Int) = CategorizedTasks(
         // TODO: Implement
         UnarchivedTasks(listOf(), listOf()),
         UnarchivedTasks(listOf(), listOf()),
@@ -57,16 +70,15 @@ class DomainModel(
         UnarchivedTasks(listOf(), listOf())
     )
 
-    fun getArchive() {
+    fun getArchive(taskList: Int) {
         // TODO: Implement
     }
 
-    fun deleteTaskList(taskListId: Long): Boolean {
-        if (taskListId == 0L) {
+    fun deleteTaskList(taskList: Int): Boolean {
+        if (taskLists.size <= 1) {
             return false
         }
-        currentTaskListId = 0L
-        // TODO: Implement logic
+
         return true
     }
 }

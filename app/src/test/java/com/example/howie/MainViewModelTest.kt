@@ -3,7 +3,7 @@ package com.example.howie
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import com.example.howie.database.TaskList
+import com.example.howie.database.TaskListEntity
 import com.example.howie.ui.MainViewModel
 import com.example.howie.ui.TaskCounts
 import com.example.howie.ui.TaskListNameAndCount
@@ -57,7 +57,10 @@ class MainViewModelTest {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
         val taskManager = MainViewModel(application, repository)
-        every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
+        every { repository.taskLists } returns MutableLiveData(listOf(TaskListEntity(
+            "ABC",
+            123
+        )))
         every { repository.currentTaskListId } returns MutableLiveData(123)
         val taskListNamesAndCounts = taskManager.getTaskListNamesAndCounts()
         taskListNamesAndCounts.observeForever {
@@ -72,8 +75,8 @@ class MainViewModelTest {
         val taskManager = MainViewModel(application, repository)
         every { repository.taskLists } returns MutableLiveData(
             listOf(
-                TaskList("ABC", 123),
-                TaskList("DEF", 456)
+                TaskListEntity("ABC", 123),
+                TaskListEntity("DEF", 456)
             )
         )
         every { repository.currentTaskListId } returns MutableLiveData(123)
@@ -93,7 +96,10 @@ class MainViewModelTest {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
         val taskManager = MainViewModel(application, repository)
-        every { repository.taskLists } returns MutableLiveData(listOf(TaskList("ABC", 123)))
+        every { repository.taskLists } returns MutableLiveData(listOf(TaskListEntity(
+            "ABC",
+            123
+        )))
         every { repository.currentTaskListId } returns MutableLiveData(123)
         every { repository.tasks } returns MutableLiveData(
             listOf(

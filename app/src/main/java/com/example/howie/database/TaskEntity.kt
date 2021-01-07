@@ -43,9 +43,9 @@ class Converters {
 }
 
 @Parcelize
-@Entity
+@Entity(tableName = "Task")
 @TypeConverters(Converters::class)
-data class Task(
+data class TaskEntity(
     val name: String,
     val taskListId: Long,
     val importance: Importance = Importance.IMPORTANT,

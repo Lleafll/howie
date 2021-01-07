@@ -6,9 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.howie.database.TaskListDao
+import com.example.howie.TaskEntity
+import com.example.howie.core.TaskList
 
-@Database(version = 11, entities = (arrayOf(Task::class, TaskList::class, WidgetSettings::class)))
+@Database(
+    version = 11,
+    entities = (arrayOf(TaskEntity::class, TaskListEntity::class, WidgetSettings::class))
+)
 abstract class TasksDatabase : RoomDatabase() {
     abstract fun getTaskDao(): TaskDao
     abstract fun getTaskListDao(): TaskListDao
@@ -104,3 +108,18 @@ private val atLeastOneTaskListCallback = object : RoomDatabase.Callback() {
         database.execSQL("INSERT OR IGNORE INTO TaskList (id, name) VALUES (0, 'Tasks')")
     }
 }
+
+data class DatabaseModel(
+    val taskEntities: List<TaskEntity>,
+    val taskListEntities: List<TaskListEntity>
+)
+
+fun List<TaskList>.toDatabaseModel() = DatabaseModel(
+    // TODO: Implement
+    listOf(),
+    listOf()
+)
+
+fun DatabaseModel.toDomainModel() = listOf<TaskList>(
+    // TODO: Implement
+)
