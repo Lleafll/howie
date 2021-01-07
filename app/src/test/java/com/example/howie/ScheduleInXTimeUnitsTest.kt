@@ -1,5 +1,8 @@
 package com.example.howie
 
+import com.example.howie.core.ScheduleInXTimeUnits
+import com.example.howie.core.TimeUnit
+import com.example.howie.core.scheduleNext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".TaskActivity">
+    tools:context=".ui.TaskActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -165,7 +165,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/scheduleSwitch" />
 
-            <com.example.howie.ScheduleView
+            <com.example.howie.ui.ScheduleView
                 android:id="@+id/schedule_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

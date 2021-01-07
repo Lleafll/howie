@@ -1,5 +1,6 @@
 package com.example.howie
 
+import com.example.howie.core.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

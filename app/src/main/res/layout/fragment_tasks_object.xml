@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".TasksTabFragment">
+    tools:context=".ui.TasksTabFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.example.howie.ExpandableTasksView
+        <com.example.howie.ui.ExpandableTasksView
             android:id="@+id/unsnoozed_tasks_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.example.howie.ExpandableTasksView
+        <com.example.howie.ui.ExpandableTasksView
             android:id="@+id/snoozed_tasks_view"
             android:name="com.example.howie.ExpandableTasksView"
             android:layout_width="match_parent"

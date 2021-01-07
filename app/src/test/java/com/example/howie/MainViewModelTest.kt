@@ -3,6 +3,11 @@ package com.example.howie
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
+import com.example.howie.database.TaskList
+import com.example.howie.ui.MainViewModel
+import com.example.howie.ui.TaskCounts
+import com.example.howie.ui.TaskListNameAndCount
+import com.example.howie.ui.TasksRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.every

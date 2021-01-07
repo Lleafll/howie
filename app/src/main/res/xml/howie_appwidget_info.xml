@@ -1,5 +1,5 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/howie_appwidget"
     android:resizeMode="horizontal|vertical"
-    android:configure="com.example.howie.WidgetConfigureActivity"
+    android:configure="com.example.howie.widget.WidgetConfigureActivity"
     android:widgetCategory="home_screen" />
