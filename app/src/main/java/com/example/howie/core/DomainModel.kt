@@ -25,12 +25,12 @@ data class TaskListInformation(
 )
 
 class DomainModel(val taskLists: List<TaskList>) {
-    fun getTaskListNames() {
-        // TODO: Implement
+    fun getTaskListNames(): List<String> {
+        TODO("Implement")
     }
 
-    fun getTaskListInformation() {
-        // TODO: Implement
+    fun getTaskListInformation(taskList: Int): TaskListInformation {
+        TODO("Implement")
     }
 
     fun getTaskCounts(taskList: Int) = TaskCounts(

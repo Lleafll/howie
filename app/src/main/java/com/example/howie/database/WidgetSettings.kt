@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class WidgetSettings(
     @PrimaryKey
     val widgetId: Int,
-    val taskListId: Long
+    val taskListId: Int
 )

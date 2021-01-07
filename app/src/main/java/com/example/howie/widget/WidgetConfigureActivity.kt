@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.howie.CONFIGURE_UPDATE
-import com.example.howie.HowieAppWidgetProvider
 import com.example.howie.R
-import com.example.howie.database.WidgetSettings
 import kotlinx.android.synthetic.main.activity_widget_configure.*
 
 class WidgetConfigureActivity : AppCompatActivity() {
@@ -22,13 +19,11 @@ class WidgetConfigureActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_widget_configure)
         setResultToCanceled()
-        val taskListIds = mutableListOf<Long>()
         configureToolbar.setOnMenuItemClickListener {
             if (it.itemId == R.id.action_ok) {
                 val selectedIndex = taskListSelection.selectedItemPosition
-                val taskListId = taskListIds[selectedIndex]
                 val widgetId = getAppWidgetId()
-                viewModel.insert(WidgetSettings(widgetId, taskListId))
+                viewModel.insert(widgetId, selectedIndex)
                 val resultValue = buildIntent()
                 setResult(Activity.RESULT_OK, resultValue)
                 finish()
@@ -37,20 +32,12 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(it)
             }
         }
-        viewModel.taskLists.observe(this, {
-            val nameList = mutableListOf<String>()
-            it.map { taskList -> taskList.name }
-            for (taskList in it) {
-                nameList.add(taskList.name)
-                taskListIds.add(taskList.id)
-            }
-            val adapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                nameList
-            )
-            taskListSelection.adapter = adapter
-        })
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            viewModel.taskListNames
+        )
+        taskListSelection.adapter = adapter
         viewModel.widgetSettings.observe(this, { updateWidget() })
     }
 

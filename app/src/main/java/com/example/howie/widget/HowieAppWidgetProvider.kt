@@ -8,7 +8,12 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import androidx.lifecycle.asLiveData
+import com.example.howie.R
 import com.example.howie.database.WidgetSettingsDao
+import com.example.howie.database.getDatabase
+import com.example.howie.ui.MainActivity
+import com.example.howie.ui.SHOW_TASK_LIST_EXTRA
+import com.example.howie.ui.TasksRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -24,12 +29,8 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        val database = TasksDatabaseSingleton.getDatabase(context)
-        repository = TasksRepository(
-            database.getTaskDao(),
-            database.getTaskListDao(),
-            context.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-        )
+        val database = getDatabase(context)
+        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
         widgetSettingsDao = database.getWidgetSettingsDao()
         appWidgetIds.forEach { appWidgetId ->
             widgetSettingsDao.getWidgetSettings(appWidgetId).asLiveData().observeForever {
@@ -55,27 +56,24 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
 
     private fun setupWidget(
         context: Context,
-        taskListId: Long,
+        taskListIndex: Int,
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int
     ) {
         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java).let { intent ->
-            intent.putExtra(SHOW_TASK_LIST_EXTRA, taskListId)
-            PendingIntent.getActivity(
-                context, taskListId.toInt(), intent, 0
-            )
+            intent.putExtra(SHOW_TASK_LIST_EXTRA, taskListIndex)
+            PendingIntent.getActivity(context, taskListIndex, intent, 0)
         }
         RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
             setOnClickPendingIntent(R.id.background, pendingIntent)
-            repository.getTaskCounts(taskListId).observeForever { taskCounts ->
+            repository.getTaskListInformation(taskListIndex).let { taskListInfo ->
+                val taskCounts = taskListInfo.taskCounts
                 setTextViewText(R.id.doTextView, toText(taskCounts.doCount))
                 setTextViewText(R.id.decideTextView, toText(taskCounts.decideCount))
                 setTextViewText(R.id.delegateTextView, toText(taskCounts.delegateCount))
                 setTextViewText(R.id.dropTextView, toText(taskCounts.dropCount))
-                repository.getTaskList(taskListId).observeForever { taskList ->
-                    setTextViewText(R.id.nameTextView, taskList.name)
-                    appWidgetManager.updateAppWidget(appWidgetId, this)
-                }
+                setTextViewText(R.id.nameTextView, taskListInfo.name)
+                appWidgetManager.updateAppWidget(appWidgetId, this)
             }
         }
     }
@@ -91,7 +89,7 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == DATABASE_UPDATE || intent.action == CONFIGURE_UPDATE) {
+        if (intent.action == CONFIGURE_UPDATE) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val appWidgetIds = appWidgetManager.getAppWidgetIds(
                 ComponentName(context, HowieAppWidgetProvider::class.java)
