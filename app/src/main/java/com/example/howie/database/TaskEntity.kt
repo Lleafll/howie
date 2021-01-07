@@ -1,12 +1,9 @@
 package com.example.howie
 
-import android.os.Parcelable
 import androidx.room.*
 import com.example.howie.core.Importance
 import com.example.howie.core.Schedule
 import com.example.howie.core.TimeUnit
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -42,7 +39,7 @@ class Converters {
     fun toInt(dayOfWeek: DayOfWeek) = dayOfWeek.ordinal
 }
 
-@Parcelize
+
 @Entity(tableName = "Task")
 @TypeConverters(Converters::class)
 data class TaskEntity(
@@ -54,8 +51,7 @@ data class TaskEntity(
     @Embedded(prefix = "schedule") val schedule: Schedule? = null,
     val completed: LocalDate? = null,
     val archived: LocalDate? = null
-) : Parcelable {
-    @IgnoredOnParcel
+) {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }

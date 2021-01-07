@@ -40,6 +40,7 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
     viewModel.archive.observe(this, {
         taskAdapter.submitList(it)
     })
+    viewModel.refreshArchive()
 }
 
 private fun ArchiveActivity.setupToolbar() {

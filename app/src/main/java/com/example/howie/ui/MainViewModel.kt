@@ -1,13 +1,13 @@
 package com.example.howie.ui
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.howie.Task
-import com.example.howie.database.TaskListEntity
+import com.example.howie.core.Task
+import com.example.howie.core.TaskCounts
+import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
 
 const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
@@ -22,65 +22,45 @@ class MainViewModel(application: Application, private val repository: TasksRepos
     AndroidViewModel(application) {
 
     constructor(application: Application) : this(application, {
-        val database = TasksDatabaseSingleton.getDatabase(application.applicationContext)
-        val preferences =
-            application.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-        TasksRepository(database.getTaskDao(), database.getTaskListDao(), preferences)
+        val database = getDatabase(application.applicationContext)
+        TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }())
 
-    val tasks = repository.tasks
-    val taskLists = repository.taskLists
-    val currentTaskList = repository.currentTaskList
-    val currentTaskListId = repository.currentTaskListId
+    var currentTaskList = 0
+        set(value) {
+            field = value
+            // TODO: Implement
+        }
+    private val _currentTaskListName = MutableLiveData<String>()
+    val currentTaskListName: LiveData<String> by this::_currentTaskListName
 
-    fun add(task: Task) = viewModelScope.launch {
-        repository.add(task)
-    }
-
-    fun update(task: Task) = viewModelScope.launch {
-        repository.update(task)
+    fun addTask(task: Task) = viewModelScope.launch {
+        // TODO: Implement
     }
 
     fun doArchive(id: Int) = viewModelScope.launch {
-        repository.doArchive(id)
+        // TODO: Implement
     }
 
     fun unarchive(id: Int) = viewModelScope.launch {
-        repository.unarchive(id)
+        // TODO: Implement
     }
 
     fun delete(id: Int) = viewModelScope.launch {
-        repository.delete(id)
+        // TODO: Implement
     }
-
-    fun switchToTaskList(newTaskListId: Long) = repository.switchToTaskList(newTaskListId)
 
     fun addTaskList(name: String) = viewModelScope.launch {
-        repository.addTaskList(name)
+        // TODO: Implement
     }
 
-    fun deleteTaskList(taskListId: Long) = viewModelScope.launch {
-        repository.deleteTaskList(taskListId)
+    fun deleteTaskList(taskList: Int) = viewModelScope.launch {
+        // TODO: Implement
     }
 
     fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
-        val liveData = MediatorLiveData<List<TaskListNameAndCount>>()
-        var taskListEntities: List<TaskListEntity>? = null
-        var tasks: List<Task>? = null
-        val setLiveData = {
-            if (taskListEntities != null && tasks != null) {
-                liveData.value = getTaskListNameAndCounts(tasks!!, taskListEntities!!)
-            }
-        }
-        liveData.addSource(repository.taskLists) {
-            taskListEntities = it
-            setLiveData()
-        }
-        liveData.addSource(repository.tasks) {
-            tasks = it
-            setLiveData()
-        }
-        return liveData
+        // TODO: Implement
+        return MutableLiveData()
     }
 
     companion object {
@@ -95,31 +75,3 @@ class MainViewModel(application: Application, private val repository: TasksRepos
         }
     }
 }
-
-private fun getTaskListNameAndCounts(
-    tasks: List<Task>,
-    tasksListEntities: List<TaskListEntity>
-): List<TaskListNameAndCount> {
-    return tasksListEntities.map { taskList ->
-        TaskListNameAndCount(
-            taskList.id,
-            taskList.name,
-            getTaskCounts(tasks.filter { task ->
-                task.archived == null
-            }, taskList.id)
-        )
-    }
-}
-
-private fun getTaskCounts(tasks: List<Task>, taskListId: Long) =
-    getTaskCounts(tasks.filter { it.taskListId == taskListId })
-
-private fun getTaskCounts(tasks: List<Task>) = TaskCounts(
-    count(tasks, TaskCategory.DO),
-    count(tasks, TaskCategory.DECIDE),
-    count(tasks, TaskCategory.DELEGATE),
-    count(tasks, TaskCategory.DROP),
-)
-
-private fun count(tasks: List<Task>, category: TaskCategory) =
-    tasks.count { taskCategory(it) == category }

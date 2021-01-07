@@ -14,7 +14,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.howie.R
-import com.example.howie.Task
+import com.example.howie.core.Task
+import com.example.howie.core.TaskCounts
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -23,7 +24,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
 const val SHOW_TASK_LIST_EXTRA = "showTaskList"
-const val DATABASE_UPDATE = "com.example.howie.ui.DATABASE_UPDATE"
 const val TASK_REQUEST_CODE = 1
 const val TASK_RETURN_CODE = "TaskReturnCode"
 const val DELETED_TASK_CODE = "DeletedTask"
@@ -42,23 +42,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupToolBar()
         setupDrawer(findViewById(R.id.drawer_layout), viewModel)
         setupColors()
-        broadcastDatabaseChanges(viewModel)  // This is hacky but the best way to update the widgets
     }
 
     private fun setupToolBar() {
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_show_archive -> {
-                    val intent = Intent(applicationContext, ArchiveActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(applicationContext, ArchiveActivity::class.java))
                     true
                 }
                 R.id.action_rename -> {
-                    onRenameClick(viewModel)
+                    openRenameTaskListFragment(viewModel.currentTaskList)
                     true
                 }
                 R.id.action_delete -> {
-                    onDeleteClick(viewModel)
+                    openDeleteTaskListDialog(viewModel)
                     true
                 }
                 else -> {
@@ -66,16 +64,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-        viewModel.currentTaskList.observe(this, {
-            toolbar.title = it.name
+        viewModel.currentTaskListName.observe(this, {
+            toolbar.title = it
         })
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val taskListId = intent.getLongExtra(SHOW_TASK_LIST_EXTRA, -1L)
-        if (taskListId != -1L) {
-            viewModel.switchToTaskList(taskListId)
+        val taskList = intent.getIntExtra(SHOW_TASK_LIST_EXTRA, -1)
+        if (taskList != -1) {
+            viewModel.currentTaskList = taskList
         }
     }
 
@@ -83,8 +81,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId == R.id.action_add_list) {
             viewModel.addTaskList("New Task List")
         } else {
-            val taskListId = item.itemId - R.id.action_add_list - 1
-            viewModel.switchToTaskList(taskListId.toLong())
+            val taskList = item.itemId - R.id.action_add_list - 1
+            viewModel.currentTaskList = taskList
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
@@ -141,13 +139,6 @@ private fun buildDrawerContent(
     }
 }
 
-private fun MainActivity.broadcastDatabaseChanges(mainViewModel: MainViewModel) {
-    mainViewModel.tasks.observe(this, {
-        val intent = Intent(DATABASE_UPDATE, null, this, HowieAppWidgetProvider::class.java)
-        sendBroadcast(intent)
-    })
-}
-
 private fun MainActivity.setupTaskButton(button: FloatingActionButton, tabLayout: TabLayout) {
     button.setOnClickListener {
         val intent = Intent(applicationContext, TaskActivity::class.java)
@@ -192,7 +183,7 @@ private fun handleTaskActivityReturn(
             snackbar.setAction("UNDO") {
                 val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
                     ?: throw Exception("Deleted task missing from returned intent")
-                mainViewModel.add(task)
+                mainViewModel.addTask(task)
             }
         }
         TASK_ARCHIVED_RETURN_CODE -> {
@@ -219,27 +210,23 @@ private fun MainActivity.setupColors() {
     }
 }
 
-private fun MainActivity.onRenameClick(mainViewModel: MainViewModel) {
-    mainViewModel.currentTaskListId.observeOnce(this, { taskListId ->
-        val dialog = RenameTaskListFragment()
-        val arguments = Bundle()
-        arguments.putLong(TASK_LIST_ID_ARGUMENT, taskListId)
-        dialog.arguments = arguments
-        dialog.show(supportFragmentManager, "renameTask")
-    })
+private fun MainActivity.openRenameTaskListFragment(taskList: Int) {
+    val dialog = RenameTaskListFragment()
+    val arguments = Bundle()
+    arguments.putInt(TASK_LIST_ID_ARGUMENT, taskList)
+    dialog.arguments = arguments
+    dialog.show(supportFragmentManager, "renameTask")
 }
 
-private fun MainActivity.onDeleteClick(mainViewModel: MainViewModel) {
-    mainViewModel.currentTaskListId.observeOnce(this, { taskListId ->
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("Delete Task List?")
-            .setPositiveButton("Yes") { _, _ ->
-                mainViewModel.deleteTaskList(taskListId)
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-        val alert = builder.create()
-        alert.show()
-    })
+private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) {
+    val builder = AlertDialog.Builder(this)
+    builder.setMessage("Delete Task List?")
+        .setPositiveButton("Yes") { _, _ ->
+            mainViewModel.deleteTaskList(mainViewModel.currentTaskList)
+        }
+        .setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+    val alert = builder.create()
+    alert.show()
 }
