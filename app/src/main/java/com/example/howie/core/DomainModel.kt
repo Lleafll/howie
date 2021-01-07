@@ -38,7 +38,7 @@ class DomainModel(val taskLists: List<TaskList>) {
         0, 0, 0, 0
     )
 
-    fun add(taskList: Int, task: Task) {
+    fun addTask(taskList: Int, task: Task) {
         // TODO: Implement
     }
 
@@ -54,7 +54,7 @@ class DomainModel(val taskLists: List<TaskList>) {
         // TODO: Implement
     }
 
-    fun delete(id: Int) {
+    fun deleteTask(id: Int) {
         // TODO: Implement
     }
 
@@ -78,7 +78,11 @@ class DomainModel(val taskLists: List<TaskList>) {
         if (taskLists.size <= 1) {
             return false
         }
-
+        // TODO: Implement
         return true
+    }
+
+    fun getTask(taskListIndex: Int, taskIndex: Int): Task {
+        TODO("Not yet implemented")
     }
 }

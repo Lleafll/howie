@@ -11,10 +11,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.LiveData
 import com.example.howie.R
-import com.example.howie.Task
+import com.example.howie.core.Importance
 import com.example.howie.core.Schedule
+import com.example.howie.core.Task
 import com.example.howie.core.scheduleNext
 import kotlinx.android.synthetic.main.activity_task.*
 import java.time.LocalDate
@@ -26,10 +26,14 @@ const val TASK_CATEGORY = "task_category"
 
 class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     MoveTaskFragment.MoveTaskFragmentListener {
+
+    companion object {
+        const val TASK_LIST_INDEX = "currentTaskListId"
+    }
+
     private val viewModel: TaskViewModel by viewModels { TaskViewModelFactory(application) }
     private var taskId: Int? = null
-    private var taskLiveData: LiveData<Task>? = null
-    private var currentTaskListId: Long? = null  // TODO(Refactor)
+    private var task: Task? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,24 +42,26 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        val taskListIndex = intent.getIntExtra(TASK_LIST_INDEX, -1)
+        if (taskListIndex == -1) {
+            error("No TASK_LIST_INDEX passed to $this")
+        }
+        viewModel.taskList = taskListIndex
         taskId = intent.getIntExtra(TASK_ID, -1)
         if (taskId != -1) {
-            taskLiveData = viewModel.getTask(taskId!!)
-            taskLiveData!!.observe(this, { setTask(it) })
+            task = viewModel.getTask(taskId!!)
+            setTask(task!!)
         } else {
-            viewModel.currentTaskListId.observeOnce(this, { taskListId ->
-                currentTaskListId = taskListId
-                val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
-                    0 -> Task("", taskListId, Importance.IMPORTANT, LocalDate.now())
-                    1 -> Task("", taskListId)
-                    2 -> Task("", taskListId, Importance.UNIMPORTANT, LocalDate.now())
-                    3 -> Task("", taskListId, Importance.UNIMPORTANT)
-                    else -> Task("", taskListId, Importance.IMPORTANT)
-                }
-                setTask(task)
-                taskNameEditText.requestFocus()
-                window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-            })
+            val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
+                0 -> Task("", Importance.IMPORTANT, LocalDate.now())
+                1 -> Task("")
+                2 -> Task("", Importance.UNIMPORTANT, LocalDate.now())
+                3 -> Task("", Importance.UNIMPORTANT)
+                else -> Task("", Importance.IMPORTANT)
+            }
+            setTask(task)
+            taskNameEditText.requestFocus()
+            window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             snoozedTextDate.isVisible = isChecked
@@ -116,7 +122,6 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
 
     private fun buildTaskFromFields() = Task(
         taskNameEditText.text.toString(),
-        currentTaskListId ?: 0,
         if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
         readDate(dueSwitch, dueTextDate),
         readDate(snoozeSwitch, snoozedTextDate),
@@ -132,7 +137,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         val deleteItem = menu.findItem(R.id.action_delete)
         val moveToTaskList = menu.findItem(R.id.action_move_to_different_list)
         val scheduleItem = menu.findItem(R.id.action_schedule)
-        if (taskLiveData == null) {
+        if (task == null) {
             saveItem.isVisible = true
             updateItem.isVisible = false
             deleteItem.isVisible = false
@@ -146,36 +151,31 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             deleteItem.isVisible = true
             moveToTaskList.isVisible = true
             scheduleItem.isVisible = true
-            taskLiveData!!.observe(this, { task ->
-                if (task.archived == null) {
-                    archiveItem.isVisible = true
-                    unarchiveItem.isVisible = false
-                } else {
-                    archiveItem.isVisible = false
-                    unarchiveItem.isVisible = true
-                }
-            })
+            if (task!!.archived == null) {
+                archiveItem.isVisible = true
+                unarchiveItem.isVisible = false
+            } else {
+                archiveItem.isVisible = false
+                unarchiveItem.isVisible = true
+            }
         }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_update -> {
-            taskLiveData?.removeObservers(this)
             val task = buildTaskFromFields()
-            task.id = taskId!!
-            viewModel.update(task)
+            viewModel.updateTask(task)
             finish()
             true
         }
         R.id.action_save -> {
             val task = buildTaskFromFields()
-            viewModel.add(task)
+            viewModel.addTask(task)
             finish()
             true
         }
         R.id.action_archive -> {
-            taskLiveData?.removeObservers(this)
             viewModel.doArchive(taskId!!)
             val data = buildIntent(TASK_ARCHIVED_RETURN_CODE)
             data.putExtra(ARCHIVED_TASK_CODE, taskId!!)
@@ -183,23 +183,18 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             true
         }
         R.id.action_unarchive -> {
-            taskLiveData?.removeObservers(this)
             viewModel.unarchive(taskId!!)
             finish()
             true
         }
         R.id.action_delete -> {
-            taskLiveData?.observe(this, { task ->
-                taskLiveData!!.removeObservers(this)
-                viewModel.delete(taskId!!)
-                val data = buildIntent(TASK_DELETED_RETURN_CODE)
-                data.putExtra(DELETED_TASK_CODE, task)
-                finish()
-            })
+            viewModel.deleteTask(taskId!!)
+            val data = buildIntent(TASK_DELETED_RETURN_CODE)
+            data.putExtra(DELETED_TASK_CODE, task)
+            finish()
             true
         }
         R.id.action_move_to_different_list -> {
-            taskLiveData?.removeObservers(this)
             val dialog = MoveTaskFragment()
             val arguments = Bundle()
             arguments.putInt("taskId", taskId!!)
@@ -210,11 +205,9 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         R.id.action_schedule -> {
             val task = buildTaskFromFields()
             if (task.schedule != null) {
-                taskLiveData?.removeObservers(this)
                 val nextDate = task.schedule.scheduleNext(LocalDate.now())
                 val updatedTask = task.copy(snoozed = nextDate, due = nextDate)
-                updatedTask.id = taskId!!
-                viewModel.update(updatedTask)
+                viewModel.updateTask(updatedTask)
                 finish()
             }
             true

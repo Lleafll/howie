@@ -16,7 +16,7 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     fun getTaskCounts(taskList: Int) = _domainModel.getTaskCounts(taskList)
 
-    fun getArchive =
+    fun getTask(taskListIndex: Int, taskIndex: Int) = _domainModel.getTask(taskListIndex, taskIndex)
 
     suspend fun deleteTaskList(position: Int) {
         if (_domainModel.deleteTaskList(position)) {

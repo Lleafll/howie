@@ -1,43 +1,41 @@
 package com.example.howie.ui
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.howie.Task
+import com.example.howie.core.Task
+import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: TasksRepository
+    var taskList by Delegates.notNull<Int>()
 
     init {
-        val database = TasksDatabaseSingleton.getDatabase(application.applicationContext)
-        val preferences =
-            application.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao(), preferences)
+        val database = getDatabase(application.applicationContext)
+        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }
 
-    val currentTaskListId = repository.currentTaskListId
+    fun getTask(task: Int) = repository.getTask(taskList, task)
 
-    fun getTask(id: Int) = repository.getTask(id)
-
-    fun update(task: Task) = viewModelScope.launch {
-        repository.update(task)
+    fun updateTask(task: Task) = viewModelScope.launch {
+        // TODO: Implement
     }
 
-    fun add(task: Task) = viewModelScope.launch {
-        repository.add(task)
+    fun addTask(task: Task) = viewModelScope.launch {
+        // TODO: Implement
     }
 
-    fun doArchive(id: Int) = viewModelScope.launch {
-        repository.doArchive(id)
+    fun doArchive(task: Int) = viewModelScope.launch {
+        // TODO: Implement
     }
 
-    fun unarchive(id: Int) = viewModelScope.launch {
-        repository.unarchive(id)
+    fun unarchive(task: Int) = viewModelScope.launch {
+        // TODO: Implement
     }
 
-    fun delete(id: Int) = viewModelScope.launch {
-        repository.delete(id)
+    fun deleteTask(task: Int) = viewModelScope.launch {
+        // TODO: Implement
     }
 }
