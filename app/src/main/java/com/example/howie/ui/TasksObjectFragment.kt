@@ -23,7 +23,7 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val taskList = requireArguments().getInt(TASK_LIST_ARGUMENT, -1)
         if (taskList == -1) {
-            error("${TASK_LIST_ARGUMENT::class} not set in $this")
+            error("${::TASK_LIST_ARGUMENT.name} not set in $this")
         }
         val position = requireArguments().getInt(POSITION_ARGUMENT, -1)
         viewModel.initialize(taskList, position)
