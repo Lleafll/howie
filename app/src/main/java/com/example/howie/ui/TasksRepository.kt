@@ -1,18 +1,27 @@
 package com.example.howie.ui
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.howie.core.DomainModel
 import com.example.howie.core.TaskCategory
 import com.example.howie.database.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: TaskListDao) {
-    private val _domainModel: DomainModel
+    private lateinit var _domainModel: DomainModel
+    private val _isLoaded = MutableLiveData<Boolean>(false)
+    val isLoaded: LiveData<Boolean> by this::_isLoaded
 
     init {
-        val taskLists =
-            DatabaseModel(_taskDao.getAll(), _taskListDao.getAllTaskLists()).toDomainModel()
-        _domainModel = DomainModel(taskLists)
+        GlobalScope.launch(Dispatchers.IO) {
+            val taskLists =
+                DatabaseModel(_taskDao.getAll(), _taskListDao.getAllTaskLists()).toDomainModel()
+            _domainModel = DomainModel(taskLists)
+            _isLoaded.postValue(true)
+        }
     }
 
     fun getTaskCounts(taskList: Int) = _domainModel.getTaskCounts(taskList)
