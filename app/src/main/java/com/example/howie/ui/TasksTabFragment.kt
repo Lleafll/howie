@@ -10,6 +10,10 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
+    companion object {
+        const val TASK_LIST_ARGUMENT = "taskListIndex"
+    }
+
     private val viewModel: TasksTabViewModel by viewModels {
         TasksTabViewModelFactory(requireActivity().application)
     }
@@ -19,20 +23,15 @@ class TasksTabFragment : Fragment(R.layout.fragment_tasks_tab) {
         viewPager.adapter = TasksTabAdapter(this)
         val tabLayout: TabLayout = view.findViewById(R.id.tab_layout)
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
-        viewModel.counts.observe(viewLifecycleOwner, {
-            setTab(0, it.doCount, tabLayout, "Do")
-            setTab(1, it.decideCount, tabLayout, "Decide")
-            setTab(2, it.delegateCount, tabLayout, "Delegate")
-            setTab(3, it.dropCount, tabLayout, "Drop")
-        })
-        viewModel.lastInsertedTaskCategory.observe(viewLifecycleOwner, {
-            tabLayout.getTabAt(it.ordinal)?.select()
-        })
+        viewModel.labels.observe(viewLifecycleOwner) { labels ->
+            setTab(0, tabLayout, labels.label0)
+            setTab(1, tabLayout, labels.label1)
+            setTab(2, tabLayout, labels.label2)
+            setTab(3, tabLayout, labels.label3)
+        }
     }
+}
 
-
-    private fun setTab(position: Int, taskCount: Int, tabLayout: TabLayout, lowerText: String) {
-        val upperText = if (taskCount != 0) taskCount.toString() else "✓"
-        tabLayout.getTabAt(position)!!.text = "$upperText\n$lowerText"
-    }
+private fun setTab(position: Int, tabLayout: TabLayout, text: String) {
+    tabLayout.getTabAt(position)!!.text = text
 }
