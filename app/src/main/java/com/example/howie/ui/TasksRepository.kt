@@ -1,6 +1,7 @@
 package com.example.howie.ui
 
 import com.example.howie.core.DomainModel
+import com.example.howie.core.TaskCategory
 import com.example.howie.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,6 +22,9 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
     fun getTaskListNames() = _domainModel.getTaskListNames()
 
     fun getTaskListInformation(taskList: Int) = _domainModel.getTaskListInformation(taskList)
+
+    fun getUnarchivedTasks(taskList: Int, category: TaskCategory) =
+        _domainModel.getUnarchivedTasks(taskList, category)
 
     suspend fun deleteTaskList(position: Int) {
         if (_domainModel.deleteTaskList(position)) {

@@ -1,25 +1,38 @@
 package com.example.howie.ui
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.example.howie.core.TaskCategory
+import com.example.howie.core.UnarchivedTasks
+import com.example.howie.database.getDatabase
+import kotlin.properties.Delegates
 
 class TasksObjectViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: TasksRepository
+    private val _repository: TasksRepository
 
     init {
-        val database = TasksDatabaseSingleton.getDatabase(application.applicationContext)
-        val preferences =
-            application.getSharedPreferences(HOWIE_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao(), preferences)
+        val database = getDatabase(application.applicationContext)
+        _repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }
-    
-    val doTasks = repository.doTasks
-    val snoozedDoTasks = repository.snoozedDoTasks
-    val decideTasks = repository.decideTasks
-    val snoozedDecideTasks = repository.snoozedDecideTasks
-    val delegateTasks = repository.delegateTasks
-    val snoozedDelegateTasks = repository.snoozedDelegateTasks
-    val dropTasks = repository.dropTasks
-    val snoozedDropTasks = repository.snoozedDropTasks
+
+    private var _taskList by Delegates.notNull<Int>()
+    private var _category by Delegates.notNull<Int>()
+    private var _tasks = MutableLiveData<UnarchivedTasks>()
+    val tasks: LiveData<UnarchivedTasks> by this::_tasks
+
+    fun initialize(taskList: Int, category: Int) {
+        _taskList = taskList
+        _category = category
+        refreshTasks()
+    }
+
+    private fun refreshTasks() {
+        _tasks.value = _repository.getUnarchivedTasks(_taskList, TaskCategory.values()[_category])
+    }
+
+    fun snoozeToTomorrow(task: Int) {
+        TODO("Implement")
+    }
 }

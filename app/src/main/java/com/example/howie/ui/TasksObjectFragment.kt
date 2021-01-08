@@ -4,14 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import com.example.howie.R
 import com.example.howie.core.Task
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
     companion object {
+        const val TASK_LIST_ARGUMENT = "taskListIndex"
         const val POSITION_ARGUMENT = "position"
     }
 
@@ -20,46 +21,70 @@ class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val position = requireArguments().getInt(POSITION_ARGUMENT, 4)
-        val unsnoozedTasks = when (position) {
-            0 -> viewModel.doTasks
-            1 -> viewModel.decideTasks
-            2 -> viewModel.delegateTasks
-            3 -> viewModel.dropTasks
-            else -> error("$this: invalid tab position required")
+        val taskList = requireArguments().getInt(TASK_LIST_ARGUMENT, -1)
+        if (taskList == -1) {
+            error("${TASK_LIST_ARGUMENT::class} not set in $this")
         }
-        val snoozedTasks = when (position) {
-            0 -> viewModel.snoozedDoTasks
-            1 -> viewModel.snoozedDecideTasks
-            2 -> viewModel.snoozedDelegateTasks
-            3 -> viewModel.snoozedDropTasks
-            else -> error("$this: invalid tab position required")
-        }
-        setupView(unsnoozed_tasks_view, unsnoozedTasks, "Tasks", true)
-        setupView(snoozed_tasks_view, snoozedTasks, "Snoozed Tasks", false)
-    }
-
-    private fun setupView(
-        view: ExpandableTasksView,
-        tasks: LiveData<List<Task>>,
-        headerText: String,
-        defaultExpandState: Boolean
-    ) {
-        view.setHeaderText(headerText)
-        val taskAdapter = TaskAdapter {
-            val intent = Intent(requireActivity().applicationContext, TaskActivity::class.java)
-            intent.putExtra(TASK_ID, it)
-            requireActivity().startActivityForResult(intent, TASK_REQUEST_CODE)
-        }
-        view.setAdapter(taskAdapter)
-        tasks.observe(viewLifecycleOwner, {
-            if (it.isEmpty()) {
-                view.visibility = View.GONE
-            } else {
-                view.visibility = View.VISIBLE
-                view.setExpanded(defaultExpandState)
-                it.let { taskAdapter.submitList(it) }
-            }
-        })
+        val position = requireArguments().getInt(POSITION_ARGUMENT, -1)
+        viewModel.initialize(taskList, position)
+        setupViews(viewModel, requireActivity())
     }
 }
+
+private fun TasksObjectFragment.setupViews(
+    viewModel: TasksObjectViewModel,
+    activity: FragmentActivity
+) {
+    unsnoozed_tasks_view.setHeaderText("Tasks")
+    snoozed_tasks_view.setHeaderText("Snoozed Tasks")
+    val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
+    val snoozedAdapter = buildTaskAdapter(viewModel, activity)
+    viewModel.tasks.observe(viewLifecycleOwner) { unarchivedTasks ->
+        setTasks(unsnoozedAdapter, unsnoozed_tasks_view, unarchivedTasks.unsnoozed, true)
+        setTasks(snoozedAdapter, snoozed_tasks_view, unarchivedTasks.snoozed, false)
+    }
+}
+
+private fun setTasks(
+    taskAdapter: TaskAdapter,
+    view: ExpandableTasksView,
+    tasks: List<Task>,
+    defaultExpandState: Boolean
+) {
+    if (tasks.isEmpty()) {
+        view.visibility = View.GONE
+    } else {
+        view.visibility = View.VISIBLE
+        view.setExpanded(defaultExpandState)
+        taskAdapter.submitList(tasks)
+    }
+}
+
+private fun buildTaskAdapter(viewModel: TasksObjectViewModel, activity: FragmentActivity) =
+    TaskAdapter(object : TaskAdapter.Listener {
+        override fun onSnoozeToTomorrowClicked(position: Int) {
+            viewModel.snoozeToTomorrow(position)
+        }
+
+        override fun onRemoveSnoozeClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onRescheduleClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onArchiveClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onUnarchiveClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onEditClicked(position: Int) {
+            val intent = Intent(activity.applicationContext, TaskActivity::class.java)
+            intent.putExtra(TASK_ID, position)
+            activity.startActivityForResult(intent, TASK_REQUEST_CODE)
+        }
+    })

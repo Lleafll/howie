@@ -62,6 +62,10 @@ class DomainModel(val taskLists: List<TaskList>) {
         // TODO: Implement
     }
 
+    fun getUnarchivedTasks(taskList: Int, category: TaskCategory): UnarchivedTasks {
+        TODO("Implement")
+    }
+
     fun getCurrentTasks(taskList: Int) = CategorizedTasks(
         // TODO: Implement
         UnarchivedTasks(listOf(), listOf()),
