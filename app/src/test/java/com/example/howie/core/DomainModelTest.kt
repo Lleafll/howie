@@ -4,7 +4,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DomainModelTest {
-
     @Test
     fun `getTaskListInformation return empty list when tasks are empty`() {
         val model = DomainModel(listOf())
