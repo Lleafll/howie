@@ -85,4 +85,8 @@ class DomainModel(val taskLists: List<TaskList>) {
     fun getTask(taskListIndex: Int, taskIndex: Int): Task {
         TODO("Not yet implemented")
     }
+
+    fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int): Boolean {
+        TODO("Implement")
+    }
 }

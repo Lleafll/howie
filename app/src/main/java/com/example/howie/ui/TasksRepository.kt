@@ -28,6 +28,16 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         }
     }
 
+    suspend fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int) {
+        if (_domainModel.moveTaskFromListToList(taskId, fromTaskList, toList)) {
+            saveAll()
+        }
+    }
+
+    suspend fun renameTaskList(taskListId: Int, newName: String) {
+        TODO("Implement")
+    }
+
     private suspend fun saveAll() {
         withContext(Dispatchers.IO) {
             val databaseModel = _domainModel.taskLists.toDatabaseModel()

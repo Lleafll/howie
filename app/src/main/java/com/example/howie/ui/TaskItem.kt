@@ -9,13 +9,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import com.example.howie.R
-import com.example.howie.Task
+import com.example.howie.core.Task
 import kotlinx.android.synthetic.main.task_item.view.*
 import java.time.LocalDate
 
 class TaskItem : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context) : super(context)
+
+    interface TaskItemListener {
+        fun onSnoozeToTomorrowClicked()
+        
+    }
 
     init {
         inflate(context, R.layout.task_item, this)

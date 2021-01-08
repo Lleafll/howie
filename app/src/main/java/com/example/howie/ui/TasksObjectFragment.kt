@@ -7,16 +7,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import com.example.howie.R
-import com.example.howie.Task
+import com.example.howie.core.Task
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
+    companion object {
+        const val POSITION_ARGUMENT = "position"
+    }
+
     private val viewModel: TasksObjectViewModel by viewModels {
         TasksObjectViewModelFactory(requireActivity().application)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val position = requireArguments().getInt("position", 4)
+        val position = requireArguments().getInt(POSITION_ARGUMENT, 4)
         val unsnoozedTasks = when (position) {
             0 -> viewModel.doTasks
             1 -> viewModel.decideTasks

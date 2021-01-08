@@ -22,7 +22,7 @@ class RenameTaskListFragment : DialogFragment() {
                 .setMessage("Rename List")
                 .setPositiveButton("Ok") { _, _ ->
                     val textEdit: TextInputEditText = dialog!!.findViewById(R.id.new_task_list_name)
-                    val taskListId = requireArguments().getLong(TASK_LIST_ID_ARGUMENT)
+                    val taskListId = requireArguments().getInt(TASK_LIST_ID_ARGUMENT)
                     viewModel.renameTaskList(taskListId, textEdit.text.toString())
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->

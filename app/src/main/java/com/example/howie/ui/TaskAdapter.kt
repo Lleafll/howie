@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.howie.R
-import com.example.howie.Task
+import com.example.howie.core.Task
 
 class TaskAdapter(private val editListener: (Int) -> Unit) :
     ListAdapter<Task, TaskAdapter.TaskViewHolder>(TasksComparator()) {
@@ -31,8 +31,7 @@ class TaskAdapter(private val editListener: (Int) -> Unit) :
 
 
     class TasksComparator : DiffUtil.ItemCallback<Task>() {
-        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean =
-            oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem === newItem
 
         override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem == newItem
     }

@@ -11,6 +11,11 @@ import androidx.fragment.app.viewModels
 import com.example.howie.R
 
 class MoveTaskFragment : DialogFragment() {
+    companion object {
+        const val TASK_ID = "taskId"
+        const val FROM_TASK_LIST = "fromTaskListId"
+    }
+
     private val viewModel: MoveTaskViewModel by viewModels {
         MoveTaskViewModelFactory(requireActivity().application)
     }
@@ -21,35 +26,28 @@ class MoveTaskFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val taskListIds = mutableListOf<Long>()
+        viewModel.taskId = requireArguments().getInt(TASK_ID)
+        viewModel.fromTaskList  = requireArguments().getInt(FROM_TASK_LIST)
         val messageBoxBuilder =
             AlertDialog.Builder(requireActivity()).setView(R.layout.fragment_move_task)
                 .setMessage("Move Task")
                 .setPositiveButton("Ok") { _, _ ->
                     val spinner: Spinner = dialog!!.findViewById(R.id.task_list_spinner)
-                    val taskId = requireArguments().getInt("taskId")
                     val selectedIndex = spinner.selectedItemPosition
-                    viewModel.moveToList(taskId, taskListIds[selectedIndex])
+                    viewModel.moveToList(selectedIndex)
                     listener.onTaskMoved()
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
         val dialog = messageBoxBuilder.create()
-        viewModel.taskLists.observe(this, {
-            val spinner: Spinner = this.dialog!!.findViewById(R.id.task_list_spinner)
-            val nameList = mutableListOf<String>()
-            for (taskList in it) {
-                nameList.add(taskList.name)
-                taskListIds.add(taskList.id)
-            }
-            val adapter = ArrayAdapter(
-                requireActivity(),
-                android.R.layout.simple_spinner_item,
-                nameList
-            )
-            spinner.adapter = adapter
-        })
+        val spinner: Spinner = this.dialog!!.findViewById(R.id.task_list_spinner)
+        val adapter = ArrayAdapter(
+            requireActivity(),
+            android.R.layout.simple_spinner_item,
+            viewModel.taskListNames
+        )
+        spinner.adapter = adapter
         return dialog
     }
 
