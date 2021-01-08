@@ -27,7 +27,7 @@ class MoveTaskFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         viewModel.taskId = requireArguments().getInt(TASK_ID)
-        viewModel.fromTaskList  = requireArguments().getInt(FROM_TASK_LIST)
+        viewModel.fromTaskList = requireArguments().getInt(FROM_TASK_LIST)
         val messageBoxBuilder =
             AlertDialog.Builder(requireActivity()).setView(R.layout.fragment_move_task)
                 .setMessage("Move Task")
@@ -42,12 +42,10 @@ class MoveTaskFragment : DialogFragment() {
                 }
         val dialog = messageBoxBuilder.create()
         val spinner: Spinner = this.dialog!!.findViewById(R.id.task_list_spinner)
-        val adapter = ArrayAdapter(
-            requireActivity(),
-            android.R.layout.simple_spinner_item,
-            viewModel.taskListNames
-        )
-        spinner.adapter = adapter
+        viewModel.taskListNames.observe(this) {
+            val adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_spinner_item, it)
+            spinner.adapter = adapter
+        }
         return dialog
     }
 

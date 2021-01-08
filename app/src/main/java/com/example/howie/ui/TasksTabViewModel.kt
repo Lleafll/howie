@@ -4,7 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.howie.database.getDatabase
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 data class TabLabels(
@@ -26,12 +28,12 @@ class TasksTabViewModel(application: Application) : AndroidViewModel(application
     private val _labels = MutableLiveData<TabLabels>()
     val labels: LiveData<TabLabels> by this::_labels
 
-    fun initialize(taskList: Int) {
+    fun initialize(taskList: Int) = viewModelScope.launch {
         _taskList = taskList
         refresh()
     }
 
-    private fun refresh() {
+    private suspend fun refresh() {
         val taskCounts = _repository.getTaskCounts(_taskList)
         _labels.value = TabLabels(
             formatLabel(taskCounts.doCount, "Do"),

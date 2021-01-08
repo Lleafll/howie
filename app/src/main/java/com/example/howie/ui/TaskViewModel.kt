@@ -2,6 +2,7 @@ package com.example.howie.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.howie.core.Task
 import com.example.howie.database.getDatabase
@@ -17,7 +18,9 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }
 
-    fun getTask(task: Int) = repository.getTask(taskList, task)
+    fun getTask(task: Int) = liveData {
+        emit(repository.getTask(taskList, task))
+    }
 
     fun updateTask(task: Task) = viewModelScope.launch {
         // TODO: Implement

@@ -2,6 +2,7 @@ package com.example.howie.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
@@ -17,7 +18,9 @@ class MoveTaskViewModel(application: Application) : AndroidViewModel(application
         repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }
 
-    val taskListNames = repository.getTaskListNames()
+    val taskListNames = liveData {
+        emit(repository.getTaskListNames())
+    }
 
     fun moveToList(toList: Int) = viewModelScope.launch {
         repository.moveTaskFromListToList(taskId, fromTaskList, toList)

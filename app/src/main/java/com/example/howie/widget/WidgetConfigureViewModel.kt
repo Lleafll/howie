@@ -3,6 +3,7 @@ package com.example.howie.widget;
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.howie.database.WidgetSettings
 import com.example.howie.database.WidgetSettingsDao
@@ -21,7 +22,10 @@ class WidgetConfigureViewModel(application: Application) : AndroidViewModel(appl
         widgetSettingsDao = database.getWidgetSettingsDao()
     }
 
-    val taskListNames = repository.getTaskListNames()
+    val taskListNames = liveData {
+        emit(repository.getTaskListNames())
+    }
+
     val widgetSettings = widgetSettingsDao.getAllWidgetSettings().asLiveData()
 
     fun insert(widgetId: Int, taskList: Int) = viewModelScope.launch {

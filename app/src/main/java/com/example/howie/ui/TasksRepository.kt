@@ -1,48 +1,44 @@
 package com.example.howie.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.howie.core.DomainModel
 import com.example.howie.core.TaskCategory
 import com.example.howie.database.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: TaskListDao) {
-    private lateinit var _domainModel: DomainModel
-    private val _isLoaded = MutableLiveData<Boolean>(false)
-    val isLoaded: LiveData<Boolean> by this::_isLoaded
+    private val _domainModel: Deferred<DomainModel>
 
     init {
-        GlobalScope.launch(Dispatchers.IO) {
+        _domainModel = GlobalScope.async {
             val taskLists =
                 DatabaseModel(_taskDao.getAll(), _taskListDao.getAllTaskLists()).toDomainModel()
-            _domainModel = DomainModel(taskLists)
-            _isLoaded.postValue(true)
+            DomainModel(taskLists)
         }
     }
 
-    fun getTaskCounts(taskList: Int) = _domainModel.getTaskCounts(taskList)
+    suspend fun getTaskCounts(taskList: Int) = _domainModel.await().getTaskCounts(taskList)
 
-    fun getTask(taskListIndex: Int, taskIndex: Int) = _domainModel.getTask(taskListIndex, taskIndex)
+    suspend fun getTask(taskListIndex: Int, taskIndex: Int) =
+        _domainModel.await().getTask(taskListIndex, taskIndex)
 
-    fun getTaskListNames() = _domainModel.getTaskListNames()
+    suspend fun getTaskListNames() = _domainModel.await().getTaskListNames()
 
-    fun getTaskListInformation(taskList: Int) = _domainModel.getTaskListInformation(taskList)
+    suspend fun getTaskListInformation(taskList: Int) =
+        _domainModel.await().getTaskListInformation(taskList)
 
-    fun getUnarchivedTasks(taskList: Int, category: TaskCategory) =
-        _domainModel.getUnarchivedTasks(taskList, category)
+    suspend fun getTaskListInformation() = _domainModel.await().getTaskListInformation()
+
+    suspend fun getUnarchivedTasks(taskList: Int, category: TaskCategory) =
+        _domainModel.await().getUnarchivedTasks(taskList, category)
 
     suspend fun deleteTaskList(position: Int) {
-        if (_domainModel.deleteTaskList(position)) {
+        if (_domainModel.await().deleteTaskList(position)) {
             saveAll()
         }
     }
 
     suspend fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int) {
-        if (_domainModel.moveTaskFromListToList(taskId, fromTaskList, toList)) {
+        if (_domainModel.await().moveTaskFromListToList(taskId, fromTaskList, toList)) {
             saveAll()
         }
     }
@@ -57,7 +53,7 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     private suspend fun saveAll() {
         withContext(Dispatchers.IO) {
-            val databaseModel = _domainModel.taskLists.toDatabaseModel()
+            val databaseModel = _domainModel.await().taskLists.toDatabaseModel()
             _taskDao.insertAll(databaseModel.taskEntities)
             _taskListDao.insertAll(databaseModel.taskListEntities)
         }

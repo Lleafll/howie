@@ -32,12 +32,10 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(it)
             }
         }
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            viewModel.taskListNames
-        )
-        taskListSelection.adapter = adapter
+        viewModel.taskListNames.observe(this) {
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, it)
+            taskListSelection.adapter = adapter
+        }
         viewModel.widgetSettings.observe(this, { updateWidget() })
     }
 

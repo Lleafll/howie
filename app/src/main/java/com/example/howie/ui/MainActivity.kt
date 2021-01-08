@@ -15,7 +15,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.howie.R
 import com.example.howie.core.Task
-import com.example.howie.core.TaskCounts
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onNewIntent(intent)
         val taskList = intent.getIntExtra(SHOW_TASK_LIST_EXTRA, -1)
         if (taskList != -1) {
-            viewModel.currentTaskList = taskList
+            viewModel.setTaskList(taskList)
         }
     }
 
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             viewModel.addTaskList("New Task List")
         } else {
             val taskList = item.itemId - R.id.action_add_list - 1
-            viewModel.currentTaskList = taskList
+            viewModel.setTaskList(taskList)
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
@@ -121,21 +120,17 @@ private fun MainActivity.setupDrawer(drawer: DrawerLayout, mainViewModel: MainVi
     )
     drawer.addDrawerListener(toggle)
     toggle.syncState()
-    mainViewModel.getTaskListNamesAndCounts().observe(this, { taskListNamesAndCounts ->
+    mainViewModel.taskListDrawerLabels.observe(this, { taskListNamesAndCounts ->
         buildDrawerContent(taskListNamesAndCounts, nav_view.menu)
     })
     nav_view.setNavigationItemSelectedListener(this)
 }
 
-private fun buildDrawerContent(
-    taskListNamesAndCounts: List<TaskListNameAndCount>,
-    menu: Menu
-) {
+private fun buildDrawerContent(labels: List<String>, menu: Menu) {
     menu.removeGroup(R.id.list_groups)
-    taskListNamesAndCounts.forEach { taskListNameAndCount ->
-        val itemId = buildNavigationItemId(taskListNameAndCount.id)
-        val name = buildDrawerItemName(taskListNameAndCount.name, taskListNameAndCount.count)
-        menu.add(R.id.list_groups, itemId, Menu.NONE, name)
+    labels.forEachIndexed { index, label ->
+        val itemId = buildNavigationItemId(index)
+        menu.add(R.id.list_groups, itemId, Menu.NONE, label)
     }
 }
 
@@ -147,21 +142,9 @@ private fun MainActivity.setupTaskButton(button: FloatingActionButton, tabLayout
     }
 }
 
-private fun buildNavigationItemId(taskListId: Long) =
-    R.id.action_add_list + taskListId.toInt() + 1
+private fun buildNavigationItemId(taskListIndex: Int) =
+    R.id.action_add_list + taskListIndex + 1
 
-private fun buildDrawerItemName(name: String, taskCounts: TaskCounts): String {
-    return "$name (" +
-            "${countToString(taskCounts.doCount)}/" +
-            "${countToString(taskCounts.decideCount)}/" +
-            "${countToString(taskCounts.delegateCount)}/" +
-            "${countToString(taskCounts.dropCount)})"
-}
-
-private fun countToString(count: Int) = when (count) {
-    0 -> "✓"
-    else -> count.toString()
-}
 
 private fun handleTaskActivityReturn(
     returnCode: Int, data: Intent, layout: CoordinatorLayout, mainViewModel: MainViewModel

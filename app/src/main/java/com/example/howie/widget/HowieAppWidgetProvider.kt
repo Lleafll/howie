@@ -14,9 +14,7 @@ import com.example.howie.database.getDatabase
 import com.example.howie.ui.MainActivity
 import com.example.howie.ui.SHOW_TASK_LIST_EXTRA
 import com.example.howie.ui.TasksRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 const val CONFIGURE_UPDATE = "com.example.howie.CONFIGURE_UPDATE"
 
@@ -64,16 +62,18 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
             intent.putExtra(SHOW_TASK_LIST_EXTRA, taskListIndex)
             PendingIntent.getActivity(context, taskListIndex, intent, 0)
         }
-        RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
-            setOnClickPendingIntent(R.id.background, pendingIntent)
-            repository.getTaskListInformation(taskListIndex).let { taskListInfo ->
-                val taskCounts = taskListInfo.taskCounts
-                setTextViewText(R.id.doTextView, toText(taskCounts.doCount))
-                setTextViewText(R.id.decideTextView, toText(taskCounts.decideCount))
-                setTextViewText(R.id.delegateTextView, toText(taskCounts.delegateCount))
-                setTextViewText(R.id.dropTextView, toText(taskCounts.dropCount))
-                setTextViewText(R.id.nameTextView, taskListInfo.name)
-                appWidgetManager.updateAppWidget(appWidgetId, this)
+        GlobalScope.launch {
+            RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
+                setOnClickPendingIntent(R.id.background, pendingIntent)
+                repository.getTaskListInformation(taskListIndex).let { taskListInfo ->
+                    val taskCounts = taskListInfo.taskCounts
+                    setTextViewText(R.id.doTextView, toText(taskCounts.doCount))
+                    setTextViewText(R.id.decideTextView, toText(taskCounts.decideCount))
+                    setTextViewText(R.id.delegateTextView, toText(taskCounts.delegateCount))
+                    setTextViewText(R.id.dropTextView, toText(taskCounts.dropCount))
+                    setTextViewText(R.id.nameTextView, taskListInfo.name)
+                    appWidgetManager.updateAppWidget(appWidgetId, this)
+                }
             }
         }
     }

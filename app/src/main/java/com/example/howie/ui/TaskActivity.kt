@@ -49,8 +49,10 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         viewModel.taskList = taskListIndex
         taskId = intent.getIntExtra(TASK_ID, -1)
         if (taskId != -1) {
-            task = viewModel.getTask(taskId!!)
-            setTask(task!!)
+            viewModel.getTask(taskId!!).observe(this) {
+                task = it
+                setTask(it)
+            }
         } else {
             val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
                 0 -> Task("", Importance.IMPORTANT, LocalDate.now())
