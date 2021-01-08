@@ -27,11 +27,33 @@ class ArchiveActivity : AppCompatActivity() {
 
 private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
     archive_view.layoutManager = LinearLayoutManager(applicationContext)
-    val taskAdapter = TaskAdapter {
-        val intent = Intent(applicationContext, TaskActivity::class.java)
-        intent.putExtra(TASK_ID, it)
-        startActivity(intent)
-    }
+    val taskAdapter = TaskAdapter(object : TaskAdapter.Listener {
+        override fun onSnoozeToTomorrowClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onRemoveSnoozeClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onRescheduleClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onArchiveClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onUnarchiveClicked(position: Int) {
+            TODO("Implement")
+        }
+
+        override fun onEditClicked(position: Int) {
+            val intent = Intent(applicationContext, TaskActivity::class.java)
+            intent.putExtra(TASK_ID, position)
+            startActivity(intent)
+        }
+    })
     archive_view.adapter = taskAdapter
     val taskListIndex = intent.getIntExtra(ArchiveActivity.TASKLIST_INDEX, -1)
     if (taskListIndex == -1) {
