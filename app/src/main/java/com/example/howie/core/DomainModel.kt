@@ -34,7 +34,7 @@ class DomainModel(val taskLists: List<TaskList>) {
     }
 
     fun getTaskListInformation(): List<TaskListInformation> {
-        return listOf()
+        return taskLists.map { TaskListInformation(it.name, countTasks(it.tasks)) }
     }
 
     fun getTaskCounts(taskList: Int) = TaskCounts(
@@ -98,3 +98,21 @@ class DomainModel(val taskLists: List<TaskList>) {
         TODO("Implement")
     }
 }
+
+private fun filterUnarchivedTasks(tasks: List<Task>): List<Task> {
+    return tasks.filter { it.archived == null }
+}
+
+private fun countTasks(tasks: List<Task>): TaskCounts {
+    return filterUnarchivedTasks(tasks).let {
+        TaskCounts(
+            count(it, TaskCategory.DO),
+            count(it, TaskCategory.DECIDE),
+            count(it, TaskCategory.DELEGATE),
+            count(it, TaskCategory.DROP)
+        )
+    }
+}
+
+private fun count(tasks: List<Task>, category: TaskCategory) =
+    tasks.count { taskCategory(it) == category }
