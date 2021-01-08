@@ -18,7 +18,7 @@ data class TaskListNameAndCount(
     val count: TaskCounts
 )
 
-class MainViewModel(application: Application, private val repository: TasksRepository) :
+class MainViewModel(application: Application, private val _repository: TasksRepository) :
     AndroidViewModel(application) {
 
     constructor(application: Application) : this(application, {
@@ -39,7 +39,7 @@ class MainViewModel(application: Application, private val repository: TasksRepos
     }
 
     fun doArchive(id: Int) = viewModelScope.launch {
-        // TODO: Implement
+        _repository.doArchive(currentTaskList, id)
     }
 
     fun unarchive(id: Int) = viewModelScope.launch {
@@ -59,7 +59,6 @@ class MainViewModel(application: Application, private val repository: TasksRepos
     }
 
     fun getTaskListNamesAndCounts(): LiveData<List<TaskListNameAndCount>> {
-        // TODO: Implement
-        return MutableLiveData()
+        TODO("Implement")
     }
 }
