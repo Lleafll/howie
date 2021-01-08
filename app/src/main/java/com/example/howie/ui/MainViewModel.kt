@@ -62,16 +62,4 @@ class MainViewModel(application: Application, private val repository: TasksRepos
         // TODO: Implement
         return MutableLiveData()
     }
-
-    companion object {
-        private var instance: MainViewModel? = null
-
-        @Deprecated("Use a proper ViewModel")
-        fun getInstance(application: Application): MainViewModel {
-            if (instance == null) {
-                instance = MainViewModel(application)
-            }
-            return instance!!
-        }
-    }
 }

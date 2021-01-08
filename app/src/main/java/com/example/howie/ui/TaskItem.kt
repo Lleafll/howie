@@ -1,6 +1,5 @@
 package com.example.howie.ui
 
-import android.app.Activity
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -17,49 +16,43 @@ class TaskItem : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context) : super(context)
 
-    interface TaskItemListener {
+    interface Listener {
         fun onSnoozeToTomorrowClicked()
-        
+        fun onRemoveSnoozeClicked()
+        fun onRescheduleClicked()
+        fun onArchiveClicked()
+        fun onUnarchiveClicked()
+        fun onEditClicked()
     }
 
     init {
         inflate(context, R.layout.task_item, this)
-        val taskManager = MainViewModel.getInstance((context as Activity).application)
         snooze_to_tomorrow.setOnClickListener {
-            val updatedTask = task.copy(snoozed = LocalDate.now().plusDays(1))
-            updatedTask.id = task.id
-            taskManager.update(updatedTask)
+            _listener?.onSnoozeToTomorrowClicked()
         }
         remove_snooze.setOnClickListener {
-            val updatedTask = task.copy(snoozed = null)
-            updatedTask.id = task.id
-            taskManager.update(updatedTask)
+            _listener?.onRemoveSnoozeClicked()
         }
         reschedule_button.setOnClickListener {
-            val updatedTask = task.scheduleNext()
-            if (updatedTask != null) {
-                taskManager.update(updatedTask)
-            }
+            _listener?.onRescheduleClicked()
         }
         archive_button.setOnClickListener {
-            val updatedTask = task.copy(archived = LocalDate.now())
-            updatedTask.id = task.id
-            taskManager.update(updatedTask)
+            _listener?.onArchiveClicked()
         }
         unarchive_button.setOnClickListener {
-            val updatedTask = task.copy(archived = null)
-            updatedTask.id = task.id
-            taskManager.update(updatedTask)
+            _listener?.onUnarchiveClicked()
         }
         edit_button.setOnClickListener {
-            editListener?.invoke(task.id)
+            _listener?.onEditClicked()
         }
         setOnClickListener {
             toggle()
         }
     }
 
-    var task: Task = Task("", 0)
+    private var _listener: Listener? = null
+
+    var task: Task = Task("")
         set(value) {
             field = value
             name_text_view.text = value.name
@@ -92,10 +85,8 @@ class TaskItem : LinearLayout {
             }
         }
 
-    private var editListener: ((Int) -> Unit)? = null
-
-    fun setEditListener(editListener: (Int) -> Unit) {
-        this.editListener = editListener
+    fun setListener(listener: Listener) {
+        _listener = listener
     }
 
     private fun toggle() = if (bottom_layout.isVisible) {
