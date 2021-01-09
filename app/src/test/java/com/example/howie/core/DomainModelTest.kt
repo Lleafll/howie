@@ -121,4 +121,10 @@ class DomainModelTest {
         val model = DomainModel(listOf())
         model.getTaskCounts(123)
     }
+
+    @Test
+    fun `getTaskCounts pretty much empty on empty task list`() {
+        val model = DomainModel(listOf(TaskList("", listOf())))
+        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
+    }
 }
