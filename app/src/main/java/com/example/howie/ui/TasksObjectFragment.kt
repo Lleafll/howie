@@ -89,6 +89,7 @@ private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivit
         override fun onEditClicked(position: Int) {
             val intent = Intent(activity.applicationContext, TaskActivity::class.java)
             intent.putExtra(TaskActivity.TASK_ID, position)
+            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
             activity.startActivityForResult(intent, TASK_REQUEST_CODE)
         }
     })
