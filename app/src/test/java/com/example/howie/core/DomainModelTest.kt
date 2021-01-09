@@ -130,7 +130,68 @@ class DomainModelTest {
 
     @Test
     fun `getTaskCounts does not count archived tasks`() {
-        val model = DomainModel(listOf(TaskList("", listOf(Task("", archived = LocalDate.now())))))
+        val archived = LocalDate.MIN
+        val model = DomainModel(listOf(TaskList("", listOf(Task("", archived = archived)))))
         assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
+    }
+
+    @Test
+    fun `getTaskCounts does not count snoozed tasks which are in the future`() {
+        val snoozed = LocalDate.MAX
+        val model = DomainModel(listOf(TaskList("", listOf(Task("", snoozed = snoozed)))))
+        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
+    }
+
+    @Test
+    fun `getTaskCounts returns proper counts`() {
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "TaskList1",
+                    listOf(
+                        // 1 Do task which is not snoozed
+                        Task("Do1", due = LocalDate.MIN, snoozed = LocalDate.MAX), // snoozed
+                        Task("Do2", due = LocalDate.MIN, snoozed = LocalDate.MIN), // not snoozed
+                        // 2 Decide tasks
+                        Task("Decide1"),
+                        Task("Decide2"),
+                        // 3 Delegate tasks
+                        Task("Delegate1", due = LocalDate.MIN, importance = Importance.UNIMPORTANT),
+                        Task("Delegate2", due = LocalDate.MIN, importance = Importance.UNIMPORTANT),
+                        Task("Delegate3", due = LocalDate.MIN, importance = Importance.UNIMPORTANT),
+                        // 0 Drop tasks
+                        Task(
+                            "Drop1",
+                            importance = Importance.UNIMPORTANT,
+                            archived = LocalDate.now()
+                        )
+                    )
+                ),
+                TaskList(
+                    "TaskList2",
+                    listOf(
+                        // Random tasks
+                        Task("2Decide1"),
+                        Task("2Decide2"),
+                        Task(
+                            "2Delegate1",
+                            due = LocalDate.MIN,
+                            importance = Importance.UNIMPORTANT
+                        ),
+                        Task(
+                            "2Delegate2",
+                            due = LocalDate.MIN,
+                            importance = Importance.UNIMPORTANT
+                        ),
+                        Task(
+                            "2Delegate3",
+                            due = LocalDate.MIN,
+                            importance = Importance.UNIMPORTANT
+                        ),
+                    )
+                )
+            )
+        )
+        assertEquals(TaskCounts(1, 2, 3, 0), model.getTaskCounts(0))
     }
 }

@@ -41,11 +41,16 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun getTaskListInformation(): List<TaskListInformation> {
-        return taskLists.map { TaskListInformation(it.name, countUnarchivedTasks(it.tasks)) }
+        return taskLists.map {
+            TaskListInformation(
+                it.name,
+                countUnarchivedUnsnoozedTasks(it.tasks)
+            )
+        }
     }
 
     fun getTaskCounts(taskList: Int): TaskCounts {
-        return countUnarchivedTasks(taskLists[taskList].tasks)
+        return countUnarchivedUnsnoozedTasks(taskLists[taskList].tasks)
     }
 
     fun addTask(taskList: Int, task: Task) {
@@ -114,8 +119,11 @@ class DomainModel(initialTaskLists: List<TaskList>) {
 
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
 
-private fun countUnarchivedTasks(tasks: Iterable<Task>): TaskCounts {
-    return filterUnarchivedTasks(tasks).let {
+private fun filterUnarchivedUnsnoozedTasks(tasks: Iterable<Task>) =
+    filterUnarchivedTasks(tasks).filter { !it.isSnoozed() }
+
+private fun countUnarchivedUnsnoozedTasks(tasks: Iterable<Task>): TaskCounts {
+    return filterUnarchivedUnsnoozedTasks(tasks).let {
         TaskCounts(
             count(it, TaskCategory.DO),
             count(it, TaskCategory.DECIDE),
