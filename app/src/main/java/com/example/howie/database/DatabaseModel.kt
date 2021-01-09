@@ -14,6 +14,8 @@ fun List<TaskList>.toDatabaseModel() = DatabaseModel(
     listOf()
 )
 
-fun DatabaseModel.toDomainModel() = listOf<TaskList>(
-    // TODO: Implement
-)
+fun DatabaseModel.toDomainModel(): List<TaskList> {
+    return taskListEntities.map {
+        TaskList(it.name, listOf())
+    }
+}
