@@ -22,14 +22,14 @@ enum class TaskCategory {
     DO, DECIDE, DELEGATE, DROP
 }
 
-fun taskCategory(task: Task): TaskCategory = if (task.importance == Importance.IMPORTANT) {
-    if (task.due != null) {
+fun Task.category(): TaskCategory = if (importance == Importance.IMPORTANT) {
+    if (due != null) {
         TaskCategory.DO
     } else {
         TaskCategory.DECIDE
     }
 } else {
-    if (task.due != null) {
+    if (due != null) {
         TaskCategory.DELEGATE
     } else {
         TaskCategory.DROP

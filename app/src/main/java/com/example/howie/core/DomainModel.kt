@@ -134,7 +134,7 @@ private fun countUnarchivedUnsnoozedTasks(tasks: Iterable<Task>): TaskCounts {
 }
 
 private fun count(tasks: Iterable<Task>, category: TaskCategory) =
-    tasks.count { taskCategory(it) == category }
+    tasks.count { it.category() == category }
 
 private fun filterCategory(tasks: Iterable<Task>, category: TaskCategory) =
-    tasks.filter { taskCategory(it) == category }
+    tasks.filter { it.category() == category }
