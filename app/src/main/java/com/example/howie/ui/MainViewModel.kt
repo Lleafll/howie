@@ -3,10 +3,11 @@ package com.example.howie.ui
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.howie.core.Task
+import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskListInformation
+import com.example.howie.core.UnarchivedTasks
 import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
 
 const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
 
@@ -18,15 +19,30 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }())
 
-    var currentTaskList by Delegates.notNull<Int>()
+    var currentTaskList = 0
         private set
-    private val _currentTaskListChanged = MutableLiveData<Int>()
+    private var _currentTaskCategoryValue = TaskCategory.DO
+
+    private val _currentTaskCategory = MutableLiveData(_currentTaskCategoryValue)
+    private val _currentTaskList = MutableLiveData(currentTaskList)
+
     private val _currentTaskListName = MutableLiveData<String>()
     val currentTaskListName: LiveData<String> by this::_currentTaskListName
 
-    fun setTaskList(taskList: Int) {
+    val tasks: LiveData<UnarchivedTasks> =
+        CombinedLiveData(_currentTaskList, _currentTaskCategory).switchMap {
+            liveData {
+                emit(_repository.getUnarchivedTasks(it.first, it.second))
+            }
+        }
+
+    fun setTaskList(taskList: Int) = viewModelScope.launch {
         currentTaskList = taskList
-        _currentTaskListChanged.value = taskList
+        _currentTaskList.value = taskList
+    }
+
+    fun setTaskCategory(category: TaskCategory) = viewModelScope.launch {
+        _currentTaskCategory.value = category
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
@@ -55,6 +71,10 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
 
     val taskListDrawerLabels = liveData {
         emit(_repository.getTaskListInformation().map { buildLabel(it) })
+    }
+
+    fun snoozeToTomorrow(task: Int) {
+        TODO("Implement")
     }
 }
 

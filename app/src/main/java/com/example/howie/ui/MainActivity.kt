@@ -13,6 +13,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import com.example.howie.R
 import com.example.howie.core.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -107,6 +108,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory {
+        return super.getDefaultViewModelProviderFactory()
     }
 }
 

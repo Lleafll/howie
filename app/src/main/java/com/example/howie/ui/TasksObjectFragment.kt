@@ -5,36 +5,20 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.howie.R
 import com.example.howie.core.Task
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
-    companion object {
-        const val TASK_LIST_ARGUMENT = "taskListIndex"
-        const val POSITION_ARGUMENT = "position"
-    }
-
-    private val viewModel: TasksObjectViewModel by viewModels {
-        TasksObjectViewModelFactory(requireActivity().application)
-    }
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val taskList = requireArguments().getInt(TASK_LIST_ARGUMENT, -1)
-        if (taskList == -1) {
-            error("${::TASK_LIST_ARGUMENT.name} not set in $this")
-        }
-        val position = requireArguments().getInt(POSITION_ARGUMENT, -1)
-        viewModel.initialize(taskList, position)
         setupViews(viewModel, requireActivity())
     }
 }
 
-private fun TasksObjectFragment.setupViews(
-    viewModel: TasksObjectViewModel,
-    activity: FragmentActivity
-) {
+private fun TasksObjectFragment.setupViews(viewModel: MainViewModel, activity: FragmentActivity) {
     unsnoozed_tasks_view.setHeaderText("Tasks")
     snoozed_tasks_view.setHeaderText("Snoozed Tasks")
     val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
@@ -60,7 +44,7 @@ private fun setTasks(
     }
 }
 
-private fun buildTaskAdapter(viewModel: TasksObjectViewModel, activity: FragmentActivity) =
+private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivity) =
     TaskAdapter(object : TaskAdapter.Listener {
         override fun onSnoozeToTomorrowClicked(position: Int) {
             viewModel.snoozeToTomorrow(position)
