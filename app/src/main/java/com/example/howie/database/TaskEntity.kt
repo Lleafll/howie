@@ -45,13 +45,12 @@ class Converters {
 data class TaskEntity(
     val name: String,
     val taskListId: Long,
-    val importance: Importance = Importance.IMPORTANT,
-    val due: LocalDate? = null,
-    val snoozed: LocalDate? = null,
-    @Embedded(prefix = "schedule") val schedule: Schedule? = null,
-    val completed: LocalDate? = null,
-    val archived: LocalDate? = null
-) {
+    val importance: Importance,
+    val due: LocalDate?,
+    val snoozed: LocalDate?,
+    @Embedded(prefix = "schedule") val schedule: Schedule?,
+    val completed: LocalDate?,
+    val archived: LocalDate?,
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
-}
+)

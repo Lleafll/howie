@@ -15,7 +15,6 @@ data class Task(
     val due: LocalDate? = null,
     val snoozed: LocalDate? = null,
     val schedule: Schedule? = null,
-    val completed: LocalDate? = null,
     val archived: LocalDate? = null
 ) : Parcelable
 

@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class TaskListEntity(
     val name: String,
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+    var id: Long
 )

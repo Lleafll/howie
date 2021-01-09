@@ -1,5 +1,8 @@
 package com.example.howie.database
 
+import com.example.howie.TaskEntity
+import com.example.howie.core.Importance
+import com.example.howie.core.Task
 import com.example.howie.core.TaskList
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,7 +18,7 @@ class DatabaseModelTest {
     fun `toDomainModel from one TaskListEntity and no TaskEntities`() {
         val databaseModel = DatabaseModel(
             listOf(),
-            listOf(TaskListEntity("ABC"))
+            listOf(TaskListEntity("ABC", 1))
         )
         assertEquals(listOf(TaskList("ABC", listOf())), databaseModel.toDomainModel())
     }
@@ -25,9 +28,9 @@ class DatabaseModelTest {
         val databaseModel = DatabaseModel(
             listOf(),
             listOf(
-                TaskListEntity("ABC"),
-                TaskListEntity("DEF"),
-                TaskListEntity("GHI")
+                TaskListEntity("ABC", 1),
+                TaskListEntity("DEF", 2),
+                TaskListEntity("GHI", 3)
             )
         )
         assertEquals(
@@ -37,6 +40,22 @@ class DatabaseModelTest {
                 TaskList("GHI", listOf()),
             ),
             databaseModel.toDomainModel()
+        )
+    }
+
+    @Test
+    fun `toDomainModel from one TaskListEntity and one TaskEntity`() {
+        val databaseModel = DatabaseModel(
+            listOf(TaskEntity("TaskName", 123, Importance.IMPORTANT, null, null, null, null, null)),
+            listOf(TaskListEntity("ABC", 123))
+        )
+        assertEquals(
+            listOf(
+                TaskList(
+                    "ABC",
+                    listOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
+                )
+            ), databaseModel.toDomainModel()
         )
     }
 }
