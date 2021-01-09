@@ -15,6 +15,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.howie.R
 import com.example.howie.core.Task
+import com.example.howie.core.TaskCategory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -136,7 +137,10 @@ private fun buildDrawerContent(labels: List<String>, menu: Menu) {
 private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel: MainViewModel) {
     button.setOnClickListener {
         val intent = Intent(applicationContext, TaskActivity::class.java)
-        intent.putExtra(TaskActivity.TASK_CATEGORY, viewModel.currentTaskCategoryValue)
+        intent.putExtra(
+            TaskActivity.TASK_CATEGORY,
+            TaskCategory.values()[tab_layout.selectedTabPosition]
+        )
         intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
         startActivity(intent)
     }

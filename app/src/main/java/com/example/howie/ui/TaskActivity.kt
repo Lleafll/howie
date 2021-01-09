@@ -12,10 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.isVisible
 import com.example.howie.R
-import com.example.howie.core.Importance
-import com.example.howie.core.Schedule
-import com.example.howie.core.Task
-import com.example.howie.core.scheduleNext
+import com.example.howie.core.*
 import kotlinx.android.synthetic.main.activity_task.*
 import java.time.LocalDate
 
@@ -54,12 +51,11 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 setTask(it)
             }
         } else {
-            val task = when (intent.getIntExtra(TASK_CATEGORY, 1)) {
-                0 -> Task("", Importance.IMPORTANT, LocalDate.now())
-                1 -> Task("")
-                2 -> Task("", Importance.UNIMPORTANT, LocalDate.now())
-                3 -> Task("", Importance.UNIMPORTANT)
-                else -> Task("", Importance.IMPORTANT)
+            val task = when (intent.getSerializableExtra(TASK_CATEGORY)!! as TaskCategory) {
+                TaskCategory.DO-> Task("", Importance.IMPORTANT, LocalDate.now())
+                TaskCategory.DECIDE -> Task("")
+                TaskCategory.DELEGATE -> Task("", Importance.UNIMPORTANT, LocalDate.now())
+                TaskCategory.DROP -> Task("", Importance.UNIMPORTANT)
             }
             setTask(task)
             taskNameEditText.requestFocus()

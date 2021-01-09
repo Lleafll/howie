@@ -6,11 +6,18 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
 import com.example.howie.R
 import com.example.howie.core.Task
+import com.example.howie.core.TaskCategory
+import com.example.howie.core.UnarchivedTasks
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
+    companion object {
+        const val TASK_CATEGORY_ARGUMENT = "taskCategory"
+    }
+
     private val viewModel: MainViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -23,9 +30,21 @@ private fun TasksObjectFragment.setupViews(viewModel: MainViewModel, activity: F
     snoozed_tasks_view.setHeaderText("Snoozed Tasks")
     val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
     val snoozedAdapter = buildTaskAdapter(viewModel, activity)
-    viewModel.tasks.observe(viewLifecycleOwner) { unarchivedTasks ->
+    val liveData = getLiveDataAccordingToCategory(viewModel)
+    liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
         setTasks(unsnoozedAdapter, unsnoozed_tasks_view, unarchivedTasks.unsnoozed, true)
         setTasks(snoozedAdapter, snoozed_tasks_view, unarchivedTasks.snoozed, false)
+    }
+}
+
+private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainViewModel): LiveData<UnarchivedTasks> {
+    val category =
+        arguments!!.getSerializable(TasksObjectFragment.TASK_CATEGORY_ARGUMENT)!! as TaskCategory
+    return when (category) {
+        TaskCategory.DO -> viewModel.doTasks
+        TaskCategory.DECIDE -> viewModel.decideTasks
+        TaskCategory.DELEGATE -> viewModel.delegateTasks
+        TaskCategory.DROP -> viewModel.dropTasks
     }
 }
 

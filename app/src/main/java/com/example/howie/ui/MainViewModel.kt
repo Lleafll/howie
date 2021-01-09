@@ -26,10 +26,7 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
 
     var currentTaskList = 0
         private set
-    var currentTaskCategoryValue = TaskCategory.DO
-        private set
 
-    private val _currentTaskCategory = MutableLiveData(currentTaskCategoryValue)
     private val _currentTaskList = MutableLiveData(currentTaskList)
 
     val currentTaskListName: LiveData<String> = _currentTaskList.switchMap {
@@ -38,20 +35,33 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         }
     }
 
-    val tasks: LiveData<UnarchivedTasks> =
-        CombinedLiveData(_currentTaskList, _currentTaskCategory).switchMap {
-            liveData {
-                emit(_repository.getUnarchivedTasks(it.first, it.second))
-            }
+    val doTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+        liveData {
+            emit(_repository.getUnarchivedTasks(it, TaskCategory.DO))
         }
+    }
+
+    val decideTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+        liveData {
+            emit(_repository.getUnarchivedTasks(it, TaskCategory.DECIDE))
+        }
+    }
+
+    val delegateTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+        liveData {
+            emit(_repository.getUnarchivedTasks(it, TaskCategory.DELEGATE))
+        }
+    }
+
+    val dropTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+        liveData {
+            emit(_repository.getUnarchivedTasks(it, TaskCategory.DROP))
+        }
+    }
 
     fun setTaskList(taskList: Int) = viewModelScope.launch {
         currentTaskList = taskList
         _currentTaskList.value = taskList
-    }
-
-    fun setTaskCategory(category: TaskCategory) = viewModelScope.launch {
-        _currentTaskCategory.value = category
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
