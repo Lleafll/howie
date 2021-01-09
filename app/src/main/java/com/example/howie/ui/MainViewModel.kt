@@ -26,9 +26,10 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
 
     var currentTaskList = 0
         private set
-    private var _currentTaskCategoryValue = TaskCategory.DO
+    var currentTaskCategoryValue = TaskCategory.DO
+        private set
 
-    private val _currentTaskCategory = MutableLiveData(_currentTaskCategoryValue)
+    private val _currentTaskCategory = MutableLiveData(currentTaskCategoryValue)
     private val _currentTaskList = MutableLiveData(currentTaskList)
 
     private val _currentTaskListName = MutableLiveData<String>()

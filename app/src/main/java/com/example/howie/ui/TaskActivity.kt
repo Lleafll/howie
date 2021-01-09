@@ -21,14 +21,14 @@ import java.time.LocalDate
 
 private const val DUE_DATE_ID = 0
 private const val SNOOZED_DATE_ID = 1
-const val TASK_ID = "taskId"
-const val TASK_CATEGORY = "task_category"
 
 class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     MoveTaskFragment.MoveTaskFragmentListener {
 
     companion object {
         const val TASK_LIST_INDEX = "currentTaskListId"
+        const val TASK_CATEGORY = "task_category"
+        const val TASK_ID = "taskId"
     }
 
     private val viewModel: TaskViewModel by viewModels { TaskViewModelFactory(application) }
@@ -44,7 +44,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         supportActionBar?.setDisplayShowTitleEnabled(false)
         val taskListIndex = intent.getIntExtra(TASK_LIST_INDEX, -1)
         if (taskListIndex == -1) {
-            error("No TASK_LIST_INDEX passed to $this")
+            error("No ${::TASK_LIST_INDEX.name} passed to $this")
         }
         viewModel.taskList = taskListIndex
         taskId = intent.getIntExtra(TASK_ID, -1)

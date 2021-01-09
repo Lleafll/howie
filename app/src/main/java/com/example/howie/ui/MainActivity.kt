@@ -13,13 +13,11 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import com.example.howie.R
 import com.example.howie.core.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
@@ -38,7 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupTaskButton(add_task_button, tab_layout)
+        setupTaskButton(add_task_button, viewModel)
         setupToolBar()
         setupDrawer(findViewById(R.id.drawer_layout), viewModel)
         setupColors()
@@ -96,7 +94,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (resultCode == RESULT_OK) {
                 val returnCode = data.getIntExtra(TASK_RETURN_CODE, -1)
                 if (returnCode == -1) {
-                    throw Exception("Supply TASK_RETURN_CODE data when exiting TaskActivity")
+                    throw Exception("Supply ${::TASK_RETURN_CODE.name} data when exiting $TaskActivity")
                 }
                 handleTaskActivityReturn(
                     returnCode,
@@ -108,10 +106,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
-    }
-
-    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory {
-        return super.getDefaultViewModelProviderFactory()
     }
 }
 
@@ -139,10 +133,11 @@ private fun buildDrawerContent(labels: List<String>, menu: Menu) {
     }
 }
 
-private fun MainActivity.setupTaskButton(button: FloatingActionButton, tabLayout: TabLayout) {
+private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel: MainViewModel) {
     button.setOnClickListener {
         val intent = Intent(applicationContext, TaskActivity::class.java)
-        intent.putExtra(TASK_CATEGORY, tabLayout.selectedTabPosition)
+        intent.putExtra(TaskActivity.TASK_CATEGORY, viewModel.currentTaskCategoryValue)
+        intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
         startActivity(intent)
     }
 }

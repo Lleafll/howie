@@ -50,7 +50,7 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
 
         override fun onEditClicked(position: Int) {
             val intent = Intent(applicationContext, TaskActivity::class.java)
-            intent.putExtra(TASK_ID, position)
+            intent.putExtra(TaskActivity.TASK_ID, position)
             startActivity(intent)
         }
     })
