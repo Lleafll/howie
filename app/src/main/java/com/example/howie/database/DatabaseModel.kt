@@ -17,7 +17,10 @@ fun List<TaskList>.toDatabaseModel() = DatabaseModel(
 
 fun DatabaseModel.toDomainModel(): List<TaskList> {
     return taskListEntities.map { taskListEntity ->
-        TaskList(taskListEntity.name, taskEntities.map { it.toTask() })
+        TaskList(
+            taskListEntity.name,
+            taskEntities.map { it.toTask() }
+        )
     }
 }
 
