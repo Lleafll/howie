@@ -127,4 +127,10 @@ class DomainModelTest {
         val model = DomainModel(listOf(TaskList("", listOf())))
         assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
     }
+
+    @Test
+    fun `getTaskCounts does not count archived tasks`() {
+        val model = DomainModel(listOf(TaskList("", listOf(Task("", archived = LocalDate.now())))))
+        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
+    }
 }
