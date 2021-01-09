@@ -9,7 +9,12 @@ import com.example.howie.core.UnarchivedTasks
 import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
 
-const val HOWIE_SHARED_PREFERENCES_KEY = "howie_default_shared_preferences"
+data class TabLabels(
+    val label0: String,
+    val label1: String,
+    val label2: String,
+    val label3: String
+)
 
 class MainViewModel(application: Application, private val _repository: TasksRepository) :
     AndroidViewModel(application) {
@@ -76,6 +81,19 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
     fun snoozeToTomorrow(task: Int) {
         TODO("Implement")
     }
+
+    val tabLabels: LiveData<TabLabels> = _currentTaskList.switchMap {
+        liveData {
+            val taskCounts = _repository.getTaskCounts(it)
+            val labels = TabLabels(
+                formatLabel(taskCounts.doCount, "Do"),
+                formatLabel(taskCounts.decideCount, "Decide"),
+                formatLabel(taskCounts.delegateCount, "Delegate"),
+                formatLabel(taskCounts.dropCount, "Drop")
+            )
+            emit(labels)
+        }
+    }
 }
 
 private fun buildLabel(information: TaskListInformation): String {
@@ -85,6 +103,11 @@ private fun buildLabel(information: TaskListInformation): String {
             "${countToString(taskCounts.decideCount)}/" +
             "${countToString(taskCounts.delegateCount)}/" +
             "${countToString(taskCounts.dropCount)})"
+}
+
+private fun formatLabel(taskCount: Int, lowerText: String): String {
+    val upperText = if (taskCount != 0) taskCount.toString() else "✓"
+    return "$upperText\n$lowerText"
 }
 
 private fun countToString(count: Int) = when (count) {
