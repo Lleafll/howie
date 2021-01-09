@@ -35,6 +35,7 @@ private fun setTasks(
     tasks: List<Task>,
     defaultExpandState: Boolean
 ) {
+    view.setAdapter(taskAdapter)
     if (tasks.isEmpty()) {
         view.visibility = View.GONE
     } else {
