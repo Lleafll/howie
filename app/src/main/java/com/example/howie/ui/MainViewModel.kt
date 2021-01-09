@@ -32,8 +32,11 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
     private val _currentTaskCategory = MutableLiveData(currentTaskCategoryValue)
     private val _currentTaskList = MutableLiveData(currentTaskList)
 
-    private val _currentTaskListName = MutableLiveData<String>()
-    val currentTaskListName: LiveData<String> by this::_currentTaskListName
+    val currentTaskListName: LiveData<String> = _currentTaskList.switchMap {
+        liveData {
+            emit(_repository.getTaskListName(it))
+        }
+    }
 
     val tasks: LiveData<UnarchivedTasks> =
         CombinedLiveData(_currentTaskList, _currentTaskCategory).switchMap {

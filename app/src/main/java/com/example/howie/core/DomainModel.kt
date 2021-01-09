@@ -107,6 +107,10 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int): Boolean {
         TODO("Implement")
     }
+
+    fun getTaskListName(taskList: Int): String {
+        TODO("Implement")
+    }
 }
 
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
