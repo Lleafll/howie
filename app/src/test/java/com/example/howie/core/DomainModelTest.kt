@@ -89,4 +89,10 @@ class DomainModelTest {
             model.getUnarchivedTasks(1, TaskCategory.DECIDE)
         )
     }
+
+    @Test
+    fun `getTaskListName returns default name on model which got passed empty task lists`() {
+        val model = DomainModel(listOf())
+        assertEquals("Tasks", model.getTaskListName(0))
+    }
 }
