@@ -41,13 +41,12 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun getTaskListInformation(): List<TaskListInformation> {
-        return taskLists.map { TaskListInformation(it.name, countTasks(it.tasks)) }
+        return taskLists.map { TaskListInformation(it.name, countUnarchivedTasks(it.tasks)) }
     }
 
-    fun getTaskCounts(taskList: Int) = TaskCounts(
-        // TODO: Implement
-        0, 0, 0, 0
-    )
+    fun getTaskCounts(taskList: Int): TaskCounts {
+        return countUnarchivedTasks(taskLists[taskList].tasks)
+    }
 
     fun addTask(taskList: Int, task: Task) {
         // TODO: Implement
@@ -115,7 +114,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
 
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
 
-private fun countTasks(tasks: Iterable<Task>): TaskCounts {
+private fun countUnarchivedTasks(tasks: Iterable<Task>): TaskCounts {
     return filterUnarchivedTasks(tasks).let {
         TaskCounts(
             count(it, TaskCategory.DO),

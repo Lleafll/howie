@@ -115,4 +115,10 @@ class DomainModelTest {
         assertEquals("DEF", model.getTaskListName(1))
         assertEquals("GHI", model.getTaskListName(2))
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `getTaskCounts throws when passed invalid index`() {
+        val model = DomainModel(listOf())
+        model.getTaskCounts(123)
+    }
 }
