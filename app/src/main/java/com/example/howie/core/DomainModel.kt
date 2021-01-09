@@ -24,7 +24,14 @@ data class TaskListInformation(
     val taskCounts: TaskCounts
 )
 
-class DomainModel(val taskLists: List<TaskList>) {
+class DomainModel(initialTaskLists: List<TaskList>) {
+    private val _taskLists: MutableList<TaskList> = if (initialTaskLists.isEmpty()) {
+        mutableListOf(TaskList("Tasks", listOf()))
+    } else {
+        initialTaskLists.toMutableList()
+    }
+    val taskLists: List<TaskList> by this::_taskLists
+
     fun getTaskListNames(): List<String> {
         TODO("Implement")
     }

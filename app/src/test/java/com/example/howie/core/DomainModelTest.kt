@@ -7,9 +7,9 @@ import java.time.LocalDate
 
 class DomainModelTest {
     @Test
-    fun `getTaskListInformation return empty list when tasks are empty`() {
+    fun `getTaskListInformation return empty information when tasks are empty`() {
         val model = DomainModel(listOf())
-        assertTrue(model.getTaskListInformation().isEmpty())
+        assertTrue(model.getTaskListInformation().first().taskCounts == TaskCounts(0, 0, 0, 0))
     }
 
     @Test
@@ -33,7 +33,7 @@ class DomainModelTest {
     @Test(expected = IndexOutOfBoundsException::class)
     fun `getUnarchivedTasks throws IllegalArgumentException when passing invalid taskList`() {
         val model = DomainModel(listOf())
-        model.getUnarchivedTasks(0, TaskCategory.DO)
+        model.getUnarchivedTasks(123, TaskCategory.DO)
     }
 
     @Test
