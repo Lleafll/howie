@@ -52,5 +52,5 @@ data class TaskEntity(
     val completed: LocalDate?,
     val archived: LocalDate?,
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Int
 )
