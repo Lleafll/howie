@@ -109,7 +109,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun getTaskListName(taskList: Int): String {
-        TODO("Implement")
+        return taskLists[taskList].name
     }
 }
 
