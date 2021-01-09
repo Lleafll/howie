@@ -58,4 +58,24 @@ class DatabaseModelTest {
             ), databaseModel.toDomainModel()
         )
     }
+
+    @Test
+    fun `toDomainModel from several TaskListEntities and one TaskEntity`() {
+        val databaseModel = DatabaseModel(
+            listOf(TaskEntity("TaskName", 123, Importance.IMPORTANT, null, null, null, null, null)),
+            listOf(TaskListEntity("ABC", 123), TaskListEntity("DEF", 456))
+        )
+        assertEquals(
+            listOf(
+                TaskList(
+                    "ABC",
+                    listOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
+                ),
+                TaskList(
+                    "DEF",
+                    listOf()
+                )
+            ), databaseModel.toDomainModel()
+        )
+    }
 }

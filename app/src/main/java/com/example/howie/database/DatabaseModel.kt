@@ -19,7 +19,7 @@ fun DatabaseModel.toDomainModel(): List<TaskList> {
     return taskListEntities.map { taskListEntity ->
         TaskList(
             taskListEntity.name,
-            taskEntities.map { it.toTask() }
+            taskEntities.filter { it.taskListId == taskListEntity.id }.map { it.toTask() }
         )
     }
 }
