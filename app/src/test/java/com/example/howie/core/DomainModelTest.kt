@@ -194,4 +194,38 @@ class DomainModelTest {
         )
         assertEquals(TaskCounts(1, 2, 3, 0), model.getTaskCounts(0))
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `getTask throws for invalid taskList index`() {
+        val model = DomainModel(listOf())
+        model.getTask(123, 0)
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `getTask throws for invalid task index`() {
+        val model = DomainModel(listOf())
+        model.getTask(0, 123)
+    }
+
+    @Test
+    fun `getTask works properly for valid indexes`() {
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "", listOf(
+                        Task("1"),
+                        Task("2")
+                    )
+                ),
+                TaskList(
+                    "", listOf(
+                        Task("3")
+                    )
+                )
+            )
+        )
+        assertEquals(Task("1"), model.getTask(0, 0))
+        assertEquals(Task("2"), model.getTask(0, 1))
+        assertEquals(Task("3"), model.getTask(1, 0))
+    }
 }

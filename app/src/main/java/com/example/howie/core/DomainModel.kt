@@ -105,7 +105,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun getTask(taskListIndex: Int, taskIndex: Int): Task {
-        TODO("Not yet implemented")
+        return taskLists[taskListIndex].tasks[taskIndex]
     }
 
     fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int): Boolean {
