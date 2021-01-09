@@ -67,7 +67,10 @@ class DomainModel(val taskLists: List<TaskList>) {
     }
 
     fun getUnarchivedTasks(taskList: Int, category: TaskCategory): UnarchivedTasks {
-        TODO("Implement")
+        val unArchivedTasks = filterUnarchivedTasks(taskLists[taskList].tasks)
+        val categoryTasks = filterCategory(unArchivedTasks, category)
+        val partitionedTasks = categoryTasks.partition { it.snoozed == null }
+        return UnarchivedTasks(partitionedTasks.first, partitionedTasks.second)
     }
 
     fun getCurrentTasks(taskList: Int) = CategorizedTasks(
@@ -99,11 +102,9 @@ class DomainModel(val taskLists: List<TaskList>) {
     }
 }
 
-private fun filterUnarchivedTasks(tasks: List<Task>): List<Task> {
-    return tasks.filter { it.archived == null }
-}
+private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
 
-private fun countTasks(tasks: List<Task>): TaskCounts {
+private fun countTasks(tasks: Iterable<Task>): TaskCounts {
     return filterUnarchivedTasks(tasks).let {
         TaskCounts(
             count(it, TaskCategory.DO),
@@ -114,5 +115,8 @@ private fun countTasks(tasks: List<Task>): TaskCounts {
     }
 }
 
-private fun count(tasks: List<Task>, category: TaskCategory) =
+private fun count(tasks: Iterable<Task>, category: TaskCategory) =
     tasks.count { taskCategory(it) == category }
+
+private fun filterCategory(tasks: Iterable<Task>, category: TaskCategory) =
+    tasks.filter { taskCategory(it) == category }

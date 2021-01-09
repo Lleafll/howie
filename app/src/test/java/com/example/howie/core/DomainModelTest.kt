@@ -3,6 +3,7 @@ package com.example.howie.core
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.LocalDate
 
 class DomainModelTest {
     @Test
@@ -26,6 +27,66 @@ class DomainModelTest {
         assertEquals(
             listOf(TaskListInformation("ABC", TaskCounts(0, 1, 0, 0))),
             model.getTaskListInformation()
+        )
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `getUnarchivedTasks throws IllegalArgumentException when passing invalid taskList`() {
+        val model = DomainModel(listOf())
+        model.getUnarchivedTasks(0, TaskCategory.DO)
+    }
+
+    @Test
+    fun `getUnarchivedTasks returns nothing when task list is empty`() {
+        val model = DomainModel(listOf(TaskList("Name", listOf())))
+        assertEquals(
+            UnarchivedTasks(listOf(), listOf()),
+            model.getUnarchivedTasks(0, TaskCategory.DO)
+        )
+    }
+
+    @Test
+    fun `getUnarchivedTasks returns proper data`() {
+        val date = LocalDate.now()
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "Name1",
+                    listOf(
+                        Task("123", snoozed = null)
+                    )
+                ),
+                TaskList(
+                    "Name2",
+                    listOf(
+                        // 2 Unsnoozed tasks
+                        Task("A", snoozed = null),
+                        Task("B", snoozed = null),
+                        // 3 Snoozed tasks
+                        Task("C", snoozed = date),
+                        Task("D", snoozed = date),
+                        Task("E", snoozed = date),
+                        // 1 Archived task
+                        Task("F", archived = date),
+                        // 1 Unimportant task
+                        Task("G", Importance.UNIMPORTANT)
+                    )
+                )
+            )
+        )
+        assertEquals(
+            UnarchivedTasks(
+                listOf(
+                    Task("A", snoozed = null),
+                    Task("B", snoozed = null)
+                ),
+                listOf(
+                    Task("C", snoozed = date),
+                    Task("D", snoozed = date),
+                    Task("E", snoozed = date)
+                )
+            ),
+            model.getUnarchivedTasks(1, TaskCategory.DECIDE)
         )
     }
 }
