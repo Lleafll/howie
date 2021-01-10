@@ -84,10 +84,8 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
     private suspend fun saveAll() {
         withContext(Dispatchers.IO) {
             val databaseModel = _domainModel.await().taskLists.toDatabaseModel()
-            /* TODO: Implement
             _taskDao.insertAll(databaseModel.taskEntities)
             _taskListDao.insertAll(databaseModel.taskListEntities)
-             */
         }
     }
 
@@ -101,7 +99,7 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         saveAll()
     }
 
-    suspend fun addTask(taskList: TaskListIndex, task: Task) : Boolean {
+    suspend fun addTask(taskList: TaskListIndex, task: Task): Boolean {
         val success = _domainModel.await().addTask(taskList, task)
         if (success) {
             saveAll()
