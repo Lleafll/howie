@@ -199,4 +199,28 @@ class DatabaseModelTest {
             domainModel.toDatabaseModel()
         )
     }
+
+    @Test
+    fun `toDatabaseModel with one task list and three tasks`() {
+        val domainModel = listOf(
+            TaskList(
+                "ABC", mutableListOf(
+                    Task("DEF", importance = Importance.UNIMPORTANT),
+                    Task("GHI", snoozed = LocalDate.MIN),
+                    Task("JKL", archived = LocalDate.MAX),
+                )
+            )
+        )
+        assertEquals(
+            DatabaseModel(
+                listOf(
+                    TaskEntity("DEF", 0, Importance.UNIMPORTANT, null, null, null, null, null, 0),
+                    TaskEntity("GHI", 0, Importance.IMPORTANT, null, LocalDate.MIN, null, null, null, 1),
+                    TaskEntity("JKL", 0, Importance.IMPORTANT, null, null, null, null, LocalDate.MAX, 2)
+                ),
+                listOf(TaskListEntity("ABC", 0))
+            ),
+            domainModel.toDatabaseModel()
+        )
+    }
 }
