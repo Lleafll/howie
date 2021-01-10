@@ -1,6 +1,7 @@
 package com.example.howie.ui
 
 import com.example.howie.core.DomainModel
+import com.example.howie.core.IndexedTask
 import com.example.howie.core.TaskCategory
 import com.example.howie.database.*
 import kotlinx.coroutines.*
@@ -51,6 +52,10 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     suspend fun doArchive(taskListId: Int, taskId: Int) {
         TODO("Implement")
+    }
+
+    suspend fun getArchive(taskList: Int): List<IndexedTask> {
+        return _domainModel.await().getArchive(taskList)
     }
 
     private suspend fun saveAll() {

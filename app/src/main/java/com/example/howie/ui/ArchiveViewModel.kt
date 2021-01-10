@@ -1,24 +1,27 @@
 package com.example.howie.ui
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import com.example.howie.core.IndexedTask
 import com.example.howie.database.getDatabase
+import kotlinx.coroutines.launch
 
 class ArchiveViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: TasksRepository
+    private val _repository: TasksRepository
 
     init {
         val database = getDatabase(application.applicationContext)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
+        _repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }
 
-    private val _archive = MutableLiveData<List<IndexedTask>>()
-    val archive: LiveData<List<IndexedTask>> by this::_archive
+    private val _taskList = MutableLiveData<Int>()
+    val archive: LiveData<List<IndexedTask>> = _taskList.switchMap {
+        liveData {
+            emit(_repository.getArchive(it))
+        }
+    }
 
-    fun refreshArchive() {
-        // TODO: Implement refreshing of data
+    fun setTaskList(taskList: Int) = viewModelScope.launch {
+        _taskList.value = taskList
     }
 }

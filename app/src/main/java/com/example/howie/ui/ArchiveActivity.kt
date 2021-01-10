@@ -59,10 +59,10 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
     if (taskListIndex == -1) {
         error("TASKLIST_INDEX not passed to $this")
     }
+    viewModel.setTaskList(taskListIndex)
     viewModel.archive.observe(this, {
         taskAdapter.submitList(it)
     })
-    viewModel.refreshArchive()
 }
 
 private fun ArchiveActivity.setupToolbar() {
