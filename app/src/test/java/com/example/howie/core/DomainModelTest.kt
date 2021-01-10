@@ -304,13 +304,15 @@ class DomainModelTest {
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `deleteTaskList throws on invalid index`() {
-        val model = DomainModel(listOf(TaskList("A", mutableListOf()), TaskList("B", mutableListOf())))
+        val model =
+            DomainModel(listOf(TaskList("A", mutableListOf()), TaskList("B", mutableListOf())))
         model.deleteTaskList(123)
     }
 
     @Test
     fun `deleteTaskList deletes properly`() {
-        val model = DomainModel(listOf(TaskList("A", mutableListOf()), TaskList("B", mutableListOf())))
+        val model =
+            DomainModel(listOf(TaskList("A", mutableListOf()), TaskList("B", mutableListOf())))
         assertTrue(model.deleteTaskList(0))
         assertEquals(listOf(TaskList("B", mutableListOf())), model.taskLists)
         assertFalse(model.deleteTaskList(0))
@@ -326,5 +328,26 @@ class DomainModelTest {
     fun `snoozeToTomorrow throws on invalid task index`() {
         val model = DomainModel(listOf())
         model.snoozeToTomorrow(0, 123)
+    }
+
+    @Test
+    fun `snoozeToTomorrow works properly`() {
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "A", mutableListOf(
+                        Task("1")
+                    )
+                ),
+                TaskList(
+                    "B", mutableListOf(
+                    )
+                ),
+            )
+        )
+        assertEquals(Task("1"), model.getTask(0, 0))
+        model.snoozeToTomorrow(0, 0)
+        val tomorrow = LocalDate.now().plusDays(1)
+        assertEquals(Task("1", snoozed = tomorrow), model.getTask(0, 0))
     }
 }
