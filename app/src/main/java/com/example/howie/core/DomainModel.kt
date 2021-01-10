@@ -73,7 +73,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun addTask(taskList: TaskListIndex, task: Task) {
-        // TODO: Implement
+        _taskLists[taskList.value].tasks.add(task)
     }
 
     fun doArchive(taskList: TaskListIndex, task: TaskIndex) {
@@ -84,10 +84,6 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     fun unarchive(taskList: TaskListIndex, task: TaskIndex) {
         val taskObject = _taskLists[taskList.value].tasks[task.value]
         _taskLists[taskList.value].tasks[task.value] = taskObject.copy(archived = null)
-    }
-
-    fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
-        // TODO: Implement
     }
 
     fun getUnarchivedTasks(taskList: TaskListIndex, category: TaskCategory): UnarchivedTasks {

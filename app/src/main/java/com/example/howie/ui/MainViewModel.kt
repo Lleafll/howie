@@ -62,7 +62,7 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
-        // TODO: Implement
+        TODO("Implement")
     }
 
     fun doArchive(id: TaskIndex) = viewModelScope.launch {

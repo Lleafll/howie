@@ -100,4 +100,9 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         _domainModel.await().unarchive(taskList, taskIndex)
         saveAll()
     }
+
+    suspend fun addTask(taskList: TaskListIndex, task: Task) {
+        _domainModel.await().addTask(taskList, task)
+        saveAll()
+    }
 }

@@ -105,7 +105,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
-        // TODO: Implement
+        _repository.addTask(taskList, task)
     }
 
     fun doArchive(task: TaskIndex) = viewModelScope.launch {
