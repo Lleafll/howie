@@ -89,8 +89,10 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         // TODO: Implement
     }
 
-    val taskListDrawerLabels = liveData {
-        emit(_repository.getTaskListInformation().map { buildLabel(it) })
+    val taskListDrawerLabels: LiveData<List<String>> = _currentTaskList.switchMap {
+        liveData {
+            emit(_repository.getTaskListInformation().map { buildLabel(it) })
+        }
     }
 
     fun snoozeToTomorrow(task: Int) {
