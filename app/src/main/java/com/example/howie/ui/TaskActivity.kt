@@ -40,7 +40,6 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         val taskId = intent.getParcelableExtra<TaskIndex>(TASK_ID)
         val taskCategory = intent.getSerializableExtra(TASK_CATEGORY) as TaskCategory?
         viewModel.initialize(taskListIndex, taskId, taskCategory)
-        viewModel.taskFields.observe(this) { setTask(it) }
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             snoozedTextDate.isVisible = isChecked
         }
@@ -64,6 +63,12 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         dueTextDate.setOnClickListener(onClickListenerFactory(DUE_DATE_ID))
         snoozedTextDate.setOnClickListener(onClickListenerFactory(SNOOZED_DATE_ID))
         setupColors()
+        viewModel.taskFields.observe(this) { setTask(it) }
+        viewModel.finishEvent.observe(this) {
+            if (it) {
+                finish()
+            }
+        }
     }
 
     private fun setupColors() {
@@ -131,25 +136,21 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         R.id.action_update -> {
             val task = buildTaskFromFields()
             viewModel.updateTask(task)
-            finish()
             true
         }
         R.id.action_save -> {
             val task = buildTaskFromFields()
             viewModel.addTask(task)
-            finish()
             true
         }
         R.id.action_archive -> {
             viewModel.doArchive(viewModel.taskIndex!!)
             val data = buildIntent(TASK_ARCHIVED_RETURN_CODE)
             data.putExtra(ARCHIVED_TASK_CODE, viewModel.taskIndex!!)
-            finish()
             true
         }
         R.id.action_unarchive -> {
             viewModel.unarchive(viewModel.taskIndex!!)
-            finish()
             true
         }
         R.id.action_delete -> {
@@ -170,7 +171,6 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 val nextDate = task.schedule.scheduleNext(LocalDate.now())
                 val updatedTask = task.copy(snoozed = nextDate, due = nextDate)
                 viewModel.updateTask(updatedTask)
-                finish()
             }
             true
         }

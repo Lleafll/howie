@@ -101,23 +101,26 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
 
     fun updateTask(task: Task) = viewModelScope.launch {
-        // TODO: Implement
+        TODO("Implement")
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
-        _repository.addTask(taskList, task)
+        val sucess = _repository.addTask(taskList, task)
+        if (sucess) {
+            callFinish()
+        }
     }
 
     fun doArchive(task: TaskIndex) = viewModelScope.launch {
-        // TODO: Implement
+        TODO("Implement")
     }
 
     fun unarchive(task: TaskIndex) = viewModelScope.launch {
-        // TODO: Implement
+        TODO("Implement")
     }
 
     fun deleteTask(task: TaskIndex) = viewModelScope.launch {
-        // TODO: Implement
+        TODO("Implement")
     }
 
     val optionsVisibility: LiveData<OptionsVisibility> = _task.switchMap {
@@ -136,5 +139,12 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
             )
             emit(options)
         }
+    }
+
+    private val _finishEvent = SingleLiveEvent<Boolean>()
+    val finishEvent: LiveData<Boolean> by this::_finishEvent
+
+    private fun callFinish() {
+        _finishEvent.value = true
     }
 }

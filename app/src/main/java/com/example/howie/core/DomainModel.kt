@@ -72,8 +72,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         return countUnarchivedUnsnoozedTasks(taskLists[taskList.value].tasks)
     }
 
-    fun addTask(taskList: TaskListIndex, task: Task) {
-        _taskLists[taskList.value].tasks.add(task)
+    fun addTask(taskList: TaskListIndex, task: Task): Boolean {
+        return _taskLists[taskList.value].tasks.add(task)
     }
 
     fun doArchive(taskList: TaskListIndex, task: TaskIndex) {

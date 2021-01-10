@@ -485,7 +485,8 @@ class DomainModelTest {
     fun addTask() {
         val model = DomainModel(listOf())
         assertTrue(model.taskLists[0].tasks.isEmpty())
-        model.addTask(TaskListIndex(0), Task(""))
+        val success = model.addTask(TaskListIndex(0), Task(""))
+        assertTrue(success)
         assertEquals(Task(""), model.getTask(TaskListIndex(0), TaskIndex(0)))
     }
 }

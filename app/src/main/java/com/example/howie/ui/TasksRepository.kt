@@ -101,8 +101,11 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         saveAll()
     }
 
-    suspend fun addTask(taskList: TaskListIndex, task: Task) {
-        _domainModel.await().addTask(taskList, task)
-        saveAll()
+    suspend fun addTask(taskList: TaskListIndex, task: Task) : Boolean {
+        val success = _domainModel.await().addTask(taskList, task)
+        if (success) {
+            saveAll()
+        }
+        return success
     }
 }
