@@ -489,4 +489,25 @@ class DomainModelTest {
         assertTrue(success)
         assertEquals(Task(""), model.getTask(TaskListIndex(0), TaskIndex(0)))
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `updateTask throws on invalid task list`() {
+        val model = DomainModel(listOf())
+        model.updateTask(TaskListIndex(123), TaskIndex(0), Task(""))
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `updateTask throws on invalid task`() {
+        val model = DomainModel(listOf())
+        model.updateTask(TaskListIndex(0), TaskIndex(123), Task(""))
+    }
+
+    @Test
+    fun updateTask() {
+        val model = DomainModel(listOf(TaskList("", mutableListOf(Task("A")))))
+        assertEquals(Task("A"), model.taskLists[0].tasks[0])
+        val success = model.updateTask(TaskListIndex(0), TaskIndex(0), Task("B"))
+        assertTrue(success)
+        assertEquals(Task("B"), model.taskLists[0].tasks[0])
+    }
 }

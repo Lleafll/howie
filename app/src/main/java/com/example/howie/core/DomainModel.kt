@@ -147,7 +147,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun updateTask(taskList: TaskListIndex, taskIndex: TaskIndex, task: Task): Boolean {
-        TODO("Not yet implemented")
+        taskLists[taskList.value].tasks[taskIndex.value] = task
+        return true
     }
 }
 
