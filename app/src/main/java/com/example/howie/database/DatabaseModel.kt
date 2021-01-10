@@ -12,7 +12,23 @@ data class DatabaseModel(
 fun List<TaskList>.toDatabaseModel(): DatabaseModel {
     val taskListEntities =
         mapIndexed { index, taskList -> TaskListEntity(taskList.name, index.toLong()) }
-    return DatabaseModel(listOf(), taskListEntities)
+    val taskEntities = mapIndexed { index, taskList ->
+        val taskListIndex = index.toLong()
+        taskList.tasks.mapIndexed { taskIndex, task ->
+            TaskEntity(
+                task.name,
+                taskListIndex,
+                task.importance,
+                task.due,
+                task.snoozed,
+                task.schedule,
+                null,
+                task.archived,
+                taskIndex
+            )
+        }
+    }.flatten()
+    return DatabaseModel(taskEntities, taskListEntities)
 }
 
 fun DatabaseModel.toDomainModel(): List<TaskList> {
