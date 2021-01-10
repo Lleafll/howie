@@ -96,8 +96,9 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         }
     }
 
-    fun snoozeToTomorrow(task: Int) {
-        TODO("Implement")
+    fun snoozeToTomorrow(task: Int) = viewModelScope.launch {
+        _repository.snoozeToTomorrow(currentTaskList, task)
+        setTaskList(currentTaskList) // Force refresh of tasks
     }
 
     val tabLabels: LiveData<TabLabels> = _currentTaskList.switchMap {

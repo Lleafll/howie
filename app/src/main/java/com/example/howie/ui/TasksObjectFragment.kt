@@ -66,8 +66,8 @@ private fun setTasks(
 
 private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivity) =
     TaskAdapter(object : TaskAdapter.Listener {
-        override fun onSnoozeToTomorrowClicked(position: Int) {
-            viewModel.snoozeToTomorrow(position)
+        override fun onSnoozeToTomorrowClicked(index: Int) {
+            viewModel.snoozeToTomorrow(index)
         }
 
         override fun onRemoveSnoozeClicked(index: Int) {

@@ -126,6 +126,10 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         _taskLists.add(TaskList("New Task List", listOf()))
         return _taskLists.size - 1
     }
+
+    fun snoozeToTomorrow(taskList: Int, task: Int) {
+        TODO("Implement")
+    }
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =

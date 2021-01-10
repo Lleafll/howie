@@ -66,6 +66,11 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         return newIndex
     }
 
+    suspend fun snoozeToTomorrow(taskList: Int, task: Int) {
+        _domainModel.await().snoozeToTomorrow(taskList, task)
+        saveAll()
+    }
+
     private suspend fun saveAll() {
         withContext(Dispatchers.IO) {
             val databaseModel = _domainModel.await().taskLists.toDatabaseModel()
