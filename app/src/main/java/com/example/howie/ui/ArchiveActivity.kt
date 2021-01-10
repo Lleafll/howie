@@ -57,7 +57,7 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
     archive_view.adapter = taskAdapter
     val taskListIndex = intent.getIntExtra(ArchiveActivity.TASKLIST_INDEX, -1)
     if (taskListIndex == -1) {
-        error("TaskList index not passed to $this")
+        error("TASKLIST_INDEX not passed to $this")
     }
     viewModel.archive.observe(this, {
         taskAdapter.submitList(it)

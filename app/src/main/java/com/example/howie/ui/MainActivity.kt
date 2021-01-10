@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_show_archive -> {
-                    startActivity(Intent(applicationContext, ArchiveActivity::class.java))
+                    showArchive(viewModel.currentTaskList)
                     true
                 }
                 R.id.action_rename -> {
@@ -216,4 +216,10 @@ private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) 
         }
     val alert = builder.create()
     alert.show()
+}
+
+private fun MainActivity.showArchive(currentTaskList: Int) {
+    val intent = Intent(applicationContext, ArchiveActivity::class.java)
+    intent.putExtra(ArchiveActivity.TASKLIST_INDEX, currentTaskList)
+    startActivity(intent)
 }
