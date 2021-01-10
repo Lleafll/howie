@@ -10,6 +10,11 @@ import java.time.LocalDate
 import java.util.*
 
 class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
+    companion object {
+        const val DATE_ID_ARGUMENT = "dateId"
+        const val DATE_ARGUMENT = "date"
+    }
+
     private lateinit var listener: DatePickerListener
 
     interface DatePickerListener {
@@ -17,7 +22,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dateString = requireArguments().getString("date")
+        val dateString = requireArguments().getString(DATE_ARGUMENT)
         val date = LocalDate.parse(dateString)
         val datePickerDialog = DatePickerDialog(
             requireActivity(),
@@ -31,7 +36,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     }
 
     override fun onDateSet(picker: DatePicker?, year: Int, month: Int, day: Int) {
-        val id = requireArguments().getInt("dateId", -1)
+        val id = requireArguments().getInt(DATE_ID_ARGUMENT, -1)
         listener.onDateChanged(id, LocalDate.of(year, month + 1, day))
     }
 

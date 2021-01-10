@@ -13,8 +13,8 @@ import com.example.howie.core.TaskListIndex
 
 class MoveTaskFragment : DialogFragment() {
     companion object {
-        const val TASK_ID = "taskId"
-        const val FROM_TASK_LIST = "fromTaskListId"
+        const val TASK_ID_ARGUMENT = "taskId"
+        const val FROM_TASK_LIST_ARGUMENT = "fromTaskListId"
     }
 
     private val viewModel: MoveTaskViewModel by viewModels {
@@ -27,8 +27,8 @@ class MoveTaskFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        viewModel.taskId = requireArguments().getParcelable(TASK_ID)!!
-        viewModel.fromTaskList = requireArguments().getParcelable(FROM_TASK_LIST)!!
+        viewModel.taskId = requireArguments().getParcelable(TASK_ID_ARGUMENT)!!
+        viewModel.fromTaskList = requireArguments().getParcelable(FROM_TASK_LIST_ARGUMENT)!!
         val messageBoxBuilder =
             AlertDialog.Builder(requireActivity()).setView(R.layout.fragment_move_task)
                 .setMessage("Move Task")

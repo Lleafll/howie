@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -29,8 +28,6 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     }
 
     private val viewModel: TaskViewModel by viewModels { TaskViewModelFactory(application) }
-    private var taskId: TaskIndex? = null
-    private var task: Task? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,24 +37,10 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         val taskListIndex = intent.getParcelableExtra<TaskListIndex>(TASK_LIST_INDEX)!!
-        viewModel.taskList = taskListIndex
-        taskId = intent.getParcelableExtra(TASK_ID)
-        if (taskId != null) {
-            viewModel.getTask(taskId!!).observe(this) {
-                task = it
-                setTask(it)
-            }
-        } else {
-            val task = when (intent.getSerializableExtra(TASK_CATEGORY)!! as TaskCategory) {
-                TaskCategory.DO-> Task("", Importance.IMPORTANT, LocalDate.now())
-                TaskCategory.DECIDE -> Task("")
-                TaskCategory.DELEGATE -> Task("", Importance.UNIMPORTANT, LocalDate.now())
-                TaskCategory.DROP -> Task("", Importance.UNIMPORTANT)
-            }
-            setTask(task)
-            taskNameEditText.requestFocus()
-            window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        }
+        val taskId = intent.getParcelableExtra<TaskIndex>(TASK_ID)
+        val taskCategory = intent.getSerializableExtra(TASK_CATEGORY) as TaskCategory?
+        viewModel.initialize(taskListIndex, taskId, taskCategory)
+        viewModel.taskFields.observe(this) { setTask(it) }
         snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
             snoozedTextDate.isVisible = isChecked
         }
@@ -72,8 +55,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 val textView = view as TextView
                 val datePicker = DatePickerFragment()
                 val arguments = Bundle()
-                arguments.putInt("dateId", dateId)
-                arguments.putString("date", textView.text.toString())
+                arguments.putInt(DatePickerFragment.DATE_ID_ARGUMENT, dateId)
+                arguments.putString(DatePickerFragment.DATE_ARGUMENT, textView.text.toString())
                 datePicker.arguments = arguments
                 datePicker.show(supportFragmentManager, "datePicker")
             }
@@ -103,15 +86,15 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
     }
 
-    private fun setTask(task: Task) {
+    private fun setTask(task: TaskFields) {
         taskNameEditText.setText(task.name)
         if (task.importance == Importance.IMPORTANT) {
             importantButton.isChecked = true
         } else {
             unimportantButton.isChecked = true
         }
-        setDateFields(dueTextDate, dueSwitch, task.due)
-        setDateFields(snoozedTextDate, snoozeSwitch, task.snoozed)
+        setDateFields(dueTextDate, dueSwitch, task.showDue, task.due)
+        setDateFields(snoozedTextDate, snoozeSwitch, task.showSnoozed, task.snoozed)
         setScheduleFields(task.schedule, scheduleSwitch, schedule_view)
     }
 
@@ -132,27 +115,14 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         val deleteItem = menu.findItem(R.id.action_delete)
         val moveToTaskList = menu.findItem(R.id.action_move_to_different_list)
         val scheduleItem = menu.findItem(R.id.action_schedule)
-        if (task == null) {
-            saveItem.isVisible = true
-            updateItem.isVisible = false
-            deleteItem.isVisible = false
-            archiveItem.isVisible = false
-            unarchiveItem.isVisible = false
-            moveToTaskList.isVisible = false
-            scheduleItem.isVisible = false
-        } else {
-            saveItem.isVisible = false
-            updateItem.isVisible = true
-            deleteItem.isVisible = true
-            moveToTaskList.isVisible = true
-            scheduleItem.isVisible = true
-            if (task!!.archived == null) {
-                archiveItem.isVisible = true
-                unarchiveItem.isVisible = false
-            } else {
-                archiveItem.isVisible = false
-                unarchiveItem.isVisible = true
-            }
+        viewModel.optionsVisibility.observe(this) {
+            saveItem.isVisible = it.save
+            updateItem.isVisible = it.update
+            deleteItem.isVisible = it.delete
+            archiveItem.isVisible = it.archive
+            unarchiveItem.isVisible = it.unarchive
+            moveToTaskList.isVisible = it.moveToTaskList
+            scheduleItem.isVisible = it.schedule
         }
         return true
     }
@@ -171,28 +141,25 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             true
         }
         R.id.action_archive -> {
-            viewModel.doArchive(taskId!!)
+            viewModel.doArchive(viewModel.taskIndex!!)
             val data = buildIntent(TASK_ARCHIVED_RETURN_CODE)
-            data.putExtra(ARCHIVED_TASK_CODE, taskId!!)
+            data.putExtra(ARCHIVED_TASK_CODE, viewModel.taskIndex!!)
             finish()
             true
         }
         R.id.action_unarchive -> {
-            viewModel.unarchive(taskId!!)
+            viewModel.unarchive(viewModel.taskIndex!!)
             finish()
             true
         }
         R.id.action_delete -> {
-            viewModel.deleteTask(taskId!!)
-            val data = buildIntent(TASK_DELETED_RETURN_CODE)
-            data.putExtra(DELETED_TASK_CODE, task)
-            finish()
-            true
+            TODO("Implement")
         }
         R.id.action_move_to_different_list -> {
             val dialog = MoveTaskFragment()
             val arguments = Bundle()
-            arguments.putParcelable("taskId", taskId!!)
+            arguments.putParcelable(MoveTaskFragment.TASK_ID_ARGUMENT, viewModel.taskIndex!!)
+            arguments.putParcelable(MoveTaskFragment.FROM_TASK_LIST_ARGUMENT, viewModel.taskList)
             dialog.arguments = arguments
             dialog.show(supportFragmentManager, "moveTaskDialog")
             true
@@ -226,15 +193,19 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
 }
 
 private fun setDateFields(
-    picker: TextView, switch: SwitchCompat, date: LocalDate?
-) = if (date != null) {
-    switch.isChecked = true
-    picker.isVisible = true
-    picker.text = date.toString()
-} else {
-    switch.isChecked = false
-    picker.isVisible = false
-    picker.text = LocalDate.now().toString()
+    picker: TextView,
+    switch: SwitchCompat,
+    show: Boolean,
+    dateString: String
+) {
+    if (show) {
+        switch.isChecked = true
+        picker.isVisible = true
+    } else {
+        switch.isChecked = false
+        picker.isVisible = false
+    }
+    picker.text = dateString
 }
 
 
