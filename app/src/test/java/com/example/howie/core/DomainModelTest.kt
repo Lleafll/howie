@@ -282,4 +282,15 @@ class DomainModelTest {
         )
         assertTrue(model.getArchive(1).isEmpty())
     }
+
+    @Test
+    fun `addTaskList new task list is empty and is named New Task List`() {
+        val model = DomainModel(listOf())
+        assertTrue(model.taskLists.size == 1)
+        val newIndex = model.addTaskList()
+        assertEquals(1, newIndex)
+        val newTaskList = model.taskLists[newIndex]
+        assertEquals("New Task List", newTaskList.name)
+        assertTrue(newTaskList.tasks.isEmpty())
+    }
 }

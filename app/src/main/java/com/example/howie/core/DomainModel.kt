@@ -122,7 +122,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun addTaskList(): Int {
-        TODO("Implement")
+        _taskLists.add(TaskList("New Task List", listOf()))
+        return _taskLists.size - 1
     }
 }
 
