@@ -377,4 +377,48 @@ class DomainModelTest {
             model.getTask(TaskListIndex(0), TaskIndex(0))
         )
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `scheduleNext throws on invalid task list index`() {
+        val model = DomainModel(listOf())
+        model.scheduleNext(TaskListIndex(123), TaskIndex(0))
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `scheduleNext throws on invalid task index`() {
+        val model = DomainModel(listOf())
+        model.scheduleNext(TaskListIndex(0), TaskIndex(123))
+    }
+
+    @Test
+    fun `scheduleNext works properly`() {
+        val schedule = Schedule(ScheduleInXTimeUnits(1, TimeUnit.DAY))
+        val model =
+            DomainModel(listOf(TaskList("", mutableListOf(Task("", schedule = schedule)))))
+        assertEquals(
+            Task("", schedule = schedule),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+        model.scheduleNext(TaskListIndex(0), TaskIndex(0))
+        val nextDate = schedule.scheduleNext(LocalDate.now())
+        assertEquals(
+            Task("", schedule = schedule, due = nextDate, snoozed = nextDate),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+    }
+
+    @Test
+    fun `scheduleNext is noop on null schedule`() {
+        val model =
+            DomainModel(listOf(TaskList("", mutableListOf(Task("", schedule = null)))))
+        assertEquals(
+            Task("", schedule = null),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+        model.scheduleNext(TaskListIndex(0), TaskIndex(0))
+        assertEquals(
+            Task("", schedule = null),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+    }
 }

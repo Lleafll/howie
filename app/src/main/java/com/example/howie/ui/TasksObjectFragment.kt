@@ -76,7 +76,7 @@ private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivit
         }
 
         override fun onRescheduleClicked(index: TaskIndex) {
-            TODO("Implement")
+            viewModel.reschedule(index)
         }
 
         override fun onArchiveClicked(index: TaskIndex) {

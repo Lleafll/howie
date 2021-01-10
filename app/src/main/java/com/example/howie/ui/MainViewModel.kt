@@ -103,6 +103,11 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         setTaskList(currentTaskList) // Force refresh of tasks
     }
 
+    fun reschedule(taskIndex: TaskIndex) = viewModelScope.launch {
+        _repository.scheduleNext(currentTaskList, taskIndex)
+        setTaskList(currentTaskList) // Force refresh of tasks
+    }
+
     val tabLabels: LiveData<TabLabels> = _currentTaskList.switchMap {
         liveData {
             val taskCounts = _repository.getTaskCounts(it)

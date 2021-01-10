@@ -89,4 +89,9 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
              */
         }
     }
+
+    suspend fun scheduleNext(taskList: TaskListIndex, task: TaskIndex) {
+        _domainModel.await().scheduleNext(taskList, task)
+        saveAll()
+    }
 }
