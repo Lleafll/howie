@@ -120,6 +120,10 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     fun getTaskListName(taskList: Int): String {
         return taskLists[taskList].name
     }
+
+    fun addTaskList(): Int {
+        TODO("Implement")
+    }
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =

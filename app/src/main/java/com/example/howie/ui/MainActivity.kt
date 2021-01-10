@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_add_list) {
-            viewModel.addTaskList("New Task List")
+            viewModel.addTaskList()
         } else {
             val taskList = item.itemId - R.id.action_add_list - 1
             viewModel.setTaskList(taskList)

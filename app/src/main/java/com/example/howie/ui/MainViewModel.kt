@@ -80,8 +80,9 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         // TODO: Implement
     }
 
-    fun addTaskList(name: String) = viewModelScope.launch {
-        // TODO: Implement
+    fun addTaskList() = viewModelScope.launch {
+        val newTaskListIndex = _repository.addTaskList()
+        setTaskList(newTaskListIndex)
     }
 
     fun deleteTaskList(taskList: Int) = viewModelScope.launch {

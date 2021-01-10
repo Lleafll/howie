@@ -58,6 +58,12 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         return _domainModel.await().getArchive(taskList)
     }
 
+    suspend fun addTaskList(): Int {
+        val newIndex = _domainModel.await().addTaskList()
+        saveAll()
+        return newIndex
+    }
+
     private suspend fun saveAll() {
         withContext(Dispatchers.IO) {
             val databaseModel = _domainModel.await().taskLists.toDatabaseModel()
