@@ -228,4 +228,10 @@ class DomainModelTest {
         assertEquals(Task("2"), model.getTask(0, 1))
         assertEquals(Task("3"), model.getTask(1, 0))
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `getArchive with invalid taskList index throws`() {
+        val model = DomainModel(listOf())
+        model.getArchive(123)
+    }
 }

@@ -97,8 +97,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         UnarchivedTasks(listOf(), listOf())
     )
 
-    fun getArchive(taskList: Int) {
-        // TODO: Implement
+    fun getArchive(taskList: Int): List<IndexedTask> {
+        return taskLists[taskList].tasks.mapIndexed { i, task -> IndexedTask(i, task) }
     }
 
     fun deleteTaskList(taskList: Int): Boolean {
