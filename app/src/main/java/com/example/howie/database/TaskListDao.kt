@@ -12,4 +12,7 @@ interface TaskListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(taskListEntities: List<TaskListEntity>)
+
+    @Query("DELETE FROM TaskList")
+    suspend fun deleteAll()
 }

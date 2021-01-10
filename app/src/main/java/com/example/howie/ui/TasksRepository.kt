@@ -84,7 +84,9 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
     private suspend fun saveAll() {
         withContext(Dispatchers.IO) {
             val databaseModel = _domainModel.await().taskLists.toDatabaseModel()
+            _taskDao.deleteAll()
             _taskDao.insertAll(databaseModel.taskEntities)
+            _taskListDao.deleteAll()
             _taskListDao.insertAll(databaseModel.taskListEntities)
         }
     }
