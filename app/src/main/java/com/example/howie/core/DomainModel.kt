@@ -76,17 +76,14 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         // TODO: Implement
     }
 
-    fun update(taskList: TaskListIndex, task: Task) {
-        // TODO: Implement
-    }
-
     fun doArchive(taskList: TaskListIndex, task: TaskIndex) {
-        var taskObject = _taskLists[taskList.value].tasks[task.value]
+        val taskObject = _taskLists[taskList.value].tasks[task.value]
         _taskLists[taskList.value].tasks[task.value] = taskObject.copy(archived = LocalDate.now())
     }
 
     fun unarchive(taskList: TaskListIndex, task: TaskIndex) {
-        // TODO: Implement
+        val taskObject = _taskLists[taskList.value].tasks[task.value]
+        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(archived = null)
     }
 
     fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
@@ -99,14 +96,6 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         val partitionedTasks = categoryTasks.partition { it.task.snoozed == null }
         return UnarchivedTasks(partitionedTasks.first, partitionedTasks.second)
     }
-
-    fun getCurrentTasks(taskList: TaskListIndex) = CategorizedTasks(
-        // TODO: Implement
-        UnarchivedTasks(listOf(), listOf()),
-        UnarchivedTasks(listOf(), listOf()),
-        UnarchivedTasks(listOf(), listOf()),
-        UnarchivedTasks(listOf(), listOf())
-    )
 
     fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
         return filterArchivedTasksToIndexTask(taskLists[taskList.value].tasks)

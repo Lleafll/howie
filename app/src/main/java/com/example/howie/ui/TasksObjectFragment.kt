@@ -84,7 +84,7 @@ private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivit
         }
 
         override fun onUnarchiveClicked(index: TaskIndex) {
-            TODO("Implement")
+            viewModel.unarchive(index)
         }
 
         override fun onEditClicked(index: TaskIndex) {

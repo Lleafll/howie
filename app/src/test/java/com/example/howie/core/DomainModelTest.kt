@@ -447,4 +447,31 @@ class DomainModelTest {
             model.getTask(TaskListIndex(0), TaskIndex(0))
         )
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `unarchive throws on invalid task list index`() {
+        val model = DomainModel(listOf())
+        model.unarchive(TaskListIndex(123), TaskIndex(0))
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `unarchive throws on invalid task index`() {
+        val model = DomainModel(listOf())
+        model.unarchive(TaskListIndex(0), TaskIndex(123))
+    }
+
+    @Test
+    fun `unarchive works properly`() {
+        val model =
+            DomainModel(listOf(TaskList("", mutableListOf(Task("", archived = LocalDate.MIN)))))
+        assertEquals(
+            Task("", archived = LocalDate.MIN),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+        model.unarchive(TaskListIndex(0), TaskIndex(0))
+        assertEquals(
+            Task("", archived = null),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+    }
 }

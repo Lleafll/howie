@@ -70,8 +70,9 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         setTaskList(currentTaskList) // Force refresh of tasks
     }
 
-    fun unarchive(id: Int) = viewModelScope.launch {
-        // TODO: Implement
+    fun unarchive(id: TaskIndex) = viewModelScope.launch {
+        _repository.unarchive(currentTaskList, id)
+        setTaskList(currentTaskList) // Force refresh of tasks
     }
 
     fun delete(id: Int) = viewModelScope.launch {

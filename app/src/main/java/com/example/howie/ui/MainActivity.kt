@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.howie.R
 import com.example.howie.core.Task
 import com.example.howie.core.TaskCategory
+import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -176,10 +177,7 @@ private fun handleTaskActivityReturn(
         }
         TASK_ARCHIVED_RETURN_CODE -> {
             snackbar.setAction("UNDO") {
-                val taskId = data.getIntExtra(ARCHIVED_TASK_CODE, -1)
-                if (taskId == -1) {
-                    throw Exception("Archived task id missing from returned intent")
-                }
+                val taskId = data.getParcelableExtra<TaskIndex>(ARCHIVED_TASK_CODE)!!
                 mainViewModel.unarchive(taskId)
             }
         }
