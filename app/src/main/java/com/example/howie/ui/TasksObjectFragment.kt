@@ -80,7 +80,7 @@ private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivit
         }
 
         override fun onArchiveClicked(index: TaskIndex) {
-            TODO("Implement")
+            viewModel.doArchive(index)
         }
 
         override fun onUnarchiveClicked(index: TaskIndex) {

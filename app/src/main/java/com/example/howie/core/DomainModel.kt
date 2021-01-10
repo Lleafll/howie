@@ -81,7 +81,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun doArchive(taskList: TaskListIndex, task: TaskIndex) {
-        // TODO: Implement
+        var taskObject = _taskLists[taskList.value].tasks[task.value]
+        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(archived = LocalDate.now())
     }
 
     fun unarchive(taskList: TaskListIndex, task: TaskIndex) {

@@ -57,7 +57,8 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
     }
 
     suspend fun doArchive(taskListId: TaskListIndex, taskId: TaskIndex) {
-        TODO("Implement")
+        _domainModel.await().doArchive(taskListId, taskId)
+        saveAll()
     }
 
     suspend fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
