@@ -234,4 +234,52 @@ class DomainModelTest {
         val model = DomainModel(listOf())
         model.getArchive(123)
     }
+
+    @Test
+    fun `getArchive empty result on default DomainModel`() {
+        val model = DomainModel(listOf())
+        assertTrue(model.getArchive(0).isEmpty())
+    }
+
+    @Test
+    fun `getArchive empty return when no archived tasks`() {
+        val model = DomainModel(listOf(TaskList("", listOf(Task("")))))
+        assertTrue(model.getArchive(0).isEmpty())
+    }
+
+    @Test
+    fun `getArchive proper return`() {
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "",
+                    listOf(
+                        // 3 Unarchived tasks
+                        Task(""),
+                        Task(""),
+                        Task(""),
+                        // 2 Archived tasks
+                        Task("", archived = LocalDate.MIN),
+                        Task("", archived = LocalDate.MIN)
+                    )
+                ),
+                TaskList(
+                    "",
+                    listOf(
+                        Task(""),
+                        Task(""),
+                        Task(""),
+                    )
+                )
+            )
+        )
+        assertEquals(
+            listOf(
+                IndexedTask(3, Task("", archived = LocalDate.MIN)),
+                IndexedTask(4, Task("", archived = LocalDate.MIN))
+            ),
+            model.getArchive(0)
+        )
+        assertTrue(model.getArchive(1).isEmpty())
+    }
 }

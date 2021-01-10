@@ -98,7 +98,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     )
 
     fun getArchive(taskList: Int): List<IndexedTask> {
-        return taskLists[taskList].tasks.mapIndexed { i, task -> IndexedTask(i, task) }
+        return filterArchivedTasksToIndexTask(taskLists[taskList].tasks)
     }
 
     fun deleteTaskList(taskList: Int): Boolean {
@@ -122,7 +122,12 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 }
 
-private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>): List<IndexedTask> =
+private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =
+    tasks.withIndex()
+        .filter { (i, task) -> task.archived != null }
+        .map { (i, task) -> IndexedTask(i, task) }
+
+private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>) =
     tasks.withIndex()
         .filter { (i, task) -> task.archived == null }
         .map { (i, task) -> IndexedTask(i, task) }
