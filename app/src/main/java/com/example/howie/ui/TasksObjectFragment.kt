@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import com.example.howie.R
-import com.example.howie.core.Task
+import com.example.howie.core.IndexedTask
 import com.example.howie.core.TaskCategory
 import com.example.howie.core.UnarchivedTasks
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
@@ -51,7 +51,7 @@ private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainVi
 private fun setTasks(
     taskAdapter: TaskAdapter,
     view: ExpandableTasksView,
-    tasks: List<Task>,
+    tasks: List<IndexedTask>,
     defaultExpandState: Boolean
 ) {
     view.setAdapter(taskAdapter)
@@ -70,25 +70,25 @@ private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivit
             viewModel.snoozeToTomorrow(position)
         }
 
-        override fun onRemoveSnoozeClicked(position: Int) {
+        override fun onRemoveSnoozeClicked(index: Int) {
             TODO("Implement")
         }
 
-        override fun onRescheduleClicked(position: Int) {
+        override fun onRescheduleClicked(index: Int) {
             TODO("Implement")
         }
 
-        override fun onArchiveClicked(position: Int) {
+        override fun onArchiveClicked(index: Int) {
             TODO("Implement")
         }
 
-        override fun onUnarchiveClicked(position: Int) {
+        override fun onUnarchiveClicked(index: Int) {
             TODO("Implement")
         }
 
-        override fun onEditClicked(position: Int) {
+        override fun onEditClicked(index: Int) {
             val intent = Intent(activity.applicationContext, TaskActivity::class.java)
-            intent.putExtra(TaskActivity.TASK_ID, position)
+            intent.putExtra(TaskActivity.TASK_ID, index)
             intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
             activity.startActivityForResult(intent, TASK_REQUEST_CODE)
         }

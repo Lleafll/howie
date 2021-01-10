@@ -1,8 +1,13 @@
 package com.example.howie.core
 
+data class IndexedTask(
+    val indexInTaskList: Int,
+    val task: Task
+)
+
 data class UnarchivedTasks(
-    val unsnoozed: List<Task>,
-    val snoozed: List<Task>
+    val unsnoozed: List<IndexedTask>,
+    val snoozed: List<IndexedTask>
 )
 
 data class CategorizedTasks(
@@ -78,9 +83,9 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun getUnarchivedTasks(taskList: Int, category: TaskCategory): UnarchivedTasks {
-        val unArchivedTasks = filterUnarchivedTasks(taskLists[taskList].tasks)
+        val unArchivedTasks = filterUnarchivedTasksToIndexedTask(taskLists[taskList].tasks)
         val categoryTasks = filterCategory(unArchivedTasks, category)
-        val partitionedTasks = categoryTasks.partition { it.snoozed == null }
+        val partitionedTasks = categoryTasks.partition { it.task.snoozed == null }
         return UnarchivedTasks(partitionedTasks.first, partitionedTasks.second)
     }
 
@@ -117,6 +122,11 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 }
 
+private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>): List<IndexedTask> =
+    tasks.withIndex()
+        .filter { (i, task) -> task.archived == null }
+        .map { (i, task) -> IndexedTask(i, task) }
+
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
 
 private fun filterUnarchivedUnsnoozedTasks(tasks: Iterable<Task>) =
@@ -136,5 +146,5 @@ private fun countUnarchivedUnsnoozedTasks(tasks: Iterable<Task>): TaskCounts {
 private fun count(tasks: Iterable<Task>, category: TaskCategory) =
     tasks.count { it.category() == category }
 
-private fun filterCategory(tasks: Iterable<Task>, category: TaskCategory) =
-    tasks.filter { it.category() == category }
+private fun filterCategory(tasks: Iterable<IndexedTask>, category: TaskCategory) =
+    tasks.filter { it.task.category() == category }

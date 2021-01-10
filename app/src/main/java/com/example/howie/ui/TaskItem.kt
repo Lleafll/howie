@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.example.howie.R
 import com.example.howie.core.Task
+import com.example.howie.core.isSnoozed
 import kotlinx.android.synthetic.main.task_item.view.*
 import java.time.LocalDate
 
@@ -55,11 +56,11 @@ class TaskItem : LinearLayout {
     var task: Task = Task("")
         set(value) {
             field = value
-            name_text_view.text = value.name
-            setDateString(due_text_view, value.due)
-            setDateString(snoozed_text_view, value.snoozed)
-            setDateString(archived_text_view, value.archived)
-            if (field.snoozed == null || field.snoozed!! <= LocalDate.now()) {
+            name_text_view.text = task.name
+            setDateString(due_text_view, task.due)
+            setDateString(snoozed_text_view, task.snoozed)
+            setDateString(archived_text_view, task.archived)
+            if (!task.isSnoozed()) {
                 snooze_to_tomorrow.isVisible = true
                 remove_snooze.isVisible = false
             } else {
@@ -67,12 +68,12 @@ class TaskItem : LinearLayout {
                 remove_snooze.isVisible = true
             }
             when {
-                value.archived != null -> {
+                task.archived != null -> {
                     reschedule_button.isVisible = false
                     archive_button.isVisible = false
                     unarchive_button.isVisible = true
                 }
-                value.schedule != null -> {
+                task.schedule != null -> {
                     reschedule_button.isVisible = true
                     archive_button.isVisible = false
                     unarchive_button.isVisible = false

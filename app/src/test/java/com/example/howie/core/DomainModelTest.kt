@@ -77,13 +77,13 @@ class DomainModelTest {
         assertEquals(
             UnarchivedTasks(
                 listOf(
-                    Task("A", snoozed = null),
-                    Task("B", snoozed = null)
+                    IndexedTask(0, Task("A", snoozed = null)),
+                    IndexedTask(1, Task("B", snoozed = null))
                 ),
                 listOf(
-                    Task("C", snoozed = date),
-                    Task("D", snoozed = date),
-                    Task("E", snoozed = date)
+                    IndexedTask(2, Task("C", snoozed = date)),
+                    IndexedTask(3, Task("D", snoozed = date)),
+                    IndexedTask(4, Task("E", snoozed = date))
                 )
             ),
             model.getUnarchivedTasks(1, TaskCategory.DECIDE)
