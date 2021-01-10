@@ -31,28 +31,29 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
     archive_view.layoutManager = LinearLayoutManager(applicationContext)
     val taskAdapter = TaskAdapter(object : TaskAdapter.Listener {
         override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
-            TODO("Implement")
+            // noop
         }
 
         override fun onRemoveSnoozeClicked(index: TaskIndex) {
-            TODO("Implement")
+            // noop
         }
 
         override fun onRescheduleClicked(index: TaskIndex) {
-            TODO("Implement")
+            // noop
         }
 
         override fun onArchiveClicked(index: TaskIndex) {
-            TODO("Implement")
+            // noop
         }
 
         override fun onUnarchiveClicked(index: TaskIndex) {
-            TODO("Implement")
+            viewModel.unarchive(index)
         }
 
         override fun onEditClicked(index: TaskIndex) {
             val intent = Intent(applicationContext, TaskActivity::class.java)
             intent.putExtra(TaskActivity.TASK_ID, index)
+            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.taskList)
             startActivity(intent)
         }
     })

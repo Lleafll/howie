@@ -3,6 +3,7 @@ package com.example.howie.ui
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.howie.core.IndexedTask
+import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
 import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
@@ -15,6 +16,7 @@ class ArchiveViewModel(application: Application) : AndroidViewModel(application)
         _repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }
 
+    lateinit var taskList: TaskListIndex
     private val _taskList = MutableLiveData<TaskListIndex>()
     val archive: LiveData<List<IndexedTask>> = _taskList.switchMap {
         liveData {
@@ -22,7 +24,12 @@ class ArchiveViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun setTaskList(taskList: TaskListIndex) = viewModelScope.launch {
-        _taskList.value = taskList
+    fun setTaskList(taskListIndex: TaskListIndex) = viewModelScope.launch {
+        taskList = taskListIndex
+        _taskList.value = taskListIndex
+    }
+
+    fun unarchive(task: TaskIndex) = viewModelScope.launch {
+        _repository.unarchive(taskList, task)
     }
 }
