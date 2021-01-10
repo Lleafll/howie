@@ -13,13 +13,13 @@ data class TabLabels(
     val label3: String
 )
 
-class MainViewModel(application: Application, private val _repository: TasksRepository) :
-    AndroidViewModel(application) {
+class MainViewModel(
+    private val _application: Application,
+    private var _repository: TasksRepository
+) :
+    AndroidViewModel(_application) {
 
-    constructor(application: Application) : this(application, {
-        val database = getDatabase(application.applicationContext)
-        TasksRepository(database.getTaskDao(), database.getTaskListDao())
-    }())
+    constructor(application: Application) : this(application, buildTaskRepository(application))
 
     var currentTaskList = TaskListIndex(0)
         private set
@@ -123,6 +123,11 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
             emit(labels)
         }
     }
+
+    fun forceRefresh() = viewModelScope.launch {
+        _repository = buildTaskRepository(_application)
+        setTaskList(currentTaskList)
+    }
 }
 
 private fun buildLabel(information: TaskListInformation): String {
@@ -142,4 +147,9 @@ private fun formatLabel(taskCount: Int, lowerText: String): String {
 private fun countToString(count: Int) = when (count) {
     0 -> "✓"
     else -> count.toString()
+}
+
+private fun buildTaskRepository(application: Application): TasksRepository {
+    val database = getDatabase(application.applicationContext)
+    return TasksRepository(database.getTaskDao(), database.getTaskListDao())
 }

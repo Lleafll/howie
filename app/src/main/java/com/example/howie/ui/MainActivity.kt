@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        viewModel.forceRefresh()
         if (requestCode == TASK_REQUEST_CODE) {
             if (data == null) {
                 return
@@ -144,7 +145,7 @@ private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel
             TaskCategory.values()[tab_layout.selectedTabPosition]
         )
         intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-        startActivity(intent)
+        startActivityForResult(intent, TASK_REQUEST_CODE)
     }
 }
 
