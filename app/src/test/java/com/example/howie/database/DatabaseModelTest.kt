@@ -215,10 +215,127 @@ class DatabaseModelTest {
             DatabaseModel(
                 listOf(
                     TaskEntity("DEF", 0, Importance.UNIMPORTANT, null, null, null, null, null, 0),
-                    TaskEntity("GHI", 0, Importance.IMPORTANT, null, LocalDate.MIN, null, null, null, 1),
-                    TaskEntity("JKL", 0, Importance.IMPORTANT, null, null, null, null, LocalDate.MAX, 2)
+                    TaskEntity(
+                        "GHI",
+                        0,
+                        Importance.IMPORTANT,
+                        null,
+                        LocalDate.MIN,
+                        null,
+                        null,
+                        null,
+                        1
+                    ),
+                    TaskEntity(
+                        "JKL",
+                        0,
+                        Importance.IMPORTANT,
+                        null,
+                        null,
+                        null,
+                        null,
+                        LocalDate.MAX,
+                        2
+                    )
                 ),
                 listOf(TaskListEntity("ABC", 0))
+            ),
+            domainModel.toDatabaseModel()
+        )
+    }
+
+    @Test
+    fun `toDatabaseModel with two task list and six tasks`() {
+        val domainModel = listOf(
+            TaskList(
+                "ABC", mutableListOf(
+                    Task("DEF", importance = Importance.UNIMPORTANT),
+                    Task("GHI", snoozed = LocalDate.MIN),
+                    Task("JKL", archived = LocalDate.MAX),
+                )
+            ),
+            TaskList(
+                "MNO", mutableListOf(
+                    Task("PQR", due = LocalDate.MIN),
+                    Task("STU"),
+                    Task("VWX", schedule = Schedule(ScheduleInXTimeUnits(1, TimeUnit.WEEK))),
+                )
+            ),
+        )
+        assertEquals(
+            DatabaseModel(
+                listOf(
+                    TaskEntity(
+                        "DEF",
+                        0,
+                        Importance.UNIMPORTANT,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        0
+                    ),
+                    TaskEntity(
+                        "GHI",
+                        0,
+                        Importance.IMPORTANT,
+                        null,
+                        LocalDate.MIN,
+                        null,
+                        null,
+                        null,
+                        1
+                    ),
+                    TaskEntity(
+                        "JKL",
+                        0,
+                        Importance.IMPORTANT,
+                        null,
+                        null,
+                        null,
+                        null,
+                        LocalDate.MAX,
+                        2
+                    ),
+                    TaskEntity(
+                        "PQR",
+                        1,
+                        Importance.IMPORTANT,
+                        LocalDate.MIN,
+                        null,
+                        null,
+                        null,
+                        null,
+                        3
+                    ),
+                    TaskEntity(
+                        "STU",
+                        1,
+                        Importance.IMPORTANT,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        4
+                    ),
+                    TaskEntity(
+                        "VWX",
+                        1,
+                        Importance.IMPORTANT,
+                        null,
+                        null,
+                        Schedule(ScheduleInXTimeUnits(1, TimeUnit.WEEK)),
+                        null,
+                        null,
+                        5
+                    )
+                ),
+                listOf(
+                    TaskListEntity("ABC", 0),
+                    TaskListEntity("MNO", 1)
+                )
             ),
             domainModel.toDatabaseModel()
         )

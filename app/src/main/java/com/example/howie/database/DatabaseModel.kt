@@ -12,9 +12,10 @@ data class DatabaseModel(
 fun List<TaskList>.toDatabaseModel(): DatabaseModel {
     val taskListEntities =
         mapIndexed { index, taskList -> TaskListEntity(taskList.name, index.toLong()) }
+    var taskIndex = 0
     val taskEntities = mapIndexed { index, taskList ->
         val taskListIndex = index.toLong()
-        taskList.tasks.mapIndexed { taskIndex, task ->
+        taskList.tasks.map { task ->
             TaskEntity(
                 task.name,
                 taskListIndex,
@@ -24,7 +25,7 @@ fun List<TaskList>.toDatabaseModel(): DatabaseModel {
                 task.schedule,
                 null,
                 task.archived,
-                taskIndex
+                taskIndex++
             )
         }
     }.flatten()

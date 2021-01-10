@@ -8,9 +8,9 @@ import java.time.LocalDate
 @Parcelize
 class Schedule(
     // kotlin/Java do not support unions, so we set one of the members to an actual object and the others to null
-    @Embedded(prefix="inX") var scheduleInXTimeUnits: ScheduleInXTimeUnits?,
-    @Embedded(prefix="forNextWeekDay") var scheduleForNextWeekDay: ScheduleForNextWeekDay?,
-    @Embedded(prefix="forNextDayOfMonth") var scheduleForNextDayOfMonth: ScheduleForNextDayOfMonth?
+    @Embedded(prefix = "inX") var scheduleInXTimeUnits: ScheduleInXTimeUnits?,
+    @Embedded(prefix = "forNextWeekDay") var scheduleForNextWeekDay: ScheduleForNextWeekDay?,
+    @Embedded(prefix = "forNextDayOfMonth") var scheduleForNextDayOfMonth: ScheduleForNextDayOfMonth?
 ) : Parcelable {
 
     constructor(inXTimeUnits: ScheduleInXTimeUnits) : this(inXTimeUnits, null, null)
@@ -26,6 +26,23 @@ class Schedule(
         null,
         scheduleForNextDayOfMonth
     )
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is Schedule) {
+            scheduleInXTimeUnits == other.scheduleInXTimeUnits &&
+                    scheduleForNextWeekDay == other.scheduleForNextWeekDay &&
+                    scheduleForNextDayOfMonth == other.scheduleForNextDayOfMonth
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        var result = scheduleInXTimeUnits?.hashCode() ?: 0
+        result = 31 * result + (scheduleForNextWeekDay?.hashCode() ?: 0)
+        result = 31 * result + (scheduleForNextDayOfMonth?.hashCode() ?: 0)
+        return result
+    }
 }
 
 fun Schedule.scheduleNext(date: LocalDate): LocalDate {
