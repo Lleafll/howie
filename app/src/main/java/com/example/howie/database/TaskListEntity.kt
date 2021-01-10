@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "TaskList")
 data class TaskListEntity(
     val name: String,
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     var id: Long
 )

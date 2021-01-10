@@ -51,6 +51,6 @@ data class TaskEntity(
     @Embedded(prefix = "schedule") val schedule: Schedule?,
     val completed: LocalDate?,
     val archived: LocalDate?,
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     var id: Int
 )
