@@ -102,11 +102,12 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun deleteTaskList(taskList: Int): Boolean {
-        if (taskLists.size <= 1) {
-            return false
+        return if (taskLists.size <= 1) {
+            false
+        } else {
+            _taskLists.removeAt(taskList)
+            true
         }
-        // TODO: Implement
-        return true
     }
 
     fun getTask(taskListIndex: Int, taskIndex: Int): Task {

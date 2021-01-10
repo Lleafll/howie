@@ -1,7 +1,6 @@
 package com.example.howie.core
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate
 
@@ -292,5 +291,22 @@ class DomainModelTest {
         val newTaskList = model.taskLists[newIndex]
         assertEquals("New Task List", newTaskList.name)
         assertTrue(newTaskList.tasks.isEmpty())
+    }
+
+    @Test
+    fun `deleteTaskList noop on default DomainModel`() {
+        val model = DomainModel(listOf())
+        assertFalse(model.deleteTaskList(0))
+        assertFalse(model.deleteTaskList(1))
+        assertFalse(model.deleteTaskList(123))
+        assertFalse(model.deleteTaskList(-1))
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `deleteTaskList throws on invalid index`() {
+        val model = DomainModel(listOf(TaskList("A", listOf()), TaskList("B", listOf())))
+        assertFalse(model.deleteTaskList(123))
+        assertTrue(model.deleteTaskList(0))
+        assertEquals(listOf(TaskList("B", listOf())), model.taskLists)
     }
 }
