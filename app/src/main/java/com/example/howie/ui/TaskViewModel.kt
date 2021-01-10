@@ -108,8 +108,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
-        val sucess = _repository.addTask(taskList, task)
-        if (sucess) {
+        val success = _repository.addTask(taskList, task)
+        if (success) {
             callFinish()
         }
     }

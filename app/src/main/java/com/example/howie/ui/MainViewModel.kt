@@ -76,10 +76,6 @@ class MainViewModel(
         setTaskList(currentTaskList) // Force refresh of tasks
     }
 
-    fun delete(id: Int) = viewModelScope.launch {
-        // TODO: Implement
-    }
-
     fun addTaskList() = viewModelScope.launch {
         val newTaskListIndex = _repository.addTaskList()
         setTaskList(newTaskListIndex)
