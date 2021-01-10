@@ -9,11 +9,11 @@ data class DatabaseModel(
     val taskListEntities: List<TaskListEntity>
 )
 
-fun List<TaskList>.toDatabaseModel() = DatabaseModel(
-    // TODO: Implement
-    listOf(),
-    listOf()
-)
+fun List<TaskList>.toDatabaseModel(): DatabaseModel {
+    val taskListEntities =
+        mapIndexed { index, taskList -> TaskListEntity(taskList.name, index.toLong()) }
+    return DatabaseModel(listOf(), taskListEntities)
+}
 
 fun DatabaseModel.toDomainModel(): List<TaskList> {
     return taskListEntities.map { taskListEntity ->

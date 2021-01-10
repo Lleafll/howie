@@ -178,4 +178,13 @@ class DatabaseModelTest {
         val domainModel = listOf<TaskList>()
         assertEquals(DatabaseModel(listOf(), listOf()), domainModel.toDatabaseModel())
     }
+
+    @Test
+    fun `toDatabaseModel with only one task list`() {
+        val domainModel = listOf(TaskList("ABC", mutableListOf()))
+        assertEquals(
+            DatabaseModel(listOf(), listOf(TaskListEntity("ABC", 0))),
+            domainModel.toDatabaseModel()
+        )
+    }
 }
