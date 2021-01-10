@@ -172,4 +172,10 @@ class DatabaseModelTest {
             ), databaseModel.toDomainModel()
         )
     }
+
+    @Test
+    fun `toDatabaseModel returns empty model on empty model`() {
+        val domainModel = listOf<TaskList>()
+        assertEquals(DatabaseModel(listOf(), listOf()), domainModel.toDatabaseModel())
+    }
 }
