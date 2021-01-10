@@ -15,12 +15,14 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         }
     }
 
-    suspend fun getTaskCounts(taskList: TaskListIndex) = _domainModel.await().getTaskCounts(taskList)
+    suspend fun getTaskCounts(taskList: TaskListIndex) =
+        _domainModel.await().getTaskCounts(taskList)
 
     suspend fun getTask(taskListIndex: TaskListIndex, taskIndex: TaskIndex) =
         _domainModel.await().getTask(taskListIndex, taskIndex)
 
-    suspend fun getTaskListName(taskList: TaskListIndex) = _domainModel.await().getTaskListName(taskList)
+    suspend fun getTaskListName(taskList: TaskListIndex) =
+        _domainModel.await().getTaskListName(taskList)
 
     suspend fun getTaskListNames() = _domainModel.await().getTaskListNames()
 
@@ -70,6 +72,11 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     suspend fun snoozeToTomorrow(taskList: TaskListIndex, task: TaskIndex) {
         _domainModel.await().snoozeToTomorrow(taskList, task)
+        saveAll()
+    }
+
+    suspend fun removeSnooze(taskList: TaskListIndex, task: TaskIndex) {
+        _domainModel.await().removeSnooze(taskList, task)
         saveAll()
     }
 

@@ -98,6 +98,11 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         setTaskList(currentTaskList) // Force refresh of tasks
     }
 
+    fun removeSnooze(index: TaskIndex) = viewModelScope.launch {
+        _repository.removeSnooze(currentTaskList, index)
+        setTaskList(currentTaskList) // Force refresh of tasks
+    }
+
     val tabLabels: LiveData<TabLabels> = _currentTaskList.switchMap {
         liveData {
             val taskCounts = _repository.getTaskCounts(it)

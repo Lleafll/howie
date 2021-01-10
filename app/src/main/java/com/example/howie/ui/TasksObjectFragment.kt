@@ -72,7 +72,7 @@ private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivit
         }
 
         override fun onRemoveSnoozeClicked(index: TaskIndex) {
-            TODO("Implement")
+            viewModel.removeSnooze(index)
         }
 
         override fun onRescheduleClicked(index: TaskIndex) {

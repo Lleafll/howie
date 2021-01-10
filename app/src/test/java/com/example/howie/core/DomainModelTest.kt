@@ -350,4 +350,31 @@ class DomainModelTest {
         val tomorrow = LocalDate.now().plusDays(1)
         assertEquals(Task("1", snoozed = tomorrow), model.getTask(TaskListIndex(0), TaskIndex(0)))
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `removeSnooze throws on invalid task list index`() {
+        val model = DomainModel(listOf())
+        model.removeSnooze(TaskListIndex(123), TaskIndex(0))
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `removeSnooze throws on invalid task index`() {
+        val model = DomainModel(listOf())
+        model.removeSnooze(TaskListIndex(0), TaskIndex(123))
+    }
+
+    @Test
+    fun `removeSnooze works properly`() {
+        val model =
+            DomainModel(listOf(TaskList("", mutableListOf(Task("", snoozed = LocalDate.MAX)))))
+        assertEquals(
+            Task("", snoozed = LocalDate.MAX),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+        model.removeSnooze(TaskListIndex(0), TaskIndex(0))
+        assertEquals(
+            Task("", snoozed = null),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+    }
 }
