@@ -1,5 +1,7 @@
 package com.example.howie.core
 
+import java.time.LocalDate
+
 data class IndexedTask(
     val indexInTaskList: Int,
     val task: Task
@@ -31,7 +33,7 @@ data class TaskListInformation(
 
 class DomainModel(initialTaskLists: List<TaskList>) {
     private val _taskLists: MutableList<TaskList> = if (initialTaskLists.isEmpty()) {
-        mutableListOf(TaskList("Tasks", listOf()))
+        mutableListOf(TaskList("Tasks", mutableListOf()))
     } else {
         initialTaskLists.toMutableList()
     }
@@ -123,12 +125,14 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun addTaskList(): Int {
-        _taskLists.add(TaskList("New Task List", listOf()))
+        _taskLists.add(TaskList("New Task List", mutableListOf()))
         return _taskLists.size - 1
     }
 
     fun snoozeToTomorrow(taskList: Int, task: Int) {
-        TODO("Implement")
+        val tomorrow = LocalDate.now().plusDays(1)
+        val taskObject = _taskLists[taskList].tasks[task]
+        _taskLists[taskList].tasks[task] = taskObject.copy(snoozed = tomorrow)
     }
 }
 

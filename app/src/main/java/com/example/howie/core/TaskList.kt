@@ -2,5 +2,5 @@ package com.example.howie.core
 
 data class TaskList (
     val name: String,
-    val tasks: List<Task>
+    val tasks: MutableList<Task>
 )

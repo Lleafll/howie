@@ -20,7 +20,7 @@ class DatabaseModelTest {
             listOf(),
             listOf(TaskListEntity("ABC", 1))
         )
-        assertEquals(listOf(TaskList("ABC", listOf())), databaseModel.toDomainModel())
+        assertEquals(listOf(TaskList("ABC", mutableListOf())), databaseModel.toDomainModel())
     }
 
     @Test
@@ -35,9 +35,9 @@ class DatabaseModelTest {
         )
         assertEquals(
             listOf(
-                TaskList("ABC", listOf()),
-                TaskList("DEF", listOf()),
-                TaskList("GHI", listOf()),
+                TaskList("ABC", mutableListOf()),
+                TaskList("DEF", mutableListOf()),
+                TaskList("GHI", mutableListOf()),
             ),
             databaseModel.toDomainModel()
         )
@@ -65,7 +65,7 @@ class DatabaseModelTest {
             listOf(
                 TaskList(
                     "ABC",
-                    listOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
+                    mutableListOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
                 )
             ), databaseModel.toDomainModel()
         )
@@ -96,11 +96,11 @@ class DatabaseModelTest {
             listOf(
                 TaskList(
                     "ABC",
-                    listOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
+                    mutableListOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
                 ),
                 TaskList(
                     "DEF",
-                    listOf()
+                    mutableListOf()
                 )
             ), databaseModel.toDomainModel()
         )
@@ -132,7 +132,16 @@ class DatabaseModelTest {
         val expected = listOf(
             TaskList(
                 "",
-                listOf(Task("Task2", Importance.UNIMPORTANT, due, snoozed, schedule, archived))
+                mutableListOf(
+                    Task(
+                        "Task2",
+                        Importance.UNIMPORTANT,
+                        due,
+                        snoozed,
+                        schedule,
+                        archived
+                    )
+                )
             )
         )
         assertEquals(expected, databaseModel.toDomainModel())
@@ -154,11 +163,11 @@ class DatabaseModelTest {
             listOf(
                 TaskList(
                     "ABC",
-                    listOf(Task("TaskName1", Importance.IMPORTANT, null, null, null, null))
+                    mutableListOf(Task("TaskName1", Importance.IMPORTANT, null, null, null, null))
                 ),
                 TaskList(
                     "DEF",
-                    listOf()
+                    mutableListOf()
                 )
             ), databaseModel.toDomainModel()
         )

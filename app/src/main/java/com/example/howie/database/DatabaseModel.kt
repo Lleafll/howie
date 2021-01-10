@@ -20,6 +20,7 @@ fun DatabaseModel.toDomainModel(): List<TaskList> {
         TaskList(
             taskListEntity.name,
             taskEntities.filter { it.taskListId == taskListEntity.id }.map { it.toTask() }
+                .toMutableList()
         )
     }
 }
