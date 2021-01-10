@@ -34,10 +34,12 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
     suspend fun getUnarchivedTasks(taskList: Int, category: TaskCategory) =
         _domainModel.await().getUnarchivedTasks(taskList, category)
 
-    suspend fun deleteTaskList(position: Int) {
-        if (_domainModel.await().deleteTaskList(position)) {
+    suspend fun deleteTaskList(position: Int): Boolean {
+        val success = _domainModel.await().deleteTaskList(position)
+        if (success) {
             saveAll()
         }
+        return success
     }
 
     suspend fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int) {

@@ -86,7 +86,8 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
     }
 
     fun deleteTaskList(taskList: Int) = viewModelScope.launch {
-        // TODO: Implement
+        _repository.deleteTaskList(taskList)
+        setTaskList(0)
     }
 
     val taskListDrawerLabels: LiveData<List<String>> = _currentTaskList.switchMap {
