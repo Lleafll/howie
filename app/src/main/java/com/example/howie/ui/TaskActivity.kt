@@ -144,13 +144,13 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             true
         }
         R.id.action_archive -> {
-            viewModel.doArchive(viewModel.taskIndex!!)
+            viewModel.doArchive()
             val data = buildIntent(TASK_ARCHIVED_RETURN_CODE)
             data.putExtra(ARCHIVED_TASK_CODE, viewModel.taskIndex!!)
             true
         }
         R.id.action_unarchive -> {
-            viewModel.unarchive(viewModel.taskIndex!!)
+            viewModel.unarchive()
             true
         }
         R.id.action_delete -> {

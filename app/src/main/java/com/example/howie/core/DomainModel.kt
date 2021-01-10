@@ -145,16 +145,20 @@ class DomainModel(initialTaskLists: List<TaskList>) {
             _taskLists[taskList.value].tasks[task.value] = nextTask
         }
     }
+
+    fun updateTask(taskList: TaskListIndex, taskIndex: TaskIndex, task: Task): Boolean {
+        TODO("Not yet implemented")
+    }
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =
     tasks.withIndex()
-        .filter { (i, task) -> task.archived != null }
+        .filter { (_, task) -> task.archived != null }
         .map { (i, task) -> IndexedTask(TaskIndex(i), task) }
 
 private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>) =
     tasks.withIndex()
-        .filter { (i, task) -> task.archived == null }
+        .filter { (_, task) -> task.archived == null }
         .map { (i, task) -> IndexedTask(TaskIndex(i), task) }
 
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }

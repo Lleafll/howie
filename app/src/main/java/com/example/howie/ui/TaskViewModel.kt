@@ -101,7 +101,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
 
     fun updateTask(task: Task) = viewModelScope.launch {
-        TODO("Implement")
+        val success = _repository.updateTask(taskList, taskIndex!!, task)
+        if (success) {
+            callFinish()
+        }
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
@@ -111,15 +114,15 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun doArchive(task: TaskIndex) = viewModelScope.launch {
+    fun doArchive() = viewModelScope.launch {
         TODO("Implement")
     }
 
-    fun unarchive(task: TaskIndex) = viewModelScope.launch {
+    fun unarchive() = viewModelScope.launch {
         TODO("Implement")
     }
 
-    fun deleteTask(task: TaskIndex) = viewModelScope.launch {
+    fun deleteTask() = viewModelScope.launch {
         TODO("Implement")
     }
 

@@ -63,6 +63,7 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
 
     fun addTask(task: Task) = viewModelScope.launch {
         _repository.addTask(currentTaskList, task)
+        setTaskList(currentTaskList) // Force refresh of tasks
     }
 
     fun doArchive(id: TaskIndex) = viewModelScope.launch {
