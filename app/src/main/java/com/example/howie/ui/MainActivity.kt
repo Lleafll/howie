@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.howie.R
 import com.example.howie.core.Task
 import com.example.howie.core.TaskCategory
+import com.example.howie.core.TaskListIndex
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -70,8 +71,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val taskList = intent.getIntExtra(SHOW_TASK_LIST_EXTRA, -1)
-        if (taskList != -1) {
+        val taskList: TaskListIndex? = intent.getParcelableExtra(SHOW_TASK_LIST_EXTRA)
+        if (taskList != null) {
             viewModel.setTaskList(taskList)
         }
     }
@@ -80,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (item.itemId == R.id.action_add_list) {
             viewModel.addTaskList()
         } else {
-            val taskList = item.itemId - R.id.action_add_list - 1
+            val taskList = TaskListIndex(item.itemId - R.id.action_add_list - 1)
             viewModel.setTaskList(taskList)
         }
         drawer_layout.closeDrawer(GravityCompat.START)
@@ -197,10 +198,10 @@ private fun MainActivity.setupColors() {
     }
 }
 
-private fun MainActivity.openRenameTaskListFragment(taskList: Int) {
+private fun MainActivity.openRenameTaskListFragment(taskList: TaskListIndex) {
     val dialog = RenameTaskListFragment()
     val arguments = Bundle()
-    arguments.putInt(TASK_LIST_ID_ARGUMENT, taskList)
+    arguments.putParcelable(TASK_LIST_ID_ARGUMENT, taskList)
     dialog.arguments = arguments
     dialog.show(supportFragmentManager, "renameTask")
 }
@@ -218,7 +219,7 @@ private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) 
     alert.show()
 }
 
-private fun MainActivity.showArchive(currentTaskList: Int) {
+private fun MainActivity.showArchive(currentTaskList: TaskListIndex) {
     val intent = Intent(applicationContext, ArchiveActivity::class.java)
     intent.putExtra(ArchiveActivity.TASKLIST_INDEX, currentTaskList)
     startActivity(intent)

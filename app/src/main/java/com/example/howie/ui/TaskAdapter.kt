@@ -8,17 +8,18 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.howie.R
 import com.example.howie.core.IndexedTask
+import com.example.howie.core.TaskIndex
 
 class TaskAdapter(private val adapterListener: Listener) :
     ListAdapter<IndexedTask, TaskAdapter.TaskViewHolder>(TasksComparator()) {
 
     interface Listener {
-        fun onSnoozeToTomorrowClicked(index: Int)
-        fun onRemoveSnoozeClicked(index: Int)
-        fun onRescheduleClicked(index: Int)
-        fun onArchiveClicked(index: Int)
-        fun onUnarchiveClicked(index: Int)
-        fun onEditClicked(index: Int)
+        fun onSnoozeToTomorrowClicked(index: TaskIndex)
+        fun onRemoveSnoozeClicked(index: TaskIndex)
+        fun onRescheduleClicked(index: TaskIndex)
+        fun onArchiveClicked(index: TaskIndex)
+        fun onUnarchiveClicked(index: TaskIndex)
+        fun onEditClicked(index: TaskIndex)
     }
 
     class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -50,7 +51,7 @@ class TaskAdapter(private val adapterListener: Listener) :
         val index = indexedTask.indexInTaskList
         holder.taskItem.setListener(object : TaskItem.Listener {
             override fun onSnoozeToTomorrowClicked() =
-                adapterListener.onSnoozeToTomorrowClicked(position)
+                adapterListener.onSnoozeToTomorrowClicked(index)
 
             override fun onRemoveSnoozeClicked() = adapterListener.onRemoveSnoozeClicked(index)
             override fun onRescheduleClicked() = adapterListener.onRescheduleClicked(index)

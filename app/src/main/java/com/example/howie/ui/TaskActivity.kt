@@ -29,7 +29,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     }
 
     private val viewModel: TaskViewModel by viewModels { TaskViewModelFactory(application) }
-    private var taskId: Int? = null
+    private var taskId: TaskIndex? = null
     private var task: Task? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,13 +39,10 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        val taskListIndex = intent.getIntExtra(TASK_LIST_INDEX, -1)
-        if (taskListIndex == -1) {
-            error("No ${::TASK_LIST_INDEX.name} passed to $this")
-        }
+        val taskListIndex = intent.getParcelableExtra<TaskListIndex>(TASK_LIST_INDEX)!!
         viewModel.taskList = taskListIndex
-        taskId = intent.getIntExtra(TASK_ID, -1)
-        if (taskId != -1) {
+        taskId = intent.getParcelableExtra(TASK_ID)
+        if (taskId != null) {
             viewModel.getTask(taskId!!).observe(this) {
                 task = it
                 setTask(it)
@@ -195,7 +192,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         R.id.action_move_to_different_list -> {
             val dialog = MoveTaskFragment()
             val arguments = Bundle()
-            arguments.putInt("taskId", taskId!!)
+            arguments.putParcelable("taskId", taskId!!)
             dialog.arguments = arguments
             dialog.show(supportFragmentManager, "moveTaskDialog")
             true

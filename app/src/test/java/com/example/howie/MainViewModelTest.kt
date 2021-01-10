@@ -2,6 +2,8 @@ package com.example.howie
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.howie.core.TaskIndex
+import com.example.howie.core.TaskListIndex
 import com.example.howie.ui.MainViewModel
 import com.example.howie.ui.TasksRepository
 import io.mockk.MockKAnnotations
@@ -41,8 +43,8 @@ class MainViewModelTest {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
         val taskManager = MainViewModel(application, repository)
-        taskManager.setTaskList(456)
-        taskManager.doArchive(123)
-        coVerify { repository.doArchive(456, 123) }
+        taskManager.setTaskList(TaskListIndex(456))
+        taskManager.doArchive(TaskIndex(123))
+        coVerify { repository.doArchive(TaskListIndex(456), TaskIndex(123)) }
     }
 }

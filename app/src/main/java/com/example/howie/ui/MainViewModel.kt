@@ -2,10 +2,7 @@ package com.example.howie.ui
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.howie.core.Task
-import com.example.howie.core.TaskCategory
-import com.example.howie.core.TaskListInformation
-import com.example.howie.core.UnarchivedTasks
+import com.example.howie.core.*
 import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
 
@@ -24,7 +21,7 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         TasksRepository(database.getTaskDao(), database.getTaskListDao())
     }())
 
-    var currentTaskList = 0
+    var currentTaskList = TaskListIndex(0)
         private set
 
     private val _currentTaskList = MutableLiveData(currentTaskList)
@@ -59,7 +56,7 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         }
     }
 
-    fun setTaskList(taskList: Int) = viewModelScope.launch {
+    fun setTaskList(taskList: TaskListIndex) = viewModelScope.launch {
         currentTaskList = taskList
         _currentTaskList.value = taskList
     }
@@ -68,7 +65,7 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         // TODO: Implement
     }
 
-    fun doArchive(id: Int) = viewModelScope.launch {
+    fun doArchive(id: TaskIndex) = viewModelScope.launch {
         _repository.doArchive(currentTaskList, id)
     }
 
@@ -85,9 +82,9 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         setTaskList(newTaskListIndex)
     }
 
-    fun deleteTaskList(taskList: Int) = viewModelScope.launch {
+    fun deleteTaskList(taskList: TaskListIndex) = viewModelScope.launch {
         _repository.deleteTaskList(taskList)
-        setTaskList(0)
+        setTaskList(TaskListIndex(0))
     }
 
     val taskListDrawerLabels: LiveData<List<String>> = _currentTaskList.switchMap {
@@ -96,7 +93,7 @@ class MainViewModel(application: Application, private val _repository: TasksRepo
         }
     }
 
-    fun snoozeToTomorrow(task: Int) = viewModelScope.launch {
+    fun snoozeToTomorrow(task: TaskIndex) = viewModelScope.launch {
         _repository.snoozeToTomorrow(currentTaskList, task)
         setTaskList(currentTaskList) // Force refresh of tasks
     }

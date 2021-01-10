@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.howie.R
+import com.example.howie.core.TaskListIndex
 import com.google.android.material.textfield.TextInputEditText
 
 const val TASK_LIST_ID_ARGUMENT = "taskListId"
@@ -22,7 +23,8 @@ class RenameTaskListFragment : DialogFragment() {
                 .setMessage("Rename List")
                 .setPositiveButton("Ok") { _, _ ->
                     val textEdit: TextInputEditText = dialog!!.findViewById(R.id.new_task_list_name)
-                    val taskListId = requireArguments().getInt(TASK_LIST_ID_ARGUMENT)
+                    val taskListId =
+                        requireArguments().getParcelable<TaskListIndex>(TASK_LIST_ID_ARGUMENT)!!
                     viewModel.renameTaskList(taskListId, textEdit.text.toString())
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->

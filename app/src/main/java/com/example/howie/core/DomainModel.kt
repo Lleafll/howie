@@ -1,9 +1,21 @@
 package com.example.howie.core
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 
+@Parcelize
+data class TaskListIndex(
+    val value: Int
+) : Parcelable
+
+@Parcelize
+data class TaskIndex(
+    val value: Int
+) : Parcelable
+
 data class IndexedTask(
-    val indexInTaskList: Int,
+    val indexInTaskList: TaskIndex,
     val task: Task
 )
 
@@ -56,42 +68,38 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         }
     }
 
-    fun getTaskCounts(taskList: Int): TaskCounts {
-        return countUnarchivedUnsnoozedTasks(taskLists[taskList].tasks)
+    fun getTaskCounts(taskList: TaskListIndex): TaskCounts {
+        return countUnarchivedUnsnoozedTasks(taskLists[taskList.value].tasks)
     }
 
-    fun addTask(taskList: Int, task: Task) {
+    fun addTask(taskList: TaskListIndex, task: Task) {
         // TODO: Implement
     }
 
-    fun update(taskList: Int, task: Task) {
+    fun update(taskList: TaskListIndex, task: Task) {
         // TODO: Implement
     }
 
-    fun doArchive(id: Int) {
+    fun doArchive(taskList: TaskListIndex, task: TaskIndex) {
         // TODO: Implement
     }
 
-    fun unarchive(id: Int) {
+    fun unarchive(taskList: TaskListIndex, task: TaskIndex) {
         // TODO: Implement
     }
 
-    fun deleteTask(id: Int) {
+    fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
         // TODO: Implement
     }
 
-    fun getCurrentTasks() {
-        // TODO: Implement
-    }
-
-    fun getUnarchivedTasks(taskList: Int, category: TaskCategory): UnarchivedTasks {
-        val unArchivedTasks = filterUnarchivedTasksToIndexedTask(taskLists[taskList].tasks)
+    fun getUnarchivedTasks(taskList: TaskListIndex, category: TaskCategory): UnarchivedTasks {
+        val unArchivedTasks = filterUnarchivedTasksToIndexedTask(taskLists[taskList.value].tasks)
         val categoryTasks = filterCategory(unArchivedTasks, category)
         val partitionedTasks = categoryTasks.partition { it.task.snoozed == null }
         return UnarchivedTasks(partitionedTasks.first, partitionedTasks.second)
     }
 
-    fun getCurrentTasks(taskList: Int) = CategorizedTasks(
+    fun getCurrentTasks(taskList: TaskListIndex) = CategorizedTasks(
         // TODO: Implement
         UnarchivedTasks(listOf(), listOf()),
         UnarchivedTasks(listOf(), listOf()),
@@ -99,52 +107,56 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         UnarchivedTasks(listOf(), listOf())
     )
 
-    fun getArchive(taskList: Int): List<IndexedTask> {
-        return filterArchivedTasksToIndexTask(taskLists[taskList].tasks)
+    fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
+        return filterArchivedTasksToIndexTask(taskLists[taskList.value].tasks)
     }
 
-    fun deleteTaskList(taskList: Int): Boolean {
+    fun deleteTaskList(taskList: TaskListIndex): Boolean {
         return if (taskLists.size <= 1) {
             false
         } else {
-            _taskLists.removeAt(taskList)
+            _taskLists.removeAt(taskList.value)
             true
         }
     }
 
-    fun getTask(taskListIndex: Int, taskIndex: Int): Task {
-        return taskLists[taskListIndex].tasks[taskIndex]
+    fun getTask(taskListIndex: TaskListIndex, taskIndex: TaskIndex): Task {
+        return taskLists[taskListIndex.value].tasks[taskIndex.value]
     }
 
-    fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int): Boolean {
+    fun moveTaskFromListToList(
+        taskId: TaskIndex,
+        fromTaskList: TaskListIndex,
+        toList: TaskListIndex
+    ): Boolean {
         TODO("Implement")
     }
 
-    fun getTaskListName(taskList: Int): String {
-        return taskLists[taskList].name
+    fun getTaskListName(taskList: TaskListIndex): String {
+        return taskLists[taskList.value].name
     }
 
-    fun addTaskList(): Int {
+    fun addTaskList(): TaskListIndex {
         _taskLists.add(TaskList("New Task List", mutableListOf()))
-        return _taskLists.size - 1
+        return TaskListIndex(_taskLists.size - 1)
     }
 
-    fun snoozeToTomorrow(taskList: Int, task: Int) {
+    fun snoozeToTomorrow(taskList: TaskListIndex, task: TaskIndex) {
         val tomorrow = LocalDate.now().plusDays(1)
-        val taskObject = _taskLists[taskList].tasks[task]
-        _taskLists[taskList].tasks[task] = taskObject.copy(snoozed = tomorrow)
+        val taskObject = _taskLists[taskList.value].tasks[task.value]
+        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(snoozed = tomorrow)
     }
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =
     tasks.withIndex()
         .filter { (i, task) -> task.archived != null }
-        .map { (i, task) -> IndexedTask(i, task) }
+        .map { (i, task) -> IndexedTask(TaskIndex(i), task) }
 
 private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>) =
     tasks.withIndex()
         .filter { (i, task) -> task.archived == null }
-        .map { (i, task) -> IndexedTask(i, task) }
+        .map { (i, task) -> IndexedTask(TaskIndex(i), task) }
 
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
 

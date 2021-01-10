@@ -6,6 +6,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.howie.R
+import com.example.howie.core.TaskIndex
+import com.example.howie.core.TaskListIndex
 import kotlinx.android.synthetic.main.activity_archive.*
 
 
@@ -28,37 +30,34 @@ class ArchiveActivity : AppCompatActivity() {
 private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
     archive_view.layoutManager = LinearLayoutManager(applicationContext)
     val taskAdapter = TaskAdapter(object : TaskAdapter.Listener {
-        override fun onSnoozeToTomorrowClicked(position: Int) {
+        override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
             TODO("Implement")
         }
 
-        override fun onRemoveSnoozeClicked(position: Int) {
+        override fun onRemoveSnoozeClicked(index: TaskIndex) {
             TODO("Implement")
         }
 
-        override fun onRescheduleClicked(position: Int) {
+        override fun onRescheduleClicked(index: TaskIndex) {
             TODO("Implement")
         }
 
-        override fun onArchiveClicked(position: Int) {
+        override fun onArchiveClicked(index: TaskIndex) {
             TODO("Implement")
         }
 
-        override fun onUnarchiveClicked(position: Int) {
+        override fun onUnarchiveClicked(index: TaskIndex) {
             TODO("Implement")
         }
 
-        override fun onEditClicked(position: Int) {
+        override fun onEditClicked(index: TaskIndex) {
             val intent = Intent(applicationContext, TaskActivity::class.java)
-            intent.putExtra(TaskActivity.TASK_ID, position)
+            intent.putExtra(TaskActivity.TASK_ID, index)
             startActivity(intent)
         }
     })
     archive_view.adapter = taskAdapter
-    val taskListIndex = intent.getIntExtra(ArchiveActivity.TASKLIST_INDEX, -1)
-    if (taskListIndex == -1) {
-        error("TASKLIST_INDEX not passed to $this")
-    }
+    val taskListIndex: TaskListIndex = intent.getParcelableExtra(ArchiveActivity.TASKLIST_INDEX)!!
     viewModel.setTaskList(taskListIndex)
     viewModel.archive.observe(this, {
         taskAdapter.submitList(it)

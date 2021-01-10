@@ -1,8 +1,6 @@
 package com.example.howie.ui
 
-import com.example.howie.core.DomainModel
-import com.example.howie.core.IndexedTask
-import com.example.howie.core.TaskCategory
+import com.example.howie.core.*
 import com.example.howie.database.*
 import kotlinx.coroutines.*
 
@@ -17,12 +15,12 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         }
     }
 
-    suspend fun getTaskCounts(taskList: Int) = _domainModel.await().getTaskCounts(taskList)
+    suspend fun getTaskCounts(taskList: TaskListIndex) = _domainModel.await().getTaskCounts(taskList)
 
-    suspend fun getTask(taskListIndex: Int, taskIndex: Int) =
+    suspend fun getTask(taskListIndex: TaskListIndex, taskIndex: TaskIndex) =
         _domainModel.await().getTask(taskListIndex, taskIndex)
 
-    suspend fun getTaskListName(taskList: Int) = _domainModel.await().getTaskListName(taskList)
+    suspend fun getTaskListName(taskList: TaskListIndex) = _domainModel.await().getTaskListName(taskList)
 
     suspend fun getTaskListNames() = _domainModel.await().getTaskListNames()
 
@@ -31,10 +29,10 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     suspend fun getTaskListInformation() = _domainModel.await().getTaskListInformation()
 
-    suspend fun getUnarchivedTasks(taskList: Int, category: TaskCategory) =
+    suspend fun getUnarchivedTasks(taskList: TaskListIndex, category: TaskCategory) =
         _domainModel.await().getUnarchivedTasks(taskList, category)
 
-    suspend fun deleteTaskList(position: Int): Boolean {
+    suspend fun deleteTaskList(position: TaskListIndex): Boolean {
         val success = _domainModel.await().deleteTaskList(position)
         if (success) {
             saveAll()
@@ -42,31 +40,35 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         return success
     }
 
-    suspend fun moveTaskFromListToList(taskId: Int, fromTaskList: Int, toList: Int) {
+    suspend fun moveTaskFromListToList(
+        taskId: TaskIndex,
+        fromTaskList: TaskListIndex,
+        toList: TaskListIndex
+    ) {
         if (_domainModel.await().moveTaskFromListToList(taskId, fromTaskList, toList)) {
             saveAll()
         }
     }
 
-    suspend fun renameTaskList(taskListId: Int, newName: String) {
+    suspend fun renameTaskList(taskListId: TaskListIndex, newName: String) {
         TODO("Implement")
     }
 
-    suspend fun doArchive(taskListId: Int, taskId: Int) {
+    suspend fun doArchive(taskListId: TaskListIndex, taskId: TaskIndex) {
         TODO("Implement")
     }
 
-    suspend fun getArchive(taskList: Int): List<IndexedTask> {
+    suspend fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
         return _domainModel.await().getArchive(taskList)
     }
 
-    suspend fun addTaskList(): Int {
+    suspend fun addTaskList(): TaskListIndex {
         val newIndex = _domainModel.await().addTaskList()
         saveAll()
         return newIndex
     }
 
-    suspend fun snoozeToTomorrow(taskList: Int, task: Int) {
+    suspend fun snoozeToTomorrow(taskList: TaskListIndex, task: TaskIndex) {
         _domainModel.await().snoozeToTomorrow(taskList, task)
         saveAll()
     }

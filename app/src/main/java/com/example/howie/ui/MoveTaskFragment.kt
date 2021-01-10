@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.howie.R
+import com.example.howie.core.TaskListIndex
 
 class MoveTaskFragment : DialogFragment() {
     companion object {
@@ -26,14 +27,14 @@ class MoveTaskFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        viewModel.taskId = requireArguments().getInt(TASK_ID)
-        viewModel.fromTaskList = requireArguments().getInt(FROM_TASK_LIST)
+        viewModel.taskId = requireArguments().getParcelable(TASK_ID)!!
+        viewModel.fromTaskList = requireArguments().getParcelable(FROM_TASK_LIST)!!
         val messageBoxBuilder =
             AlertDialog.Builder(requireActivity()).setView(R.layout.fragment_move_task)
                 .setMessage("Move Task")
                 .setPositiveButton("Ok") { _, _ ->
                     val spinner: Spinner = dialog!!.findViewById(R.id.task_list_spinner)
-                    val selectedIndex = spinner.selectedItemPosition
+                    val selectedIndex = TaskListIndex(spinner.selectedItemPosition)
                     viewModel.moveToList(selectedIndex)
                     listener.onTaskMoved()
                 }

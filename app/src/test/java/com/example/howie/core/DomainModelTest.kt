@@ -32,7 +32,7 @@ class DomainModelTest {
     @Test(expected = IndexOutOfBoundsException::class)
     fun `getUnarchivedTasks throws IllegalArgumentException when passing invalid taskList`() {
         val model = DomainModel(listOf())
-        model.getUnarchivedTasks(123, TaskCategory.DO)
+        model.getUnarchivedTasks(TaskListIndex(123), TaskCategory.DO)
     }
 
     @Test
@@ -40,7 +40,7 @@ class DomainModelTest {
         val model = DomainModel(listOf(TaskList("Name", mutableListOf())))
         assertEquals(
             UnarchivedTasks(listOf(), listOf()),
-            model.getUnarchivedTasks(0, TaskCategory.DO)
+            model.getUnarchivedTasks(TaskListIndex(0), TaskCategory.DO)
         )
     }
 
@@ -76,29 +76,29 @@ class DomainModelTest {
         assertEquals(
             UnarchivedTasks(
                 listOf(
-                    IndexedTask(0, Task("A", snoozed = null)),
-                    IndexedTask(1, Task("B", snoozed = null))
+                    IndexedTask(TaskIndex(0), Task("A", snoozed = null)),
+                    IndexedTask(TaskIndex(1), Task("B", snoozed = null))
                 ),
                 listOf(
-                    IndexedTask(2, Task("C", snoozed = date)),
-                    IndexedTask(3, Task("D", snoozed = date)),
-                    IndexedTask(4, Task("E", snoozed = date))
+                    IndexedTask(TaskIndex(2), Task("C", snoozed = date)),
+                    IndexedTask(TaskIndex(3), Task("D", snoozed = date)),
+                    IndexedTask(TaskIndex(4), Task("E", snoozed = date))
                 )
             ),
-            model.getUnarchivedTasks(1, TaskCategory.DECIDE)
+            model.getUnarchivedTasks(TaskListIndex(1), TaskCategory.DECIDE)
         )
     }
 
     @Test
     fun `getTaskListName returns default name on model which got passed empty task lists`() {
         val model = DomainModel(listOf())
-        assertEquals("Tasks", model.getTaskListName(0))
+        assertEquals("Tasks", model.getTaskListName(TaskListIndex(0)))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `getTaskListName throws on invalid index`() {
         val model = DomainModel(listOf())
-        model.getTaskListName(123)
+        model.getTaskListName(TaskListIndex(123))
     }
 
     @Test
@@ -110,35 +110,35 @@ class DomainModelTest {
                 TaskList("GHI", mutableListOf())
             )
         )
-        assertEquals("ABC", model.getTaskListName(0))
-        assertEquals("DEF", model.getTaskListName(1))
-        assertEquals("GHI", model.getTaskListName(2))
+        assertEquals("ABC", model.getTaskListName(TaskListIndex(0)))
+        assertEquals("DEF", model.getTaskListName(TaskListIndex(1)))
+        assertEquals("GHI", model.getTaskListName(TaskListIndex(2)))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `getTaskCounts throws when passed invalid index`() {
         val model = DomainModel(listOf())
-        model.getTaskCounts(123)
+        model.getTaskCounts(TaskListIndex(123))
     }
 
     @Test
     fun `getTaskCounts pretty much empty on empty task list`() {
         val model = DomainModel(listOf(TaskList("", mutableListOf())))
-        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
+        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(TaskListIndex(0)))
     }
 
     @Test
     fun `getTaskCounts does not count archived tasks`() {
         val archived = LocalDate.MIN
         val model = DomainModel(listOf(TaskList("", mutableListOf(Task("", archived = archived)))))
-        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
+        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(TaskListIndex(0)))
     }
 
     @Test
     fun `getTaskCounts does not count snoozed tasks which are in the future`() {
         val snoozed = LocalDate.MAX
         val model = DomainModel(listOf(TaskList("", mutableListOf(Task("", snoozed = snoozed)))))
-        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(0))
+        assertEquals(TaskCounts(0, 0, 0, 0), model.getTaskCounts(TaskListIndex(0)))
     }
 
     @Test
@@ -191,19 +191,19 @@ class DomainModelTest {
                 )
             )
         )
-        assertEquals(TaskCounts(1, 2, 3, 0), model.getTaskCounts(0))
+        assertEquals(TaskCounts(1, 2, 3, 0), model.getTaskCounts(TaskListIndex(0)))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `getTask throws for invalid taskList index`() {
         val model = DomainModel(listOf())
-        model.getTask(123, 0)
+        model.getTask(TaskListIndex(123), TaskIndex(0))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `getTask throws for invalid task index`() {
         val model = DomainModel(listOf())
-        model.getTask(0, 123)
+        model.getTask(TaskListIndex(0), TaskIndex(123))
     }
 
     @Test
@@ -223,27 +223,27 @@ class DomainModelTest {
                 )
             )
         )
-        assertEquals(Task("1"), model.getTask(0, 0))
-        assertEquals(Task("2"), model.getTask(0, 1))
-        assertEquals(Task("3"), model.getTask(1, 0))
+        assertEquals(Task("1"), model.getTask(TaskListIndex(0), TaskIndex(0)))
+        assertEquals(Task("2"), model.getTask(TaskListIndex(0), TaskIndex(1)))
+        assertEquals(Task("3"), model.getTask(TaskListIndex(1), TaskIndex(0)))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `getArchive with invalid taskList index throws`() {
         val model = DomainModel(listOf())
-        model.getArchive(123)
+        model.getArchive(TaskListIndex(123))
     }
 
     @Test
     fun `getArchive empty result on default DomainModel`() {
         val model = DomainModel(listOf())
-        assertTrue(model.getArchive(0).isEmpty())
+        assertTrue(model.getArchive(TaskListIndex(0)).isEmpty())
     }
 
     @Test
     fun `getArchive empty return when no archived tasks`() {
         val model = DomainModel(listOf(TaskList("", mutableListOf(Task("")))))
-        assertTrue(model.getArchive(0).isEmpty())
+        assertTrue(model.getArchive(TaskListIndex(0)).isEmpty())
     }
 
     @Test
@@ -274,12 +274,12 @@ class DomainModelTest {
         )
         assertEquals(
             listOf(
-                IndexedTask(3, Task("", archived = LocalDate.MIN)),
-                IndexedTask(4, Task("", archived = LocalDate.MIN))
+                IndexedTask(TaskIndex(3), Task("", archived = LocalDate.MIN)),
+                IndexedTask(TaskIndex(4), Task("", archived = LocalDate.MIN))
             ),
-            model.getArchive(0)
+            model.getArchive(TaskListIndex(0))
         )
-        assertTrue(model.getArchive(1).isEmpty())
+        assertTrue(model.getArchive(TaskListIndex(1)).isEmpty())
     }
 
     @Test
@@ -287,8 +287,8 @@ class DomainModelTest {
         val model = DomainModel(listOf())
         assertTrue(model.taskLists.size == 1)
         val newIndex = model.addTaskList()
-        assertEquals(1, newIndex)
-        val newTaskList = model.taskLists[newIndex]
+        assertEquals(TaskListIndex(1), newIndex)
+        val newTaskList = model.taskLists[newIndex.value]
         assertEquals("New Task List", newTaskList.name)
         assertTrue(newTaskList.tasks.isEmpty())
     }
@@ -296,38 +296,38 @@ class DomainModelTest {
     @Test
     fun `deleteTaskList noop on default DomainModel`() {
         val model = DomainModel(listOf())
-        assertFalse(model.deleteTaskList(0))
-        assertFalse(model.deleteTaskList(1))
-        assertFalse(model.deleteTaskList(123))
-        assertFalse(model.deleteTaskList(-1))
+        assertFalse(model.deleteTaskList(TaskListIndex(0)))
+        assertFalse(model.deleteTaskList(TaskListIndex(1)))
+        assertFalse(model.deleteTaskList(TaskListIndex(123)))
+        assertFalse(model.deleteTaskList(TaskListIndex(-1)))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `deleteTaskList throws on invalid index`() {
         val model =
             DomainModel(listOf(TaskList("A", mutableListOf()), TaskList("B", mutableListOf())))
-        model.deleteTaskList(123)
+        model.deleteTaskList(TaskListIndex(123))
     }
 
     @Test
     fun `deleteTaskList deletes properly`() {
         val model =
             DomainModel(listOf(TaskList("A", mutableListOf()), TaskList("B", mutableListOf())))
-        assertTrue(model.deleteTaskList(0))
+        assertTrue(model.deleteTaskList(TaskListIndex(0)))
         assertEquals(listOf(TaskList("B", mutableListOf())), model.taskLists)
-        assertFalse(model.deleteTaskList(0))
+        assertFalse(model.deleteTaskList(TaskListIndex(0)))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `snoozeToTomorrow throws on invalid task list index`() {
         val model = DomainModel(listOf())
-        model.snoozeToTomorrow(123, 0)
+        model.snoozeToTomorrow(TaskListIndex(123), TaskIndex(0))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `snoozeToTomorrow throws on invalid task index`() {
         val model = DomainModel(listOf())
-        model.snoozeToTomorrow(0, 123)
+        model.snoozeToTomorrow(TaskListIndex(0), TaskIndex(123))
     }
 
     @Test
@@ -345,9 +345,9 @@ class DomainModelTest {
                 ),
             )
         )
-        assertEquals(Task("1"), model.getTask(0, 0))
-        model.snoozeToTomorrow(0, 0)
+        assertEquals(Task("1"), model.getTask(TaskListIndex(0), TaskIndex(0)))
+        model.snoozeToTomorrow(TaskListIndex(0), TaskIndex(0))
         val tomorrow = LocalDate.now().plusDays(1)
-        assertEquals(Task("1", snoozed = tomorrow), model.getTask(0, 0))
+        assertEquals(Task("1", snoozed = tomorrow), model.getTask(TaskListIndex(0), TaskIndex(0)))
     }
 }
