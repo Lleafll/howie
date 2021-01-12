@@ -152,7 +152,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
-        TODO("Not yet implemented")
+        taskLists[taskList.value].tasks.removeAt(task.value)
     }
 }
 
