@@ -131,7 +131,11 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteTask() = viewModelScope.launch {
-        TODO("Implement")
+        if (taskIndex == null) {
+            error("delete cannot be called with a null taskIndex")
+        }
+        _repository.deleteTask(taskList, taskIndex!!)
+        callFinish()
     }
 
     val optionsVisibility: LiveData<OptionsVisibility> = _task.switchMap {

@@ -150,6 +150,10 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         taskLists[taskList.value].tasks[taskIndex.value] = task
         return true
     }
+
+    fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
+        TODO("Not yet implemented")
+    }
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =

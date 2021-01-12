@@ -154,7 +154,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             true
         }
         R.id.action_delete -> {
-            TODO("Implement")
+            viewModel.deleteTask()
+            true
         }
         R.id.action_move_to_different_list -> {
             val dialog = MoveTaskFragment()
