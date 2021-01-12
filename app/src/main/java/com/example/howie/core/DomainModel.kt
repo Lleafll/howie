@@ -24,13 +24,6 @@ data class UnarchivedTasks(
     val snoozed: List<IndexedTask>
 )
 
-data class CategorizedTasks(
-    val doTasks: UnarchivedTasks,
-    val decideTasks: UnarchivedTasks,
-    val delegateTasks: UnarchivedTasks,
-    val dropTasks: UnarchivedTasks
-)
-
 data class TaskCounts(
     val doCount: Int,
     val decideCount: Int,
