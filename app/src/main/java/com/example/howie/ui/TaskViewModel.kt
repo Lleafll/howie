@@ -115,11 +115,19 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun doArchive() = viewModelScope.launch {
-        TODO("Implement")
+        if (taskIndex == null) {
+            error("doArchive cannot be called with a null taskIndex")
+        }
+        _repository.doArchive(taskList, taskIndex!!)
+        callFinish()
     }
 
     fun unarchive() = viewModelScope.launch {
-        TODO("Implement")
+        if (taskIndex == null) {
+            error("unarchive cannot be called with a null taskIndex")
+        }
+        _repository.unarchive(taskList, taskIndex!!)
+        callFinish()
     }
 
     fun deleteTask() = viewModelScope.launch {
