@@ -154,6 +154,10 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
         taskLists[taskList.value].tasks.removeAt(task.value)
     }
+
+    fun renameTaskList(taskListId: TaskListIndex, newName: String) {
+        TODO("Not yet implemented")
+    }
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =
