@@ -156,7 +156,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun renameTaskList(taskListId: TaskListIndex, newName: String) {
-        TODO("Not yet implemented")
+        val taskList = _taskLists[taskListId.value]
+        _taskLists[taskListId.value] = taskList.copy(name = newName)
     }
 }
 
