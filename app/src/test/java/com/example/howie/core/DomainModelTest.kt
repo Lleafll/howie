@@ -378,6 +378,14 @@ class DomainModelTest {
         )
     }
 
+    @Test
+    fun `removeSnooze returns old snoozed date`() {
+        val model =
+            DomainModel(listOf(TaskList("", mutableListOf(Task("", snoozed = LocalDate.MAX)))))
+        assertEquals(LocalDate.MAX, model.removeSnooze(TaskListIndex(0), TaskIndex(0)))
+        assertNull(model.removeSnooze(TaskListIndex(0), TaskIndex(0)))
+    }
+
     @Test(expected = IndexOutOfBoundsException::class)
     fun `scheduleNext throws on invalid task list index`() {
         val model = DomainModel(listOf())
@@ -673,4 +681,5 @@ class DomainModelTest {
             model.getTask(TaskListIndex(0), TaskIndex(0))
         )
     }
+
 }

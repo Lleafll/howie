@@ -131,9 +131,10 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         _taskLists[taskList.value].tasks[task.value] = taskObject.copy(snoozed = tomorrow)
     }
 
-    fun removeSnooze(taskList: TaskListIndex, task: TaskIndex) {
+    fun removeSnooze(taskList: TaskListIndex, task: TaskIndex): LocalDate? {
         val taskObject = _taskLists[taskList.value].tasks[task.value]
         _taskLists[taskList.value].tasks[task.value] = taskObject.copy(snoozed = null)
+        return taskObject.snoozed
     }
 
     fun scheduleNext(taskList: TaskListIndex, task: TaskIndex) {
