@@ -8,15 +8,10 @@ import com.example.howie.core.TaskListIndex
 import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
 
-class ArchiveViewModel(application: Application) : AndroidViewModel(application) {
-    private val _repository: TasksRepository
+class ArchiveViewModel(private val _application: Application) : AndroidViewModel(_application) {
+    private var _repository = buildTaskRepository(_application)
 
-    init {
-        val database = getDatabase(application.applicationContext)
-        _repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
-    }
-
-    lateinit var taskList: TaskListIndex
+    lateinit var currentTaskList: TaskListIndex
     private val _taskList = MutableLiveData<TaskListIndex>()
     val archive: LiveData<List<IndexedTask>> = _taskList.switchMap {
         liveData {
@@ -25,11 +20,22 @@ class ArchiveViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setTaskList(taskListIndex: TaskListIndex) = viewModelScope.launch {
-        taskList = taskListIndex
+        currentTaskList = taskListIndex
         _taskList.value = taskListIndex
     }
 
     fun unarchive(task: TaskIndex) = viewModelScope.launch {
-        _repository.unarchive(taskList, task)
+        _repository.unarchive(currentTaskList, task)
+        setTaskList(currentTaskList)
     }
+
+    fun forceRefresh() = viewModelScope.launch {
+        _repository = buildTaskRepository(_application)
+        setTaskList(currentTaskList)
+    }
+}
+
+private fun buildTaskRepository(application: Application): TasksRepository {
+    val database = getDatabase(application.applicationContext)
+    return TasksRepository(database.getTaskDao(), database.getTaskListDao())
 }

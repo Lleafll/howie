@@ -10,8 +10,11 @@ import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
 import kotlinx.android.synthetic.main.activity_archive.*
 
-
 class ArchiveActivity : AppCompatActivity() {
+    companion object {
+        const val TASKLIST_INDEX = "taskListId"
+    }
+
     private val viewModel: ArchiveViewModel by viewModels { ArchiveViewModelFactory(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +25,9 @@ class ArchiveActivity : AppCompatActivity() {
         setupActivityColors(resources, window, applicationContext)
     }
 
-    companion object {
-        const val TASKLIST_INDEX = "taskListId"
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        viewModel.forceRefresh()
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }
 
@@ -53,8 +57,8 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
         override fun onEditClicked(index: TaskIndex) {
             val intent = Intent(applicationContext, TaskActivity::class.java)
             intent.putExtra(TaskActivity.TASK_ID, index)
-            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.taskList)
-            startActivity(intent)
+            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+            startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
         }
     })
     archive_view.adapter = taskAdapter

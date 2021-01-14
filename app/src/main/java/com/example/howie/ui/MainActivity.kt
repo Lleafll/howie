@@ -25,7 +25,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
 
 const val SHOW_TASK_LIST_EXTRA = "showTaskList"
-const val TASK_REQUEST_CODE = 1
+const val TASK_ACTIVITY_REQUEST_CODE = 1
+private const val ARCHIVE_ACTIVITY_REQUEST_CODE = 2
 const val TASK_RETURN_CODE = "TaskReturnCode"
 const val DELETED_TASK_CODE = "DeletedTask"
 const val ARCHIVED_TASK_CODE = "ArchivedTask"
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         viewModel.forceRefresh()
-        if (requestCode == TASK_REQUEST_CODE) {
+        if (requestCode == TASK_ACTIVITY_REQUEST_CODE) {
             if (data == null) {
                 return
             }
@@ -145,7 +146,7 @@ private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel
             TaskCategory.values()[tab_layout.selectedTabPosition]
         )
         intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-        startActivityForResult(intent, TASK_REQUEST_CODE)
+        startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
     }
 }
 
@@ -221,5 +222,5 @@ private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) 
 private fun MainActivity.showArchive(currentTaskList: TaskListIndex) {
     val intent = Intent(applicationContext, ArchiveActivity::class.java)
     intent.putExtra(ArchiveActivity.TASKLIST_INDEX, currentTaskList)
-    startActivity(intent)
+    startActivityForResult(intent, ARCHIVE_ACTIVITY_REQUEST_CODE)
 }

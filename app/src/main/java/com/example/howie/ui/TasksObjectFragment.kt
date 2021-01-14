@@ -91,6 +91,6 @@ private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivit
             val intent = Intent(activity.applicationContext, TaskActivity::class.java)
             intent.putExtra(TaskActivity.TASK_ID, index)
             intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-            activity.startActivityForResult(intent, TASK_REQUEST_CODE)
+            activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
         }
     })
