@@ -48,6 +48,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/howie_appwidget_info" />
         </receiver>
+
+        <service
+            android:name=".widget.WidgetService"
+            android:exported="false" />
+
     </application>
 
 </manifest>
