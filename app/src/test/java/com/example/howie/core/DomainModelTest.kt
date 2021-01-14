@@ -544,4 +544,17 @@ class DomainModelTest {
         model.renameTaskList(TaskListIndex(0), "DEF")
         assertEquals(TaskList("DEF", mutableListOf()), model.taskLists[0])
     }
+
+    @Test
+    fun `getTaskListNames default task list names`() {
+        val model = DomainModel(listOf())
+        assertEquals(listOf("Tasks"), model.getTaskListNames())
+    }
+
+    @Test
+    fun getTaskListNames() {
+        val model =
+            DomainModel(listOf(TaskList("ABC", mutableListOf()), TaskList("DEF", mutableListOf())))
+        assertEquals(listOf("ABC", "DEF"), model.getTaskListNames())
+    }
 }

@@ -45,7 +45,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     val taskLists: List<TaskList> by this::_taskLists
 
     fun getTaskListNames(): List<String> {
-        TODO("Implement")
+        return taskLists.map { it.name }
     }
 
     fun getTaskListInformation(taskList: Int): TaskListInformation {
