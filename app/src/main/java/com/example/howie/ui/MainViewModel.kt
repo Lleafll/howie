@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.example.howie.core.*
 import com.example.howie.database.getDatabase
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 data class TabLabels(
     val label0: String,
@@ -99,9 +100,17 @@ class MainViewModel(
         taskSnoozedToTomorrowNotificationEvent.value = task
     }
 
-    fun removeSnooze(index: TaskIndex) = viewModelScope.launch {
-        _repository.removeSnooze(currentTaskList, index)
+    fun addSnooze(task: TaskIndex, snooze: LocalDate) = viewModelScope.launch {
+        _repository.addSnooze(currentTaskList, task, snooze)
         setTaskList(currentTaskList) // Force refresh of tasks
+    }
+
+    fun removeSnooze(index: TaskIndex) = viewModelScope.launch {
+        val oldSnooze = _repository.removeSnooze(currentTaskList, index)
+        setTaskList(currentTaskList) // Force refresh of tasks
+        if (oldSnooze != null) {
+            snoozeRemovedNotificationEvent.value = Pair(index, oldSnooze)
+        }
     }
 
     fun reschedule(taskIndex: TaskIndex) = viewModelScope.launch {
@@ -130,6 +139,7 @@ class MainViewModel(
     val taskArchivedNotificationEvent = SingleLiveEvent<TaskIndex>()
     val taskDeletedNotificationEvent = SingleLiveEvent<Task>()
     val taskSnoozedToTomorrowNotificationEvent = SingleLiveEvent<TaskIndex>()
+    val snoozeRemovedNotificationEvent = SingleLiveEvent<Pair<TaskIndex, LocalDate>>()
 }
 
 private fun buildLabel(information: TaskListInformation): String {

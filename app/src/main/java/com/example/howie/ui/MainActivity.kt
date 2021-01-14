@@ -23,6 +23,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks_tab.*
+import java.time.LocalDate
 
 const val SHOW_TASK_LIST_EXTRA = "showTaskList"
 const val TASK_ACTIVITY_REQUEST_CODE = 1
@@ -126,6 +127,20 @@ private fun MainActivity.setupSnackbar(viewModel: MainViewModel) {
         this,
         showSnoozedToTomorrowNotification(layout, viewModel)
     )
+    viewModel.snoozeRemovedNotificationEvent.observe(
+        this,
+        showSnoozedRemovedNotification(layout, viewModel)
+    )
+}
+
+private fun showSnoozedRemovedNotification(
+    layout: CoordinatorLayout,
+    viewModel: MainViewModel
+) = { it: Pair<TaskIndex, LocalDate> ->
+    val (task: TaskIndex, snooze: LocalDate) = it
+    val snackbar = Snackbar.make(layout, "Task unsnoozed", Snackbar.LENGTH_LONG)
+    snackbar.setAction("UNDO") { viewModel.addSnooze(task, snooze) }
+    snackbar.show()
 }
 
 private fun showSnoozedToTomorrowNotification(
@@ -138,12 +153,11 @@ private fun showSnoozedToTomorrowNotification(
 
 private fun showDeletedNotification(
     layout: CoordinatorLayout, viewModel: MainViewModel
-) =
-    { task: Task ->
-        val snackbar = Snackbar.make(layout, "Task deleted", Snackbar.LENGTH_LONG)
-        snackbar.setAction("UNDO") { viewModel.addTask(task) }
-        snackbar.show()
-    }
+) = { task: Task ->
+    val snackbar = Snackbar.make(layout, "Task deleted", Snackbar.LENGTH_LONG)
+    snackbar.setAction("UNDO") { viewModel.addTask(task) }
+    snackbar.show()
+}
 
 private fun showArchivedNotification(
     layout: CoordinatorLayout, viewModel: MainViewModel

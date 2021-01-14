@@ -3,6 +3,7 @@ package com.example.howie.ui
 import com.example.howie.core.*
 import com.example.howie.database.*
 import kotlinx.coroutines.*
+import java.time.LocalDate
 
 class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: TaskListDao) {
     private val _domainModel: Deferred<DomainModel>
@@ -80,9 +81,10 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         saveAll()
     }
 
-    suspend fun removeSnooze(taskList: TaskListIndex, task: TaskIndex) {
-        _domainModel.await().removeSnooze(taskList, task)
+    suspend fun removeSnooze(taskList: TaskListIndex, task: TaskIndex): LocalDate? {
+        val oldSnoozed = _domainModel.await().removeSnooze(taskList, task)
         saveAll()
+        return oldSnoozed
     }
 
     private suspend fun saveAll() {
@@ -119,5 +121,10 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
             saveAll()
         }
         return success
+    }
+
+    suspend fun addSnooze(currentTaskList: TaskListIndex, task: TaskIndex, snooze: LocalDate) {
+        _domainModel.await().addSnooze(currentTaskList, task, snooze)
+        saveAll()
     }
 }
