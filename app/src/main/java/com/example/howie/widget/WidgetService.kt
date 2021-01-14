@@ -24,7 +24,7 @@ class WidgetService : Service() {
     private lateinit var repository: TasksRepository
     private lateinit var widgetSettingsDao: WidgetSettingsDao
 
-    override fun onStart(intent: Intent?, startId: Int) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val context = applicationContext
         val database = getDatabase(context)
         repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
@@ -46,6 +46,7 @@ class WidgetService : Service() {
                 }
             }
         }
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {
