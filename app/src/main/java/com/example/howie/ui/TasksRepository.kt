@@ -51,9 +51,8 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         fromTaskList: TaskListIndex,
         toList: TaskListIndex
     ) {
-        if (_domainModel.await().moveTaskFromListToList(taskId, fromTaskList, toList)) {
-            saveAll()
-        }
+        _domainModel.await().moveTaskFromListToList(taskId, fromTaskList, toList)
+        saveAll()
     }
 
     suspend fun renameTaskList(taskListId: TaskListIndex, newName: String) {

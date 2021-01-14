@@ -111,8 +111,9 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         taskId: TaskIndex,
         fromTaskList: TaskListIndex,
         toList: TaskListIndex
-    ): Boolean {
-        TODO("Implement")
+    ) {
+        val task = taskLists[fromTaskList.value].tasks.removeAt(taskId.value)
+        taskLists[toList.value].tasks.add(task)
     }
 
     fun getTaskListName(taskList: TaskListIndex): String {

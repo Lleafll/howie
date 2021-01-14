@@ -593,4 +593,48 @@ class DomainModelTest {
             )
         )
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `moveFromTaskListToTaskList throws on invalid taskId`() {
+        val model = DomainModel(listOf(TaskList("", mutableListOf(Task("")))))
+        model.moveTaskFromListToList(TaskIndex(123), TaskListIndex(0), TaskListIndex(0))
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `moveFromTaskListToTaskList throws on invalid fromTaskList`() {
+        val model = DomainModel(listOf(TaskList("", mutableListOf(Task("")))))
+        model.moveTaskFromListToList(TaskIndex(0), TaskListIndex(123), TaskListIndex(0))
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `moveFromTaskListToTaskList throws on invalid toTaskList`() {
+        val model = DomainModel(listOf(TaskList("", mutableListOf(Task("")))))
+        model.moveTaskFromListToList(TaskIndex(0), TaskListIndex(0), TaskListIndex(123))
+    }
+
+    @Test
+    fun `moveFromTaskListToTaskList to same list appends task to the end`() {
+        val model = DomainModel(listOf(TaskList("", mutableListOf(Task("ABC"), Task("DEF")))))
+        assertEquals(TaskList("", mutableListOf(Task("ABC"), Task("DEF"))), model.taskLists[0])
+        model.moveTaskFromListToList(TaskIndex(0), TaskListIndex(0), TaskListIndex(0))
+        assertEquals(TaskList("", mutableListOf(Task("DEF"), Task("ABC"))), model.taskLists[0])
+    }
+
+    @Test
+    fun `moveFromTaskListToTaskList properly from list to list`() {
+        val model = DomainModel(
+            listOf(
+                TaskList("1", mutableListOf(Task("ABC"), Task("DEF"))),
+                TaskList("2", mutableListOf(Task("GHI"), Task("JKL")))
+            )
+        )
+        assertEquals(TaskList("1", mutableListOf(Task("ABC"), Task("DEF"))), model.taskLists[0])
+        assertEquals(TaskList("2", mutableListOf(Task("GHI"), Task("JKL"))), model.taskLists[1])
+        model.moveTaskFromListToList(TaskIndex(1), TaskListIndex(0), TaskListIndex(1))
+        assertEquals(TaskList("1", mutableListOf(Task("ABC"))), model.taskLists[0])
+        assertEquals(
+            TaskList("2", mutableListOf(Task("GHI"), Task("JKL"), Task("DEF"))),
+            model.taskLists[1]
+        )
+    }
 }
