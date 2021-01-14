@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.howie.core.*
 import com.example.howie.database.getDatabase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.properties.Delegates
@@ -32,33 +33,48 @@ private data class NullableTask(
     val task: Task?
 )
 
+private data class NullableTaskIndex(
+    val index: TaskIndex?
+)
+
+private data class NullableTaskCategory(
+    val category: TaskCategory?
+)
+
 class TaskViewModel(
     application: Application,
-    private var _repository: TasksRepository
+    private var _repository: TasksRepository,
+    private val coroutineScope: CoroutineScope?
 ) : AndroidViewModel(application) {
 
-    constructor(application: Application) : this(application, buildTaskRepository(application))
+    constructor(application: Application) : this(
+        application,
+        buildTaskRepository(application),
+        null
+    )
+
+    private fun getCoroutineScope(): CoroutineScope = coroutineScope ?: viewModelScope
 
     var taskList by Delegates.notNull<TaskListIndex>()
         private set
     var taskIndex: TaskIndex? = null
         private set
     private val _taskList = MutableLiveData<TaskListIndex>()
-    private val _taskIndex = MutableLiveData<TaskIndex?>()
-    private val _taskCategory = MutableLiveData<TaskCategory?>()
+    private val _taskIndex = MutableLiveData<NullableTaskIndex>()
+    private val _taskCategory = MutableLiveData<NullableTaskCategory>()
     private val _task: LiveData<NullableTask> = CombinedLiveData(_taskList, _taskIndex).switchMap {
         liveData {
-            if (it.second == null) {
+            if (it.second.index == null) {
                 emit(NullableTask(null))
             } else {
-                emit(NullableTask(_repository.getTask(it.first, it.second!!)))
+                emit(NullableTask(_repository.getTask(it.first, it.second.index!!)))
             }
         }
     }
     val taskFields: LiveData<TaskFields> =
         CombinedLiveData(_task, _taskCategory).switchMap {
             liveData {
-                val (nullableTask, category) = it
+                val (nullableTask, nullableCategory) = it
                 val task = nullableTask.task
                 val todayString = LocalDate.now().toString()
                 if (task != null) {
@@ -73,47 +89,57 @@ class TaskViewModel(
                     )
                     emit(fields)
                 } else {
-                    if (category == null) {
-                        error("Set category in $TaskActivity")
+                    val category = nullableCategory.category
+                    val fields = if (category == null) {
+                        TaskFields(
+                            "",
+                            Importance.IMPORTANT,
+                            false,
+                            todayString,
+                            false,
+                            todayString,
+                            null
+                        )
+                    } else {
+                        TaskFields(
+                            "",
+                            if (category == TaskCategory.DO || category == TaskCategory.DECIDE) Importance.IMPORTANT else Importance.UNIMPORTANT,
+                            category == TaskCategory.DO || category == TaskCategory.DELEGATE,
+                            todayString,
+                            false,
+                            todayString,
+                            null
+                        )
                     }
-                    val fields = TaskFields(
-                        "",
-                        if (category == TaskCategory.DO || category == TaskCategory.DECIDE) Importance.IMPORTANT else Importance.UNIMPORTANT,
-                        category == TaskCategory.DO || category == TaskCategory.DELEGATE,
-                        todayString,
-                        false,
-                        todayString,
-                        null
-                    )
                     emit(fields)
                 }
             }
         }
 
     fun initialize(taskListIndex: TaskListIndex, task: TaskIndex?, taskCategory: TaskCategory?) =
-        viewModelScope.launch {
+        getCoroutineScope().launch {
             taskList = taskListIndex
             taskIndex = task
             _taskList.value = taskListIndex
-            _taskIndex.value = task
-            _taskCategory.value = taskCategory ?: TaskCategory.DO
+            _taskIndex.value = NullableTaskIndex(task)
+            _taskCategory.value = NullableTaskCategory(taskCategory)
         }
 
-    fun updateTask(task: Task) = viewModelScope.launch {
+    fun updateTask(task: Task) = getCoroutineScope().launch {
         val success = _repository.updateTask(taskList, taskIndex!!, task)
         if (success) {
             callFinish()
         }
     }
 
-    fun addTask(task: Task) = viewModelScope.launch {
+    fun addTask(task: Task) = getCoroutineScope().launch {
         val success = _repository.addTask(taskList, task)
         if (success) {
             callFinish()
         }
     }
 
-    fun doArchive() = viewModelScope.launch {
+    fun doArchive() = getCoroutineScope().launch {
         if (taskIndex == null) {
             error("doArchive cannot be called with a null taskIndex")
         }
@@ -121,7 +147,7 @@ class TaskViewModel(
         callFinish()
     }
 
-    fun unarchive() = viewModelScope.launch {
+    fun unarchive() = getCoroutineScope().launch {
         if (taskIndex == null) {
             error("unarchive cannot be called with a null taskIndex")
         }
@@ -129,7 +155,7 @@ class TaskViewModel(
         callFinish()
     }
 
-    fun deleteTask() = viewModelScope.launch {
+    fun deleteTask() = getCoroutineScope().launch {
         if (taskIndex == null) {
             error("delete cannot be called with a null taskIndex")
         }
