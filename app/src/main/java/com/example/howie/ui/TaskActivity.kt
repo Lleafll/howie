@@ -28,6 +28,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     }
 
     private val viewModel: TaskViewModel by viewModels { TaskViewModelFactory(application) }
+    private var archived: String = ""  // There is no field for this but we need to remember this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +102,7 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         setDateFields(dueTextDate, dueSwitch, task.showDue, task.due)
         setDateFields(snoozedTextDate, snoozeSwitch, task.showSnoozed, task.snoozed)
         setScheduleFields(task.schedule, scheduleSwitch, schedule_view)
+        archived = task.archived
     }
 
     private fun buildTaskFromFields() = Task(
@@ -108,7 +110,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
         readDate(dueSwitch, dueTextDate),
         readDate(snoozeSwitch, snoozedTextDate),
-        readSchedule(scheduleSwitch, schedule_view)
+        readSchedule(scheduleSwitch, schedule_view),
+        if (archived.isNotEmpty()) LocalDate.parse(archived) else null
     )
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -161,7 +164,10 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             val dialog = MoveTaskFragment()
             val arguments = Bundle()
             arguments.putParcelable(MoveTaskFragment.TASK_ID_ARGUMENT, viewModel.taskIndex!!)
-            arguments.putParcelable(MoveTaskFragment.FROM_TASK_LIST_ARGUMENT, viewModel.taskList)
+            arguments.putParcelable(
+                MoveTaskFragment.FROM_TASK_LIST_ARGUMENT,
+                viewModel.taskList
+            )
             dialog.arguments = arguments
             dialog.show(supportFragmentManager, "moveTaskDialog")
             true

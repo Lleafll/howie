@@ -2,10 +2,7 @@ package com.example.howie.ui
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.howie.core.Importance
-import com.example.howie.core.Task
-import com.example.howie.core.TaskIndex
-import com.example.howie.core.TaskListIndex
+import com.example.howie.core.*
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -63,7 +60,33 @@ class TaskViewModelTest {
             todaysString(),
             false,
             todaysString(),
-            null
+            null,
+            ""
+        )
+        assertEquals(expected, viewModel.taskFields.value)
+    }
+
+    @Test
+    fun `taskFields with non-null archived date`() {
+        val application = mockk<Application>(relaxed = true)
+        val repository = mockk<TasksRepository>(relaxed = true) {
+            coEvery { getTask(any(), any()) } returns Task(
+                "TaskName",
+                archived = LocalDate.of(1111, 11, 11)
+            )
+        }
+        val viewModel = TaskViewModel(application, repository, testScope)
+        viewModel.initialize(TaskListIndex(0), TaskIndex(0), TaskCategory.DECIDE)
+        viewModel.taskFields.observeForever {}
+        val expected = TaskFields(
+            "TaskName",
+            Importance.IMPORTANT,
+            false,
+            todaysString(),
+            false,
+            todaysString(),
+            null,
+            "1111-11-11"
         )
         assertEquals(expected, viewModel.taskFields.value)
     }

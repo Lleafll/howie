@@ -26,7 +26,8 @@ data class TaskFields(
     val due: String,
     val showSnoozed: Boolean,
     val snoozed: String,
-    val schedule: Schedule?
+    val schedule: Schedule?,
+    val archived: String
 )
 
 private data class NullableTask(
@@ -86,7 +87,8 @@ class TaskViewModel(
                         if (task.due == null) todayString else task.due.toString(),
                         task.snoozed != null,
                         if (task.snoozed == null) todayString else task.snoozed.toString(),
-                        task.schedule
+                        task.schedule,
+                        archiveDateToString(task.archived)
                     )
                     emit(fields)
                 } else {
@@ -99,7 +101,8 @@ class TaskViewModel(
                             todayString,
                             false,
                             todayString,
-                            null
+                            null,
+                            ""
                         )
                     } else {
                         TaskFields(
@@ -109,7 +112,8 @@ class TaskViewModel(
                             todayString,
                             false,
                             todayString,
-                            null
+                            null,
+                            ""
                         )
                     }
                     emit(fields)
@@ -218,3 +222,5 @@ private fun buildTaskRepository(application: Application): TasksRepository {
     val database = getDatabase(application.applicationContext)
     return TasksRepository(database.getTaskDao(), database.getTaskListDao())
 }
+
+private fun archiveDateToString(archived: LocalDate?) = archived?.toString() ?: ""
