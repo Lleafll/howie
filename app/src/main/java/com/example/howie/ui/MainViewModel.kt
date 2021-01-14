@@ -96,6 +96,7 @@ class MainViewModel(
     fun snoozeToTomorrow(task: TaskIndex) = viewModelScope.launch {
         _repository.snoozeToTomorrow(currentTaskList, task)
         setTaskList(currentTaskList) // Force refresh of tasks
+        taskSnoozedToTomorrowNotificationEvent.value = task
     }
 
     fun removeSnooze(index: TaskIndex) = viewModelScope.launch {
@@ -128,6 +129,7 @@ class MainViewModel(
 
     val taskArchivedNotificationEvent = SingleLiveEvent<TaskIndex>()
     val taskDeletedNotificationEvent = SingleLiveEvent<Task>()
+    val taskSnoozedToTomorrowNotificationEvent = SingleLiveEvent<TaskIndex>()
 }
 
 private fun buildLabel(information: TaskListInformation): String {

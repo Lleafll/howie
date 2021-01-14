@@ -122,21 +122,36 @@ private fun MainActivity.setupSnackbar(viewModel: MainViewModel) {
         showArchivedNotification(layout, viewModel)
     )
     viewModel.taskDeletedNotificationEvent.observe(this, showDeletedNotification(layout, viewModel))
+    viewModel.taskSnoozedToTomorrowNotificationEvent.observe(
+        this,
+        showSnoozedToTomorrowNotification(layout, viewModel)
+    )
 }
 
-private fun showDeletedNotification(layout: CoordinatorLayout, viewModel: MainViewModel) =
+private fun showSnoozedToTomorrowNotification(
+    layout: CoordinatorLayout, viewModel: MainViewModel
+) = { task: TaskIndex ->
+    val snackbar = Snackbar.make(layout, "Task snoozed to tomorrow", Snackbar.LENGTH_LONG)
+    snackbar.setAction("UNDO") { viewModel.removeSnooze(task) }
+    snackbar.show()
+}
+
+private fun showDeletedNotification(
+    layout: CoordinatorLayout, viewModel: MainViewModel
+) =
     { task: Task ->
         val snackbar = Snackbar.make(layout, "Task deleted", Snackbar.LENGTH_LONG)
         snackbar.setAction("UNDO") { viewModel.addTask(task) }
         snackbar.show()
     }
 
-private fun showArchivedNotification(layout: CoordinatorLayout, viewModel: MainViewModel) =
-    { taskIndex: TaskIndex ->
-        val snackbar = Snackbar.make(layout, "Task archived", Snackbar.LENGTH_LONG)
-        snackbar.setAction("UNDO") { viewModel.unarchive(taskIndex) }
-        snackbar.show()
-    }
+private fun showArchivedNotification(
+    layout: CoordinatorLayout, viewModel: MainViewModel
+) = { taskIndex: TaskIndex ->
+    val snackbar = Snackbar.make(layout, "Task archived", Snackbar.LENGTH_LONG)
+    snackbar.setAction("UNDO") { viewModel.unarchive(taskIndex) }
+    snackbar.show()
+}
 
 private fun MainActivity.setupDrawer(drawer: DrawerLayout, mainViewModel: MainViewModel) {
     val toggle = ActionBarDrawerToggle(
