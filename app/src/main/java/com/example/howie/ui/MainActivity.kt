@@ -131,6 +131,14 @@ private fun MainActivity.setupSnackbar(viewModel: MainViewModel) {
         this,
         showSnoozedRemovedNotification(layout, viewModel)
     )
+    viewModel.taskScheduledNotificationEvent.observe(this, showScheduleNotification(layout))
+}
+
+private fun showScheduleNotification(
+    layout: CoordinatorLayout
+) = { _: Boolean ->
+    val snackbar = Snackbar.make(layout, "Task rescheduled", Snackbar.LENGTH_SHORT)
+    snackbar.show()
 }
 
 private fun showSnoozedRemovedNotification(

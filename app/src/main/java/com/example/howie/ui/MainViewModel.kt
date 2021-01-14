@@ -116,6 +116,7 @@ class MainViewModel(
     fun reschedule(taskIndex: TaskIndex) = viewModelScope.launch {
         _repository.scheduleNext(currentTaskList, taskIndex)
         setTaskList(currentTaskList) // Force refresh of tasks
+        taskScheduledNotificationEvent.value = true
     }
 
     val tabLabels: LiveData<TabLabels> = _currentTaskList.switchMap {
@@ -140,6 +141,7 @@ class MainViewModel(
     val taskDeletedNotificationEvent = SingleLiveEvent<Task>()
     val taskSnoozedToTomorrowNotificationEvent = SingleLiveEvent<TaskIndex>()
     val snoozeRemovedNotificationEvent = SingleLiveEvent<Pair<TaskIndex, LocalDate>>()
+    val taskScheduledNotificationEvent = SingleLiveEvent<Boolean>()
 }
 
 private fun buildLabel(information: TaskListInformation): String {
