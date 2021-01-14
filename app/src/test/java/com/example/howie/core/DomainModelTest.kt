@@ -46,7 +46,7 @@ class DomainModelTest {
 
     @Test
     fun `getUnarchivedTasks returns proper data`() {
-        val date = LocalDate.now()
+        val date = LocalDate.MAX
         val model = DomainModel(
             listOf(
                 TaskList(
@@ -635,6 +635,31 @@ class DomainModelTest {
         assertEquals(
             TaskList("2", mutableListOf(Task("GHI"), Task("JKL"), Task("DEF"))),
             model.taskLists[1]
+        )
+    }
+
+    @Test
+    fun `getUnarchivedTasks returns tasks with snoozed date in the past as unsnoozed`() {
+        val yesterday = LocalDate.now().minusDays(1)
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "", mutableListOf(
+                        Task("", Importance.IMPORTANT, due = LocalDate.MAX, snoozed = yesterday)
+                    )
+                )
+            )
+        )
+        assertEquals(
+            UnarchivedTasks(
+                unsnoozed = listOf(
+                    IndexedTask(
+                        TaskIndex(0),
+                        Task("", Importance.IMPORTANT, due = LocalDate.MAX, snoozed = yesterday)
+                    )
+                ),
+                snoozed = emptyList()
+            ), model.getUnarchivedTasks(TaskListIndex(0), TaskCategory.DO)
         )
     }
 }
