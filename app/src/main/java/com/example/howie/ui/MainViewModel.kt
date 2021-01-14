@@ -69,6 +69,7 @@ class MainViewModel(
     fun doArchive(id: TaskIndex) = viewModelScope.launch {
         _repository.doArchive(currentTaskList, id)
         setTaskList(currentTaskList) // Force refresh of tasks
+        taskArchivedNotificationEvent.value = id
     }
 
     fun unarchive(id: TaskIndex) = viewModelScope.launch {
@@ -124,6 +125,9 @@ class MainViewModel(
         _repository = buildTaskRepository(_application)
         setTaskList(currentTaskList)
     }
+
+    val taskArchivedNotificationEvent = SingleLiveEvent<TaskIndex>()
+    val taskDeletedNotificationEvent = SingleLiveEvent<Task>()
 }
 
 private fun buildLabel(information: TaskListInformation): String {

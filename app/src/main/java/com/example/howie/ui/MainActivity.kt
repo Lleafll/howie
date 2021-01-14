@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupToolBar()
         setupDrawer(findViewById(R.id.drawer_layout), viewModel)
         setupColors()
+        setupSnackbar(viewModel)
     }
 
     private fun setupToolBar() {
@@ -114,6 +115,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 }
 
+private fun MainActivity.setupSnackbar(viewModel: MainViewModel) {
+    val layout: CoordinatorLayout = findViewById(R.id.main_coordinator_layout)
+    viewModel.taskArchivedNotificationEvent.observe(
+        this,
+        showArchivedNotification(layout, viewModel)
+    )
+    viewModel.taskDeletedNotificationEvent.observe(this, showDeletedNotification(layout, viewModel))
+}
+
+private fun showDeletedNotification(layout: CoordinatorLayout, viewModel: MainViewModel) =
+    { task: Task ->
+        val snackbar = Snackbar.make(layout, "Task deleted", Snackbar.LENGTH_LONG)
+        snackbar.setAction("UNDO") { viewModel.addTask(task) }
+        snackbar.show()
+    }
+
+private fun showArchivedNotification(layout: CoordinatorLayout, viewModel: MainViewModel) =
+    { taskIndex: TaskIndex ->
+        val snackbar = Snackbar.make(layout, "Task archived", Snackbar.LENGTH_LONG)
+        snackbar.setAction("UNDO") { viewModel.unarchive(taskIndex) }
+        snackbar.show()
+    }
+
 private fun MainActivity.setupDrawer(drawer: DrawerLayout, mainViewModel: MainViewModel) {
     val toggle = ActionBarDrawerToggle(
         this,
@@ -157,34 +181,21 @@ private fun buildNavigationItemId(taskListIndex: Int) =
 private fun handleTaskActivityReturn(
     returnCode: Int, data: Intent, layout: CoordinatorLayout, mainViewModel: MainViewModel
 ) {
-    val text = when (returnCode) {
-        TASK_DELETED_RETURN_CODE -> "Task Deleted"
-        TASK_ARCHIVED_RETURN_CODE -> "Task Archived"
-        TASK_MOVED_RETURN_CODE -> "Task Moved"
-        else -> "NOTIFICATION"
-    }
-    val duration = when (returnCode) {
-        TASK_DELETED_RETURN_CODE -> Snackbar.LENGTH_LONG
-        TASK_ARCHIVED_RETURN_CODE -> Snackbar.LENGTH_LONG
-        else -> Snackbar.LENGTH_SHORT
-    }
-    val snackbar = Snackbar.make(layout, text, duration)
     when (returnCode) {
         TASK_DELETED_RETURN_CODE -> {
-            snackbar.setAction("UNDO") {
-                val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
-                    ?: throw Exception("Deleted task missing from returned intent")
-                mainViewModel.addTask(task)
-            }
+            val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
+                ?: error("Deleted task missing from returned intent")
+            mainViewModel.taskDeletedNotificationEvent.value = task
         }
         TASK_ARCHIVED_RETURN_CODE -> {
-            snackbar.setAction("UNDO") {
-                val taskId = data.getParcelableExtra<TaskIndex>(ARCHIVED_TASK_CODE)!!
-                mainViewModel.unarchive(taskId)
-            }
+            val taskId = data.getParcelableExtra<TaskIndex>(ARCHIVED_TASK_CODE)!!
+            mainViewModel.taskArchivedNotificationEvent.value = taskId
+        }
+        TASK_MOVED_RETURN_CODE -> {
+            val snackbar = Snackbar.make(layout, "Task Moved", Snackbar.LENGTH_SHORT)
+            snackbar.show()
         }
     }
-    snackbar.show()
 }
 
 private fun MainActivity.setupColors() {
