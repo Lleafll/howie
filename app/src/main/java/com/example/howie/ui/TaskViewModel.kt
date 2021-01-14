@@ -67,7 +67,8 @@ class TaskViewModel(
             if (it.second.index == null) {
                 emit(NullableTask(null))
             } else {
-                emit(NullableTask(_repository.getTask(it.first, it.second.index!!)))
+                val task = _repository.getTask(it.first, it.second.index!!)
+                emit(NullableTask(task))
             }
         }
     }
@@ -166,17 +167,11 @@ class TaskViewModel(
     val optionsVisibility: LiveData<OptionsVisibility> = _task.switchMap {
         liveData {
             val task = it.task
-            val showArchive = task != null && task.archived == null
-            val showUnarchive = task?.archived != null
-            val options = OptionsVisibility(
-                task == null,
-                task != null,
-                task != null,
-                showArchive,
-                showUnarchive,
-                task != null,
-                task != null
-            )
+            val options = when {
+                task == null -> optionsForNewTask()
+                task.archived == null -> optionsForUnarchivedTask()
+                else -> optionsForArchivedTask()
+            }
             emit(options)
         }
     }
@@ -188,6 +183,36 @@ class TaskViewModel(
         _finishEvent.value = true
     }
 }
+
+private fun optionsForNewTask() = OptionsVisibility(
+    save = true,
+    update = false,
+    delete = false,
+    archive = false,
+    unarchive = false,
+    moveToTaskList = false,
+    schedule = false
+)
+
+private fun optionsForArchivedTask() = OptionsVisibility(
+    save = false,
+    update = true,
+    delete = true,
+    archive = false,
+    unarchive = true,
+    moveToTaskList = true,
+    schedule = false
+)
+
+private fun optionsForUnarchivedTask() = OptionsVisibility(
+    save = false,
+    update = true,
+    delete = true,
+    archive = true,
+    unarchive = false,
+    moveToTaskList = true,
+    schedule = true
+)
 
 private fun buildTaskRepository(application: Application): TasksRepository {
     val database = getDatabase(application.applicationContext)

@@ -3,8 +3,11 @@ package com.example.howie.ui
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.howie.core.Importance
+import com.example.howie.core.Task
+import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -63,6 +66,27 @@ class TaskViewModelTest {
             null
         )
         assertEquals(expected, viewModel.taskFields.value)
+    }
+
+    @Test
+    fun `optionsVisibility for archived task`() {
+        val application = mockk<Application>(relaxed = true)
+        val repository = mockk<TasksRepository> {
+            coEvery { getTask(any(), any()) } returns Task("TaskName", archived = LocalDate.MIN)
+        }
+        val viewModel = TaskViewModel(application, repository, testScope)
+        viewModel.initialize(TaskListIndex(0), TaskIndex(0), null)
+        viewModel.optionsVisibility.observeForever {}
+        val expected = OptionsVisibility(
+            save = false,
+            update = true,
+            delete = true,
+            archive = false,
+            unarchive = true,
+            moveToTaskList = true,
+            schedule = false
+        )
+        assertEquals(expected, viewModel.optionsVisibility.value)
     }
 }
 
