@@ -557,4 +557,40 @@ class DomainModelTest {
             DomainModel(listOf(TaskList("ABC", mutableListOf()), TaskList("DEF", mutableListOf())))
         assertEquals(listOf("ABC", "DEF"), model.getTaskListNames())
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun `getTaskListInformation throws on invalid task list`() {
+        val model = DomainModel(listOf())
+        model.getTaskListInformation(TaskListIndex(123))
+    }
+
+    @Test
+    fun `getTaskListInformation default information`() {
+        val model = DomainModel(listOf())
+        assertEquals(
+            TaskListInformation("Tasks", TaskCounts(0, 0, 0, 0)), model.getTaskListInformation(
+                TaskListIndex(0)
+            )
+        )
+    }
+
+    @Test
+    fun getTaskListInformation() {
+        val model = DomainModel(
+            listOf(
+                TaskList("ABC", mutableListOf(Task("", Importance.IMPORTANT))),
+                TaskList("DEF", mutableListOf(Task("", Importance.UNIMPORTANT)))
+            )
+        )
+        assertEquals(
+            TaskListInformation("ABC", TaskCounts(0, 1, 0, 0)), model.getTaskListInformation(
+                TaskListIndex(0)
+            )
+        )
+        assertEquals(
+            TaskListInformation("DEF", TaskCounts(0, 0, 0, 1)), model.getTaskListInformation(
+                TaskListIndex(1)
+            )
+        )
+    }
 }

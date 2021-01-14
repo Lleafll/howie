@@ -26,7 +26,7 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     suspend fun getTaskListNames() = _domainModel.await().getTaskListNames()
 
-    suspend fun getTaskListInformation(taskList: Int) =
+    suspend fun getTaskListInformation(taskList: TaskListIndex) =
         _domainModel.await().getTaskListInformation(taskList)
 
     suspend fun getTaskListInformation() = _domainModel.await().getTaskListInformation()

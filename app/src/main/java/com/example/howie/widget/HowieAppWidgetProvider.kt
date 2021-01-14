@@ -9,6 +9,7 @@ import android.content.Intent
 import android.widget.RemoteViews
 import androidx.lifecycle.asLiveData
 import com.example.howie.R
+import com.example.howie.core.TaskListIndex
 import com.example.howie.database.WidgetSettingsDao
 import com.example.howie.database.getDatabase
 import com.example.howie.ui.MainActivity
@@ -33,7 +34,7 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         appWidgetIds.forEach { appWidgetId ->
             widgetSettingsDao.getWidgetSettings(appWidgetId).asLiveData().observeForever {
                 if (it != null) {
-                    setupWidget(context, it.taskListId, appWidgetManager, appWidgetId)
+                    setupWidget(context, TaskListIndex(it.taskListId), appWidgetManager, appWidgetId)
                 } else {
                     setupInvalidWidget(context, appWidgetManager, appWidgetId)
                 }
@@ -54,13 +55,13 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
 
     private fun setupWidget(
         context: Context,
-        taskListIndex: Int,
+        taskListIndex: TaskListIndex,
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int
     ) {
         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java).let { intent ->
             intent.putExtra(SHOW_TASK_LIST_EXTRA, taskListIndex)
-            PendingIntent.getActivity(context, taskListIndex, intent, 0)
+            PendingIntent.getActivity(context, taskListIndex.value, intent, 0)
         }
         GlobalScope.launch {
             RemoteViews(context.packageName, R.layout.howie_appwidget).apply {

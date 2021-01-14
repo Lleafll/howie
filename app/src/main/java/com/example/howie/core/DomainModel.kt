@@ -48,8 +48,12 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         return taskLists.map { it.name }
     }
 
-    fun getTaskListInformation(taskList: Int): TaskListInformation {
-        TODO("Implement")
+    fun getTaskListInformation(taskList: TaskListIndex): TaskListInformation {
+        val taskList = taskLists[taskList.value]
+        return TaskListInformation(
+            taskList.name,
+            countUnarchivedUnsnoozedTasks(taskList.tasks)
+        )
     }
 
     fun getTaskListInformation(): List<TaskListInformation> {
