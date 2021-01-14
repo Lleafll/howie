@@ -36,6 +36,7 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     suspend fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
         _domainModel.await().deleteTask(taskList, task)
+        saveAll()
     }
 
     suspend fun deleteTaskList(position: TaskListIndex): Boolean {
