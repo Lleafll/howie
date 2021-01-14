@@ -32,13 +32,12 @@ private data class NullableTask(
     val task: Task?
 )
 
-class TaskViewModel(application: Application) : AndroidViewModel(application) {
-    private val _repository: TasksRepository
+class TaskViewModel(
+    application: Application,
+    private var _repository: TasksRepository
+) : AndroidViewModel(application) {
 
-    init {
-        val database = getDatabase(application.applicationContext)
-        _repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
-    }
+    constructor(application: Application) : this(application, buildTaskRepository(application))
 
     var taskList by Delegates.notNull<TaskListIndex>()
         private set
@@ -162,4 +161,9 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private fun callFinish() {
         _finishEvent.value = true
     }
+}
+
+private fun buildTaskRepository(application: Application): TasksRepository {
+    val database = getDatabase(application.applicationContext)
+    return TasksRepository(database.getTaskDao(), database.getTaskListDao())
 }
