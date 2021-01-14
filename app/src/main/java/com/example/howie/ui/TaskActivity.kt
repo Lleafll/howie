@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -94,6 +95,10 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
 
     private fun setTask(task: TaskFields) {
         taskNameEditText.setText(task.name)
+        if (task.name.isEmpty()) {
+            taskNameEditText.requestFocus()
+            window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        }
         if (task.importance == Importance.IMPORTANT) {
             importantButton.isChecked = true
         } else {
