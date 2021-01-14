@@ -24,6 +24,7 @@ class TaskItem : LinearLayout {
         fun onArchiveClicked()
         fun onUnarchiveClicked()
         fun onEditClicked()
+        fun onSelected()
     }
 
     init {
@@ -47,7 +48,7 @@ class TaskItem : LinearLayout {
             _listener?.onEditClicked()
         }
         setOnClickListener {
-            toggle()
+            _listener?.onSelected()
         }
     }
 
@@ -90,19 +91,15 @@ class TaskItem : LinearLayout {
         _listener = listener
     }
 
-    private fun toggle() = if (bottom_layout.isVisible) {
-        collapse()
-    } else {
-        expand()
-    }
+    fun isExpanded(): Boolean = bottom_layout.isVisible
 
-    private fun collapse() {
+    fun collapse() {
         bottom_layout.isVisible = false
         name_text_view.isSingleLine = true
         name_text_view.ellipsize = TextUtils.TruncateAt.MARQUEE
     }
 
-    private fun expand() {
+    fun expand() {
         bottom_layout.isVisible = true
         name_text_view.isSingleLine = false
         name_text_view.maxLines = 3

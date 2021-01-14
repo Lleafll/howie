@@ -13,6 +13,9 @@ import com.example.howie.core.TaskIndex
 class TaskAdapter(private val adapterListener: Listener) :
     ListAdapter<IndexedTask, TaskAdapter.TaskViewHolder>(TasksComparator()) {
 
+    private var selectedIndex: TaskIndex? = null
+    private var selectedPosition: Int = -1
+
     interface Listener {
         fun onSnoozeToTomorrowClicked(index: TaskIndex)
         fun onRemoveSnoozeClicked(index: TaskIndex)
@@ -47,17 +50,46 @@ class TaskAdapter(private val adapterListener: Listener) :
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val indexedTask = getItem(position)
-        holder.taskItem.task = indexedTask.task
+        val taskItem = holder.taskItem
+        taskItem.task = indexedTask.task
         val index = indexedTask.indexInTaskList
-        holder.taskItem.setListener(object : TaskItem.Listener {
-            override fun onSnoozeToTomorrowClicked() =
+        if (index == selectedIndex) {
+            taskItem.expand()
+        } else {
+            taskItem.collapse()
+        }
+        taskItem.setListener(object : TaskItem.Listener {
+            override fun onSnoozeToTomorrowClicked() {
                 adapterListener.onSnoozeToTomorrowClicked(index)
+            }
 
-            override fun onRemoveSnoozeClicked() = adapterListener.onRemoveSnoozeClicked(index)
-            override fun onRescheduleClicked() = adapterListener.onRescheduleClicked(index)
-            override fun onArchiveClicked() = adapterListener.onArchiveClicked(index)
-            override fun onUnarchiveClicked() = adapterListener.onUnarchiveClicked(index)
-            override fun onEditClicked() = adapterListener.onEditClicked(index)
+            override fun onRemoveSnoozeClicked() {
+                adapterListener.onRemoveSnoozeClicked(index)
+            }
+
+            override fun onRescheduleClicked() {
+                adapterListener.onRescheduleClicked(index)
+            }
+
+            override fun onArchiveClicked() {
+                adapterListener.onArchiveClicked(index)
+            }
+
+            override fun onUnarchiveClicked() {
+                adapterListener.onUnarchiveClicked(index)
+            }
+
+            override fun onEditClicked() {
+                adapterListener.onEditClicked(index)
+            }
+
+            override fun onSelected() {
+                selectedIndex = if (taskItem.isExpanded()) null else index
+                val previousSelectedPosition = selectedPosition
+                selectedPosition = position
+                notifyItemChanged(previousSelectedPosition);
+                notifyItemChanged(selectedPosition);
+            }
         })
     }
 }
