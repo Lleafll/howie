@@ -1,13 +1,13 @@
 package com.example.howie.widget
 
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.widget.RemoteViews
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.asLiveData
 import com.example.howie.R
 import com.example.howie.core.TaskListIndex
@@ -24,7 +24,12 @@ class WidgetService : Service() {
     private lateinit var repository: TasksRepository
     private lateinit var widgetSettingsDao: WidgetSettingsDao
 
+    override fun onCreate() {
+        startForegroundWithNotification()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForegroundWithNotification()
         val context = applicationContext
         val database = getDatabase(context)
         repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
@@ -92,3 +97,31 @@ class WidgetService : Service() {
 }
 
 private fun toText(count: Int) = if (count != 0) count.toString() else "✓"
+
+fun WidgetService.startForegroundWithNotification() {
+    val notificationChannelId = "com.example.howie"
+    createNotificationChannel(notificationChannelId)
+    val notification = buildNotification(notificationChannelId)
+    startForeground(1, notification)
+}
+
+private fun WidgetService.createNotificationChannel(notificationChannelId: String) {
+    val channel = NotificationChannel(
+        notificationChannelId,
+        "Widget updater background service",
+        NotificationManager.IMPORTANCE_NONE
+    )
+    channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+    val notificationManager: NotificationManager =
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.createNotificationChannel(channel)
+}
+
+private fun WidgetService.buildNotification(notificationChannelId: String): Notification {
+    val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
+        .setContentTitle("App is running in background")
+        .setPriority(NotificationManager.IMPORTANCE_MIN)
+        .setCategory(Notification.CATEGORY_SERVICE)
+        .setOngoing(true)
+    return notificationBuilder.build()
+}

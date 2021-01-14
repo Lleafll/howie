@@ -18,7 +18,7 @@ class HowieAppWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        context.startService(Intent(context, WidgetService::class.java))
+        context.startForegroundService(Intent(context, WidgetService::class.java))
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
