@@ -53,7 +53,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
-    testImplementation 'android.arch.core:core-testing:1.1.1'
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2"
     testImplementation "io.mockk:mockk:1.10.4"
 }
