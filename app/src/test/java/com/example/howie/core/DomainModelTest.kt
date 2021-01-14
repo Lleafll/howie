@@ -662,4 +662,15 @@ class DomainModelTest {
             ), model.getUnarchivedTasks(TaskListIndex(0), TaskCategory.DO)
         )
     }
+
+    @Test
+    fun addSnooze() {
+        val model = DomainModel(listOf(TaskList("", mutableListOf(Task("")))))
+        assertEquals(Task("", snoozed = null), model.getTask(TaskListIndex(0), TaskIndex(0)))
+        model.addSnooze(TaskListIndex(0), TaskIndex(0), LocalDate.MAX)
+        assertEquals(
+            Task("", snoozed = LocalDate.MAX),
+            model.getTask(TaskListIndex(0), TaskIndex(0))
+        )
+    }
 }

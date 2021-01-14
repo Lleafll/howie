@@ -157,6 +157,11 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         val taskList = _taskLists[taskListId.value]
         _taskLists[taskListId.value] = taskList.copy(name = newName)
     }
+
+    fun addSnooze(taskList: TaskListIndex, task: TaskIndex, snooze: LocalDate) {
+        val taskObject = _taskLists[taskList.value].tasks[task.value]
+        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(snoozed = snooze)
+    }
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =
