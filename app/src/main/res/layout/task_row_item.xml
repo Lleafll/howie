@@ -4,7 +4,7 @@
     android:orientation="vertical">
 
 
-    <com.example.howie.TaskItem
+    <com.example.howie.ui.TaskItem
         android:id="@+id/taskItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

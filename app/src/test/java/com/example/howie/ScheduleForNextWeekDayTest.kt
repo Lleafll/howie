@@ -1,5 +1,7 @@
 package com.example.howie
 
+import com.example.howie.core.ScheduleForNextWeekDay
+import com.example.howie.core.scheduleNext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.DayOfWeek

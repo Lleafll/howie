@@ -11,7 +11,7 @@
         android:id="@+id/main_coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".ui.MainActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
 
             <fragment
                 android:id="@+id/tasks_tab_fragment"
-                android:name="com.example.howie.TasksTabFragment"
+                android:name="com.example.howie.ui.TasksTabFragment"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
