@@ -7,4 +7,8 @@
     <color name="navigationBarColorDark">@color/statusBarColorDark</color>
     <color name="navigationBarColorLight">#999999</color>
     <color name="tabColorDark">@color/statusBarColorDark</color>
+    <color name="taskItemExpandedColorDark">#242424</color>
+    <color name="taskItemExpandedColorLight">#EDEDED</color>
+    <color name="taskItemCollapsedColorDark">@color/statusBarColorDark</color>
+    <color name="taskItemCollapsedColorLight">@color/design_default_color_surface</color>
 </resources>
