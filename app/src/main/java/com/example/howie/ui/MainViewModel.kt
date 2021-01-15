@@ -33,27 +33,32 @@ class MainViewModel(
         }
     }
 
-    val doTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+    val doTasks: LiveData<UnarchivedTaskItemFields> = _currentTaskList.switchMap {
         liveData {
-            emit(_repository.getUnarchivedTasks(it, TaskCategory.DO))
+            emit(_repository.getUnarchivedTasks(it, TaskCategory.DO).toUnarchivedTaskItemFields())
         }
     }
 
-    val decideTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+    val decideTasks: LiveData<UnarchivedTaskItemFields> = _currentTaskList.switchMap {
         liveData {
-            emit(_repository.getUnarchivedTasks(it, TaskCategory.DECIDE))
+            emit(
+                _repository.getUnarchivedTasks(it, TaskCategory.DECIDE).toUnarchivedTaskItemFields()
+            )
         }
     }
 
-    val delegateTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+    val delegateTasks: LiveData<UnarchivedTaskItemFields> = _currentTaskList.switchMap {
         liveData {
-            emit(_repository.getUnarchivedTasks(it, TaskCategory.DELEGATE))
+            emit(
+                _repository.getUnarchivedTasks(it, TaskCategory.DELEGATE)
+                    .toUnarchivedTaskItemFields()
+            )
         }
     }
 
-    val dropTasks: LiveData<UnarchivedTasks> = _currentTaskList.switchMap {
+    val dropTasks: LiveData<UnarchivedTaskItemFields> = _currentTaskList.switchMap {
         liveData {
-            emit(_repository.getUnarchivedTasks(it, TaskCategory.DROP))
+            emit(_repository.getUnarchivedTasks(it, TaskCategory.DROP).toUnarchivedTaskItemFields())
         }
     }
 
