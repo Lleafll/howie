@@ -151,8 +151,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         return true
     }
 
-    fun deleteTask(taskList: TaskListIndex, task: TaskIndex) {
-        taskLists[taskList.value].tasks.removeAt(task.value)
+    fun deleteTask(taskList: TaskListIndex, task: TaskIndex): Task {
+        return taskLists[taskList.value].tasks.removeAt(task.value)
     }
 
     fun renameTaskList(taskListId: TaskListIndex, newName: String) {

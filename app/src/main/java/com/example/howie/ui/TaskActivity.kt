@@ -71,6 +71,11 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 finish()
             }
         }
+        viewModel.returnTaskDeletedEvent.observe(this) {
+            val data = buildIntent(TASK_DELETED_RETURN_CODE)
+            data.putExtra(DELETED_TASK_CODE, it)
+            finish()
+        }
     }
 
     private fun setupColors() {

@@ -3,6 +3,7 @@ package com.example.howie.ui
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.howie.core.IndexedTask
+import com.example.howie.core.Task
 import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
 import com.example.howie.database.getDatabase
@@ -43,7 +44,13 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
         setTaskList(currentTaskList)
     }
 
+    fun addTask(task: Task) = viewModelScope.launch {
+        _repository.addTask(currentTaskList, task)
+        setTaskList(currentTaskList) // Force refresh of tasks
+    }
+
     val taskUnarchivedNotificationEvent = SingleLiveEvent<Pair<TaskIndex, LocalDate>>()
+    val taskDeletedNotificationEvent = SingleLiveEvent<Task>()
 }
 
 private fun buildTaskRepository(application: Application): TasksRepository {

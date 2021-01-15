@@ -164,8 +164,8 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("delete cannot be called with a null taskIndex")
         }
-        _repository.deleteTask(taskList, taskIndex!!)
-        callFinish()
+        val oldTask = _repository.deleteTask(taskList, taskIndex!!)
+        returnTaskDeletedEvent.value = oldTask
     }
 
     val optionsVisibility: LiveData<OptionsVisibility> = _task.switchMap {
@@ -186,6 +186,8 @@ class TaskViewModel(
     private fun callFinish() {
         _finishEvent.value = true
     }
+
+    val returnTaskDeletedEvent = SingleLiveEvent<Task>()
 }
 
 private fun optionsForNewTask() = OptionsVisibility(

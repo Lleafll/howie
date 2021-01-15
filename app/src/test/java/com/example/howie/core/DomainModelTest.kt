@@ -547,6 +547,12 @@ class DomainModelTest {
         assertTrue(model.taskLists[0].tasks.size == 0)
     }
 
+    @Test
+    fun `deleteTask returns removed task`() {
+        val model = DomainModel(listOf(TaskList("", mutableListOf(Task("ABC")))))
+        assertEquals(Task("ABC"), model.deleteTask(TaskListIndex(0), TaskIndex(0)))
+    }
+
     @Test(expected = IndexOutOfBoundsException::class)
     fun `renameTaskList throw on invalid task list index`() {
         val model = DomainModel(listOf())

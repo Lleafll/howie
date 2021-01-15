@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.howie.R
+import com.example.howie.core.Task
 import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
 import com.google.android.material.snackbar.Snackbar
@@ -30,7 +31,41 @@ class ArchiveActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         viewModel.forceRefresh()
-        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TASK_ACTIVITY_REQUEST_CODE) {
+            if (data == null) {
+                return
+            }
+            if (resultCode == RESULT_OK) {
+                val returnCode = data.getIntExtra(TASK_RETURN_CODE, -1)
+                if (returnCode == -1) {
+                    error("Supply ${::TASK_RETURN_CODE.name} data when exiting $TaskActivity")
+                }
+                handleTaskActivityReturn(
+                    returnCode,
+                    data,
+                    findViewById(R.id.archive_coordinator_layout),
+                    viewModel
+                )
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+}
+
+private fun handleTaskActivityReturn(
+    returnCode: Int, data: Intent, layout: CoordinatorLayout, viewModel: ArchiveViewModel
+) {
+    when (returnCode) {
+        TASK_DELETED_RETURN_CODE -> {
+            val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
+                ?: error("Deleted task missing from returned intent")
+            viewModel.taskDeletedNotificationEvent.value = task
+        }
+        TASK_MOVED_RETURN_CODE -> {
+            val snackbar = Snackbar.make(layout, "Task Moved", Snackbar.LENGTH_SHORT)
+            snackbar.show()
+        }
     }
 }
 
@@ -41,6 +76,11 @@ private fun ArchiveActivity.setupSnackbar(viewModel: ArchiveViewModel) {
     ) { (task, oldDate) ->
         val snackbar = Snackbar.make(layout, "Task unarchived", Snackbar.LENGTH_LONG)
         snackbar.setAction("UNDO") { viewModel.doArchive(task, oldDate) }
+        snackbar.show()
+    }
+    viewModel.taskDeletedNotificationEvent.observe(this) {task ->
+        val snackbar = Snackbar.make(layout, "Task deleted", Snackbar.LENGTH_LONG)
+        snackbar.setAction("UNDO") { viewModel.addTask(task) }
         snackbar.show()
     }
 }
@@ -76,7 +116,8 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
         }
     })
     archive_view.adapter = taskAdapter
-    val taskListIndex: TaskListIndex = intent.getParcelableExtra(ArchiveActivity.TASKLIST_INDEX)!!
+    val taskListIndex: TaskListIndex =
+        intent.getParcelableExtra(ArchiveActivity.TASKLIST_INDEX)!!
     viewModel.setTaskList(taskListIndex)
     viewModel.archive.observe(this, {
         taskAdapter.submitList(it)
