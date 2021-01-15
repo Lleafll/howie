@@ -59,6 +59,9 @@ class TaskItem : LinearLayout {
         snooze_to_tomorrow.isVisible = fields.snoozedToTomorrow
         remove_snooze.isVisible = fields.removeSnoozed
         reschedule_button.isVisible = fields.reschedule != null
+        if (fields.reschedule != null) {
+            schedule_text.text = fields.reschedule
+        }
         archive_button.isVisible = fields.archive
         unarchive_button.isVisible = fields.unarchive
     }

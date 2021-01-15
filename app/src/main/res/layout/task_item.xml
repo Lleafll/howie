@@ -75,64 +75,144 @@
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/snoozed_text_view"
         tools:visibility="visible">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/snooze_to_tomorrow"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:icon="@drawable/outline_plus_one_24"
-            app:iconGravity="textStart" />
+            android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/remove_snooze"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:icon="@drawable/outline_alarm_off_24"
-            app:iconGravity="textStart" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/snooze_to_tomorrow"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/outline_plus_one_24"
+                app:iconGravity="textStart" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/reschedule_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:icon="@drawable/outline_schedule_24"
-            app:iconGravity="textStart" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tomorrow"
+                android:textAlignment="center" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/archive_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:icon="@drawable/outline_archive_24"
-            app:iconGravity="textStart" />
+        </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/unarchive_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:icon="@drawable/outline_unarchive_24"
-            app:iconGravity="textStart" />
+            android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/remove_snooze"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/outline_alarm_off_24"
+                app:iconGravity="textStart" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/unsnooze"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:icon="@drawable/outline_edit_24"
-            app:iconGravity="textStart" />
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reschedule_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/outline_schedule_24"
+                app:iconGravity="textStart" />
+
+            <TextView
+                android:id="@+id/schedule_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                tools:text="30 Months" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/archive_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/outline_archive_24"
+                app:iconGravity="textStart" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/archive"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/unarchive_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/outline_unarchive_24"
+                app:iconGravity="textStart" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/unarchive"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/outline_edit_24"
+                app:iconGravity="textStart" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit"
+                android:textAlignment="center" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
