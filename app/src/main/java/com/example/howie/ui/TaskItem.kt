@@ -3,12 +3,13 @@ package com.example.howie.ui
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import com.example.howie.R
-import kotlinx.android.synthetic.main.task_item.view.*
+import com.example.howie.databinding.TaskItemBinding
 
 class TaskItem : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -24,24 +25,26 @@ class TaskItem : LinearLayout {
         fun onSelected()
     }
 
+    private val binding = TaskItemBinding.inflate(LayoutInflater.from(context), this, true)
+
     init {
         inflate(context, R.layout.task_item, this)
-        snooze_to_tomorrow.setOnClickListener {
+        binding.snoozeToTomorrow.setOnClickListener {
             _listener?.onSnoozeToTomorrowClicked()
         }
-        remove_snooze.setOnClickListener {
+        binding.removeSnooze.setOnClickListener {
             _listener?.onRemoveSnoozeClicked()
         }
-        reschedule_button.setOnClickListener {
+        binding.rescheduleButton.setOnClickListener {
             _listener?.onRescheduleClicked()
         }
-        archive_button.setOnClickListener {
+        binding.archiveButton.setOnClickListener {
             _listener?.onArchiveClicked()
         }
-        unarchive_button.setOnClickListener {
+        binding.unarchiveButton.setOnClickListener {
             _listener?.onUnarchiveClicked()
         }
-        edit_button.setOnClickListener {
+        binding.editButton.setOnClickListener {
             _listener?.onEditClicked()
         }
         setOnClickListener {
@@ -52,37 +55,37 @@ class TaskItem : LinearLayout {
     private var _listener: Listener? = null
 
     fun setFields(fields: TaskItemFields) {
-        name_text_view.text = fields.name
-        setDateString(due_text_view, fields.due)
-        setDateString(snoozed_text_view, fields.snoozed)
-        setDateString(archived_text_view, fields.archived)
-        snooze_to_tomorrow_layout.isVisible = fields.snoozedToTomorrow
-        remove_snooze_layout.isVisible = fields.removeSnoozed
-        reschedule_layout.isVisible = fields.reschedule != null
+        binding.nameTextView.text = fields.name
+        setDateString(binding.dueTextView, fields.due)
+        setDateString(binding.snoozedTextView, fields.snoozed)
+        setDateString(binding.archivedTextView, fields.archived)
+        binding.snoozeToTomorrowLayout.isVisible = fields.snoozedToTomorrow
+        binding.removeSnoozeLayout.isVisible = fields.removeSnoozed
+        binding.rescheduleLayout.isVisible = fields.reschedule != null
         if (fields.reschedule != null) {
-            schedule_text.text = fields.reschedule
+            binding.scheduleText.text = fields.reschedule
         }
-        archive_layout.isVisible = fields.archive
-        unarchive_layout.isVisible = fields.unarchive
+        binding.archiveLayout.isVisible = fields.archive
+        binding.unarchiveLayout.isVisible = fields.unarchive
     }
 
     fun setListener(listener: Listener) {
         _listener = listener
     }
 
-    fun isExpanded(): Boolean = bottom_layout.isVisible
+    fun isExpanded(): Boolean = binding.bottomLayout.isVisible
 
     fun collapse() {
-        bottom_layout.isVisible = false
-        name_text_view.isSingleLine = true
-        name_text_view.ellipsize = TextUtils.TruncateAt.MARQUEE
+        binding.bottomLayout.isVisible = false
+        binding.nameTextView.isSingleLine = true
+        binding.nameTextView.ellipsize = TextUtils.TruncateAt.MARQUEE
     }
 
     fun expand() {
-        bottom_layout.isVisible = true
-        name_text_view.isSingleLine = false
-        name_text_view.maxLines = 3
-        name_text_view.ellipsize = TextUtils.TruncateAt.END
+        binding.bottomLayout.isVisible = true
+        binding.nameTextView.isSingleLine = false
+        binding.nameTextView.maxLines = 3
+        binding.nameTextView.ellipsize = TextUtils.TruncateAt.END
     }
 }
 

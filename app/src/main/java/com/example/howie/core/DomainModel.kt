@@ -1,7 +1,7 @@
 package com.example.howie.core
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 
 @Parcelize
@@ -48,8 +48,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         return taskLists.map { it.name }
     }
 
-    fun getTaskListInformation(taskList: TaskListIndex): TaskListInformation {
-        val taskList = taskLists[taskList.value]
+    fun getTaskListInformation(taskListIndex: TaskListIndex): TaskListInformation {
+        val taskList = taskLists[taskListIndex.value]
         return TaskListInformation(
             taskList.name,
             countUnarchivedUnsnoozedTasks(taskList.tasks)

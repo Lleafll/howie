@@ -9,10 +9,13 @@ import android.widget.LinearLayout
 import com.example.howie.R
 import com.example.howie.core.ScheduleInXTimeUnits
 import com.example.howie.core.TimeUnit
-import kotlinx.android.synthetic.main.view_schedule_in_x_time_units.view.*
+import com.example.howie.databinding.ViewScheduleInXTimeUnitsBinding
 
 class ScheduleInXTimeUnitsView(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs) {
+
+    private val binding =
+        ViewScheduleInXTimeUnitsBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_schedule_in_x_time_units, this)
@@ -22,18 +25,18 @@ class ScheduleInXTimeUnitsView(context: Context, attrs: AttributeSet? = null) :
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            time_unit_spinner.adapter = adapter
+            binding.timeUnitSpinner.adapter = adapter
         }
     }
 
     fun setSchedule(schedule: ScheduleInXTimeUnits) {
-        quantity_field.setText(schedule.quantity.toString())
-        time_unit_spinner.setSelection(schedule.timeUnit.ordinal)
+        binding.quantityField.setText(schedule.quantity.toString())
+        binding.timeUnitSpinner.setSelection(schedule.timeUnit.ordinal)
     }
 
     fun getSchedule() = ScheduleInXTimeUnits(
-        convertTextToValidQuantity(quantity_field.text),
-        TimeUnit.values()[time_unit_spinner.selectedItemPosition]
+        convertTextToValidQuantity(binding.quantityField.text),
+        TimeUnit.values()[binding.timeUnitSpinner.selectedItemPosition]
     )
 }
 
