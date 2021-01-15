@@ -1,7 +1,6 @@
 package com.example.howie.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,7 +9,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.howie.R
@@ -18,11 +16,11 @@ import com.example.howie.core.Task
 import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
+import com.example.howie.databinding.ActivityMainBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_tasks_tab.*
+import com.google.android.material.tabs.TabLayout
 import java.time.LocalDate
 
 const val SHOW_TASK_LIST_EXTRA = "showTaskList"
@@ -37,19 +35,21 @@ const val TASK_MOVED_RETURN_CODE = 2
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val viewModel: MainViewModel by viewModels { MainViewModelFactory(application) }
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setupTaskButton(add_task_button, viewModel)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupTaskButton(binding.addTaskButton, viewModel)
         setupToolBar()
-        setupDrawer(findViewById(R.id.drawer_layout), viewModel)
+        setupDrawer(binding.drawerLayout, viewModel, binding)
         setupColors()
         setupSnackbar(viewModel)
     }
 
     private fun setupToolBar() {
-        toolbar.setOnMenuItemClickListener {
+        binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_show_archive -> {
                     showArchive(viewModel.currentTaskList)
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         viewModel.currentTaskListName.observe(this, {
-            toolbar.title = it
+            binding.toolbar.title = it
         })
     }
 
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val taskList = TaskListIndex(item.itemId - R.id.action_add_list - 1)
             viewModel.setTaskList(taskList)
         }
-        drawer_layout.closeDrawer(GravityCompat.START)
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -175,20 +175,24 @@ private fun showArchivedNotification(
     snackbar.show()
 }
 
-private fun MainActivity.setupDrawer(drawer: DrawerLayout, mainViewModel: MainViewModel) {
+private fun MainActivity.setupDrawer(
+    drawer: DrawerLayout,
+    mainViewModel: MainViewModel,
+    binding: ActivityMainBinding
+) {
     val toggle = ActionBarDrawerToggle(
         this,
         drawer,
-        toolbar,
+        binding.toolbar,
         R.string.navigation_drawer_open,
         R.string.navigation_drawer_close
     )
     drawer.addDrawerListener(toggle)
     toggle.syncState()
     mainViewModel.taskListDrawerLabels.observe(this, { taskListNamesAndCounts ->
-        buildDrawerContent(taskListNamesAndCounts, nav_view.menu)
+        buildDrawerContent(taskListNamesAndCounts, binding.navView.menu)
     })
-    nav_view.setNavigationItemSelectedListener(this)
+    binding.navView.setNavigationItemSelectedListener(this)
 }
 
 private fun buildDrawerContent(labels: List<String>, menu: Menu) {
@@ -202,9 +206,10 @@ private fun buildDrawerContent(labels: List<String>, menu: Menu) {
 private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel: MainViewModel) {
     button.setOnClickListener {
         val intent = Intent(applicationContext, TaskActivity::class.java)
+        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         intent.putExtra(
             TaskActivity.TASK_CATEGORY,
-            TaskCategory.values()[tab_layout.selectedTabPosition]
+            TaskCategory.values()[tabLayout.selectedTabPosition]
         )
         intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
         startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
@@ -237,13 +242,6 @@ private fun handleTaskActivityReturn(
 
 private fun MainActivity.setupColors() {
     setupActivityColors(resources, window, applicationContext)
-    when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-        Configuration.UI_MODE_NIGHT_YES -> {
-            tab_layout.setBackgroundColor(
-                ContextCompat.getColor(applicationContext, R.color.tabColorDark)
-            )
-        }
-    }
 }
 
 private fun MainActivity.openRenameTaskListFragment(taskList: TaskListIndex) {

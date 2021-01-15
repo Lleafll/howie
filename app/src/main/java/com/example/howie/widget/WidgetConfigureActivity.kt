@@ -8,22 +8,24 @@ import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.howie.R
-import kotlinx.android.synthetic.main.activity_widget_configure.*
+import com.example.howie.databinding.ActivityWidgetConfigureBinding
 
 class WidgetConfigureActivity : AppCompatActivity() {
-    private val viewModel: WidgetConfigureViewModel by viewModels {
+    private val _viewModel: WidgetConfigureViewModel by viewModels {
         WidgetConfigureViewModelFactory(application)
     }
+    private lateinit var _binding: ActivityWidgetConfigureBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_widget_configure)
+        _binding = ActivityWidgetConfigureBinding.inflate(layoutInflater)
+        setContentView(_binding.root)
         setResultToCanceled()
-        configureToolbar.setOnMenuItemClickListener {
+        _binding.configureToolbar.setOnMenuItemClickListener {
             if (it.itemId == R.id.action_ok) {
-                val selectedIndex = taskListSelection.selectedItemPosition
+                val selectedIndex = _binding.taskListSelection.selectedItemPosition
                 val widgetId = getAppWidgetId()
-                viewModel.insert(widgetId, selectedIndex)
+                _viewModel.insert(widgetId, selectedIndex)
                 val resultValue = buildIntent()
                 setResult(Activity.RESULT_OK, resultValue)
                 finish()
@@ -32,11 +34,11 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(it)
             }
         }
-        viewModel.taskListNames.observe(this) {
+        _viewModel.taskListNames.observe(this) {
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, it)
-            taskListSelection.adapter = adapter
+            _binding.taskListSelection.adapter = adapter
         }
-        viewModel.widgetSettings.observe(this, { updateWidget() })
+        _viewModel.widgetSettings.observe(this, { updateWidget() })
     }
 
     private fun updateWidget() {

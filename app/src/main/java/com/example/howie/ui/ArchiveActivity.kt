@@ -6,12 +6,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.howie.R
 import com.example.howie.core.Task
 import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
+import com.example.howie.databinding.ActivityArchiveBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_archive.*
 
 class ArchiveActivity : AppCompatActivity() {
     companion object {
@@ -19,12 +20,14 @@ class ArchiveActivity : AppCompatActivity() {
     }
 
     private val viewModel: ArchiveViewModel by viewModels { ArchiveViewModelFactory(application) }
+    private lateinit var binding: ActivityArchiveBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_archive)
-        setupToolbar()
-        setupArchiveView(viewModel)
+        binding = ActivityArchiveBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupToolbar(binding.toolbar)
+        setupArchiveView(viewModel, binding.archiveView)
         setupActivityColors(resources, window, applicationContext)
         setupSnackbar(viewModel)
     }
@@ -78,15 +81,18 @@ private fun ArchiveActivity.setupSnackbar(viewModel: ArchiveViewModel) {
         snackbar.setAction("UNDO") { viewModel.doArchive(task, oldDate) }
         snackbar.show()
     }
-    viewModel.taskDeletedNotificationEvent.observe(this) {task ->
+    viewModel.taskDeletedNotificationEvent.observe(this) { task ->
         val snackbar = Snackbar.make(layout, "Task deleted", Snackbar.LENGTH_LONG)
         snackbar.setAction("UNDO") { viewModel.addTask(task) }
         snackbar.show()
     }
 }
 
-private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
-    archive_view.layoutManager = LinearLayoutManager(applicationContext)
+private fun ArchiveActivity.setupArchiveView(
+    viewModel: ArchiveViewModel,
+    archiveView: RecyclerView
+) {
+    archiveView.layoutManager = LinearLayoutManager(applicationContext)
     val taskAdapter = TaskAdapter(object : TaskAdapter.Listener {
         override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
             // noop
@@ -115,7 +121,7 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
             startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
         }
     })
-    archive_view.adapter = taskAdapter
+    archiveView.adapter = taskAdapter
     val taskListIndex: TaskListIndex =
         intent.getParcelableExtra(ArchiveActivity.TASKLIST_INDEX)!!
     viewModel.setTaskList(taskListIndex)
@@ -124,7 +130,7 @@ private fun ArchiveActivity.setupArchiveView(viewModel: ArchiveViewModel) {
     })
 }
 
-private fun ArchiveActivity.setupToolbar() {
+private fun ArchiveActivity.setupToolbar(toolbar: androidx.appcompat.widget.Toolbar) {
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayShowHomeEnabled(true)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)

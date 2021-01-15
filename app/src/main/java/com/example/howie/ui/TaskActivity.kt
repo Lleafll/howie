@@ -13,7 +13,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.isVisible
 import com.example.howie.R
 import com.example.howie.core.*
-import kotlinx.android.synthetic.main.activity_task.*
+import com.example.howie.databinding.ActivityTaskBinding
 import java.time.LocalDate
 
 private const val DUE_DATE_ID = 0
@@ -29,12 +29,14 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
     }
 
     private val viewModel: TaskViewModel by viewModels { TaskViewModelFactory(application) }
+    private lateinit var binding: ActivityTaskBinding
     private var archived: String = ""  // There is no field for this but we need to remember this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task)
-        setSupportActionBar(toolbar)
+        binding = ActivityTaskBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -42,14 +44,14 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         val taskId = intent.getParcelableExtra<TaskIndex>(TASK_ID)
         val taskCategory = intent.getSerializableExtra(TASK_CATEGORY) as TaskCategory?
         viewModel.initialize(taskListIndex, taskId, taskCategory)
-        snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            snoozedTextDate.isVisible = isChecked
+        binding.snoozeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            binding.snoozedTextDate.isVisible = isChecked
         }
-        dueSwitch.setOnCheckedChangeListener { _, isChecked ->
-            dueTextDate.isVisible = isChecked
+        binding.dueSwitch.setOnCheckedChangeListener { _, isChecked ->
+            binding.dueTextDate.isVisible = isChecked
         }
-        scheduleSwitch.setOnCheckedChangeListener { _, isChecked ->
-            schedule_view.isVisible = isChecked
+        binding.scheduleSwitch.setOnCheckedChangeListener { _, isChecked ->
+            binding.scheduleView.isVisible = isChecked
         }
         val onClickListenerFactory = { dateId: Int ->
             { view: View ->
@@ -62,8 +64,8 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
                 datePicker.show(supportFragmentManager, "datePicker")
             }
         }
-        dueTextDate.setOnClickListener(onClickListenerFactory(DUE_DATE_ID))
-        snoozedTextDate.setOnClickListener(onClickListenerFactory(SNOOZED_DATE_ID))
+        binding.dueTextDate.setOnClickListener(onClickListenerFactory(DUE_DATE_ID))
+        binding.snoozedTextDate.setOnClickListener(onClickListenerFactory(SNOOZED_DATE_ID))
         setupColors()
         viewModel.taskFields.observe(this) { setTask(it) }
         viewModel.finishEvent.observe(this) {
@@ -88,39 +90,39 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
         }
         val dateString = date.toString()
         if (id == DUE_DATE_ID) {
-            dueTextDate.text = dateString
+            binding.dueTextDate.text = dateString
         } else if (id == SNOOZED_DATE_ID) {
-            snoozedTextDate.text = dateString
-            if (date > LocalDate.parse(dueTextDate.text)) {
+            binding.snoozedTextDate.text = dateString
+            if (date > LocalDate.parse(binding.dueTextDate.text)) {
                 // Due can't realistically be before snoozed
-                dueTextDate.text = dateString
+                binding.dueTextDate.text = dateString
             }
         }
     }
 
     private fun setTask(task: TaskFields) {
-        taskNameEditText.setText(task.name)
+        binding.taskNameEditText.setText(task.name)
         if (task.name.isEmpty()) {
-            taskNameEditText.requestFocus()
+            binding.taskNameEditText.requestFocus()
             window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
         if (task.importance == Importance.IMPORTANT) {
-            importantButton.isChecked = true
+            binding.importantButton.isChecked = true
         } else {
-            unimportantButton.isChecked = true
+            binding.unimportantButton.isChecked = true
         }
-        setDateFields(dueTextDate, dueSwitch, task.showDue, task.due)
-        setDateFields(snoozedTextDate, snoozeSwitch, task.showSnoozed, task.snoozed)
-        setScheduleFields(task.schedule, scheduleSwitch, schedule_view)
+        setDateFields(binding.dueTextDate, binding.dueSwitch, task.showDue, task.due)
+        setDateFields(binding.snoozedTextDate, binding.snoozeSwitch, task.showSnoozed, task.snoozed)
+        setScheduleFields(task.schedule, binding.scheduleSwitch, binding.scheduleView)
         archived = task.archived
     }
 
     private fun buildTaskFromFields() = Task(
-        taskNameEditText.text.toString(),
-        if (importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
-        readDate(dueSwitch, dueTextDate),
-        readDate(snoozeSwitch, snoozedTextDate),
-        readSchedule(scheduleSwitch, schedule_view),
+        binding.taskNameEditText.text.toString(),
+        if (binding.importantButton.isChecked) Importance.IMPORTANT else Importance.UNIMPORTANT,
+        readDate(binding.dueSwitch, binding.dueTextDate),
+        readDate(binding.snoozeSwitch, binding.snoozedTextDate),
+        readSchedule(binding.scheduleSwitch, binding.scheduleView),
         if (archived.isNotEmpty()) LocalDate.parse(archived) else null
     )
 

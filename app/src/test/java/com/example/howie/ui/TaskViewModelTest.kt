@@ -43,7 +43,7 @@ class TaskViewModelTest {
     fun `construct taskFields with dependency injection`() {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
-        val viewModel = TaskViewModel(application, repository, null)
+        TaskViewModel(application, repository, null)
     }
 
     @Test

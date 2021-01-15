@@ -2,7 +2,7 @@ package com.example.howie.core
 
 import android.os.Parcelable
 import androidx.room.Embedded
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 
 @Parcelize

@@ -2,37 +2,52 @@ package com.example.howie.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
-import com.example.howie.R
 import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskIndex
-import kotlinx.android.synthetic.main.fragment_tasks_object.*
+import com.example.howie.databinding.FragmentTasksObjectBinding
 
-class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
+class TasksObjectFragment : Fragment() {
     companion object {
         const val TASK_CATEGORY_ARGUMENT = "taskCategory"
     }
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val _viewModel: MainViewModel by activityViewModels()
+    private lateinit var _binding: FragmentTasksObjectBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTasksObjectBinding.inflate(inflater, container, false)
+        return _binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupViews(viewModel, requireActivity())
+        setupViews(_viewModel, requireActivity(), _binding)
     }
 }
 
-private fun TasksObjectFragment.setupViews(viewModel: MainViewModel, activity: FragmentActivity) {
-    unsnoozed_tasks_view.setHeaderText("Tasks")
-    snoozed_tasks_view.setHeaderText("Snoozed Tasks")
+private fun TasksObjectFragment.setupViews(
+    viewModel: MainViewModel,
+    activity: FragmentActivity,
+    binding: FragmentTasksObjectBinding
+) {
+    binding.unsnoozedTasksView.setHeaderText("Tasks")
+    binding.snoozedTasksView.setHeaderText("Snoozed Tasks")
     val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
     val snoozedAdapter = buildTaskAdapter(viewModel, activity)
     val liveData = getLiveDataAccordingToCategory(viewModel)
     liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
-        setTasks(unsnoozedAdapter, unsnoozed_tasks_view, unarchivedTasks.unsnoozed, true)
-        setTasks(snoozedAdapter, snoozed_tasks_view, unarchivedTasks.snoozed, false)
+        setTasks(unsnoozedAdapter, binding.unsnoozedTasksView, unarchivedTasks.unsnoozed, true)
+        setTasks(snoozedAdapter, binding.snoozedTasksView, unarchivedTasks.snoozed, false)
     }
 }
 
