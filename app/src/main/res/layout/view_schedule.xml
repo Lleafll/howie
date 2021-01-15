@@ -14,14 +14,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/scheduleInXTimeUnitsView" />
 
-    <com.example.howie.core.ScheduleInXTimeUnitsView
+    <com.example.howie.ui.ScheduleInXTimeUnitsView
         android:id="@+id/scheduleInXTimeUnitsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/schedule_spinner"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.howie.core.ScheduleForNextWeekDayView
+    <com.example.howie.ui.ScheduleForNextWeekDayView
         android:id="@+id/scheduleForNextWeekDayView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         app:layout_constraintStart_toEndOf="@+id/schedule_spinner"
         app:layout_constraintTop_toTopOf="@+id/schedule_spinner" />
 
-    <com.example.howie.core.ScheduleForNextDayOfMonthView
+    <com.example.howie.ui.ScheduleForNextDayOfMonthView
         android:id="@+id/scheduleForNextDayOfMonthView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
