@@ -11,6 +11,10 @@ data class ScheduleForNextDayOfMonth(val dayOfMonth: Int) : Parcelable {
             error("dayOfMonth ($dayOfMonth) not >= 1 and <= 31")
         }
     }
+
+    override fun toString(): String {
+        return "$dayOfMonth."
+    }
 }
 
 fun ScheduleForNextDayOfMonth.scheduleNext(date: LocalDate): LocalDate {
