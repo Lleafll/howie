@@ -12,7 +12,6 @@ class TaskAdapter(private val adapterListener: Listener) :
     ListAdapter<TaskItemFields, TaskAdapter.TaskViewHolder>(TasksComparator()) {
 
     private var selectedIndex: TaskIndex? = null
-    private var selectedPosition: Int = -1
 
     interface Listener {
         fun onSnoozeToTomorrowClicked(index: TaskIndex)
@@ -86,10 +85,7 @@ class TaskAdapter(private val adapterListener: Listener) :
 
             override fun onSelected() {
                 selectedIndex = if (taskItem.isExpanded()) null else index
-                val previousSelectedPosition = selectedPosition
-                selectedPosition = position
-                notifyItemChanged(previousSelectedPosition)
-                notifyItemChanged(selectedPosition)
+                notifyDataSetChanged()
             }
         })
     }
