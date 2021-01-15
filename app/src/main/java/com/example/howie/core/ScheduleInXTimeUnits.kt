@@ -26,7 +26,7 @@ private fun TimeUnit.toString(plural: Boolean): String {
         TimeUnit.DAY -> "Day"
         TimeUnit.WEEK -> "Week"
         TimeUnit.MONTH -> "Month"
-        TimeUnit.YEAR -> "Years"
+        TimeUnit.YEAR -> "Year"
     }
     if (plural) {
         string += "s"
