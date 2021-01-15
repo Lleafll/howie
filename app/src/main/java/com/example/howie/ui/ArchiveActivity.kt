@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.howie.R
 import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_archive.*
 
 class ArchiveActivity : AppCompatActivity() {
@@ -23,11 +25,23 @@ class ArchiveActivity : AppCompatActivity() {
         setupToolbar()
         setupArchiveView(viewModel)
         setupActivityColors(resources, window, applicationContext)
+        setupSnackbar(viewModel)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         viewModel.forceRefresh()
         super.onActivityResult(requestCode, resultCode, data)
+    }
+}
+
+private fun ArchiveActivity.setupSnackbar(viewModel: ArchiveViewModel) {
+    val layout: CoordinatorLayout = findViewById(R.id.archive_coordinator_layout)
+    viewModel.taskUnarchivedNotificationEvent.observe(
+        this
+    ) { (task, oldDate) ->
+        val snackbar = Snackbar.make(layout, "Task unarchived", Snackbar.LENGTH_LONG)
+        snackbar.setAction("UNDO") { viewModel.doArchive(task, oldDate) }
+        snackbar.show()
     }
 }
 

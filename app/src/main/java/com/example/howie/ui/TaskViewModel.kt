@@ -148,7 +148,7 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("doArchive cannot be called with a null taskIndex")
         }
-        _repository.doArchive(taskList, taskIndex!!)
+        _repository.doArchive(taskList, taskIndex!!, LocalDate.now())
         callFinish()
     }
 

@@ -18,6 +18,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 import java.util.concurrent.Executors
 
 @ExperimentalCoroutinesApi
@@ -45,6 +46,6 @@ class MainViewModelTest {
         val taskManager = MainViewModel(application, repository)
         taskManager.setTaskList(TaskListIndex(456))
         taskManager.doArchive(TaskIndex(123))
-        coVerify { repository.doArchive(TaskListIndex(456), TaskIndex(123)) }
+        coVerify { repository.doArchive(TaskListIndex(456), TaskIndex(123), LocalDate.now()) }
     }
 }

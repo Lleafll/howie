@@ -68,7 +68,7 @@ class MainViewModel(
     }
 
     fun doArchive(id: TaskIndex) = viewModelScope.launch {
-        _repository.doArchive(currentTaskList, id)
+        _repository.doArchive(currentTaskList, id, LocalDate.now())
         setTaskList(currentTaskList) // Force refresh of tasks
         taskArchivedNotificationEvent.value = id
     }

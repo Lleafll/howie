@@ -61,8 +61,8 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         _domainModel.await().renameTaskList(taskListId, newName)
     }
 
-    suspend fun doArchive(taskListId: TaskListIndex, taskId: TaskIndex) {
-        _domainModel.await().doArchive(taskListId, taskId)
+    suspend fun doArchive(taskListId: TaskListIndex, taskId: TaskIndex, date: LocalDate) {
+        _domainModel.await().doArchive(taskListId, taskId, date)
         saveAll()
     }
 
@@ -102,9 +102,10 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         saveAll()
     }
 
-    suspend fun unarchive(taskList: TaskListIndex, taskIndex: TaskIndex) {
-        _domainModel.await().unarchive(taskList, taskIndex)
+    suspend fun unarchive(taskList: TaskListIndex, taskIndex: TaskIndex): LocalDate? {
+        val oldArchivedate = _domainModel.await().unarchive(taskList, taskIndex)
         saveAll()
+        return oldArchivedate
     }
 
     suspend fun addTask(taskList: TaskListIndex, task: Task): Boolean {

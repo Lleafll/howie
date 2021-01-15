@@ -433,13 +433,13 @@ class DomainModelTest {
     @Test(expected = IndexOutOfBoundsException::class)
     fun `doArchive throws on invalid task list index`() {
         val model = DomainModel(listOf())
-        model.doArchive(TaskListIndex(123), TaskIndex(0))
+        model.doArchive(TaskListIndex(123), TaskIndex(0), LocalDate.MAX)
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
     fun `doArchive throws on invalid task index`() {
         val model = DomainModel(listOf())
-        model.doArchive(TaskListIndex(0), TaskIndex(123))
+        model.doArchive(TaskListIndex(0), TaskIndex(123), LocalDate.MAX)
     }
 
     @Test
@@ -449,9 +449,9 @@ class DomainModelTest {
             Task("", archived = null),
             model.getTask(TaskListIndex(0), TaskIndex(0))
         )
-        model.doArchive(TaskListIndex(0), TaskIndex(0))
+        model.doArchive(TaskListIndex(0), TaskIndex(0), LocalDate.MAX)
         assertEquals(
-            Task("", archived = LocalDate.now()),
+            Task("", archived = LocalDate.MAX),
             model.getTask(TaskListIndex(0), TaskIndex(0))
         )
     }
@@ -481,6 +481,14 @@ class DomainModelTest {
             Task("", archived = null),
             model.getTask(TaskListIndex(0), TaskIndex(0))
         )
+    }
+
+    @Test
+    fun `unarchive returns old archive date`() {
+        val model =
+            DomainModel(listOf(TaskList("", mutableListOf(Task("", archived = LocalDate.MIN)))))
+        assertEquals(LocalDate.MIN, model.unarchive(TaskListIndex(0), TaskIndex(0)))
+        assertNull(model.unarchive(TaskListIndex(0), TaskIndex(0)))
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
