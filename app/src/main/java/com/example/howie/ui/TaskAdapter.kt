@@ -7,11 +7,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.howie.R
-import com.example.howie.core.IndexedTask
 import com.example.howie.core.TaskIndex
 
 class TaskAdapter(private val adapterListener: Listener) :
-    ListAdapter<IndexedTask, TaskAdapter.TaskViewHolder>(TasksComparator()) {
+    ListAdapter<TaskItemFields, TaskAdapter.TaskViewHolder>(TasksComparator()) {
 
     private var selectedIndex: TaskIndex? = null
     private var selectedPosition: Int = -1
@@ -37,11 +36,11 @@ class TaskAdapter(private val adapterListener: Listener) :
         }
     }
 
-    class TasksComparator : DiffUtil.ItemCallback<IndexedTask>() {
-        override fun areItemsTheSame(oldItem: IndexedTask, newItem: IndexedTask): Boolean =
+    class TasksComparator : DiffUtil.ItemCallback<TaskItemFields>() {
+        override fun areItemsTheSame(oldItem: TaskItemFields, newItem: TaskItemFields): Boolean =
             oldItem === newItem
 
-        override fun areContentsTheSame(oldItem: IndexedTask, newItem: IndexedTask): Boolean =
+        override fun areContentsTheSame(oldItem: TaskItemFields, newItem: TaskItemFields): Boolean =
             oldItem == newItem
     }
 
@@ -49,10 +48,10 @@ class TaskAdapter(private val adapterListener: Listener) :
         TaskViewHolder.create(parent)
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val indexedTask = getItem(position)
+        val taskItemFields = getItem(position)
         val taskItem = holder.taskItem
-        taskItem.task = indexedTask.task
-        val index = indexedTask.indexInTaskList
+        taskItem.setFields(taskItemFields)
+        val index = taskItemFields.index
         if (index == selectedIndex) {
             taskItem.expand()
         } else {
@@ -87,8 +86,8 @@ class TaskAdapter(private val adapterListener: Listener) :
                 selectedIndex = if (taskItem.isExpanded()) null else index
                 val previousSelectedPosition = selectedPosition
                 selectedPosition = position
-                notifyItemChanged(previousSelectedPosition);
-                notifyItemChanged(selectedPosition);
+                notifyItemChanged(previousSelectedPosition)
+                notifyItemChanged(selectedPosition)
             }
         })
     }

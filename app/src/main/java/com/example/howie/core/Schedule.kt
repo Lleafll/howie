@@ -43,6 +43,12 @@ class Schedule(
         result = 31 * result + (scheduleForNextDayOfMonth?.hashCode() ?: 0)
         return result
     }
+
+    override fun toString(): String {
+        return scheduleInXTimeUnits?.toString()
+            ?: scheduleForNextWeekDay?.toString()
+            ?: scheduleForNextDayOfMonth!!.toString()
+    }
 }
 
 fun Schedule.scheduleNext(date: LocalDate): LocalDate {

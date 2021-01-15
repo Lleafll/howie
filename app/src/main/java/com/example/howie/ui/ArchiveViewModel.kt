@@ -2,7 +2,6 @@ package com.example.howie.ui
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.howie.core.IndexedTask
 import com.example.howie.core.Task
 import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
@@ -15,9 +14,9 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
 
     lateinit var currentTaskList: TaskListIndex
     private val _taskList = MutableLiveData<TaskListIndex>()
-    val archive: LiveData<List<IndexedTask>> = _taskList.switchMap {
+    val archive: LiveData<List<TaskItemFields>> = _taskList.switchMap {
         liveData {
-            emit(_repository.getArchive(it))
+            emit(_repository.getArchive(it).map { it.toTaskItemFields() })
         }
     }
 

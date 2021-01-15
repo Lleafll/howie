@@ -8,10 +8,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import com.example.howie.R
-import com.example.howie.core.IndexedTask
 import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskIndex
-import com.example.howie.core.UnarchivedTasks
 import kotlinx.android.synthetic.main.fragment_tasks_object.*
 
 class TasksObjectFragment : Fragment(R.layout.fragment_tasks_object) {
@@ -38,7 +36,7 @@ private fun TasksObjectFragment.setupViews(viewModel: MainViewModel, activity: F
     }
 }
 
-private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainViewModel): LiveData<UnarchivedTasks> {
+private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainViewModel): LiveData<UnarchivedTaskItemFields> {
     val category =
         arguments!!.getSerializable(TasksObjectFragment.TASK_CATEGORY_ARGUMENT)!! as TaskCategory
     return when (category) {
@@ -52,7 +50,7 @@ private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainVi
 private fun setTasks(
     taskAdapter: TaskAdapter,
     view: ExpandableTasksView,
-    tasks: List<IndexedTask>,
+    tasks: List<TaskItemFields>,
     defaultExpandState: Boolean
 ) {
     view.setAdapter(taskAdapter)

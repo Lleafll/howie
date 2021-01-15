@@ -14,4 +14,13 @@ class TaskTest {
         assertFalse(Task("", snoozed = LocalDate.now()).isSnoozed())
         assertTrue(Task("", snoozed = LocalDate.now().plusDays(1)).isSnoozed())
     }
+
+    @Test
+    fun isArchived() {
+        assertTrue(Task("", archived = LocalDate.MAX).isArchived())
+        assertTrue(Task("", archived = LocalDate.MIN).isArchived())
+        assertTrue(Task("", archived = LocalDate.of(1234, 12, 12)).isArchived())
+        assertFalse(Task("").isArchived())
+        assertFalse(Task("", archived = null).isArchived())
+    }
 }

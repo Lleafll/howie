@@ -50,3 +50,5 @@ fun Task.isSnoozed(): Boolean {
         snoozed > LocalDate.now()
     }
 }
+
+fun Task.isArchived(): Boolean = archived != null

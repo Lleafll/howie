@@ -1,4 +1,4 @@
-package com.example.howie.core
+package com.example.howie.ui
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import com.example.howie.R
+import com.example.howie.core.ScheduleForNextWeekDay
 import kotlinx.android.synthetic.main.view_schedule_for_next_day_of_week.view.*
 import java.time.DayOfWeek
 

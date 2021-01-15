@@ -1,4 +1,4 @@
-package com.example.howie.core
+package com.example.howie.ui
 
 import android.content.Context
 import android.text.Editable
@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.example.howie.R
+import com.example.howie.core.ScheduleForNextDayOfMonth
 import kotlinx.android.synthetic.main.view_schedule_for_next_day_of_month.view.*
 
 class ScheduleForNextDayOfMonthView(context: Context, attrs: AttributeSet? = null) :

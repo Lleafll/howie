@@ -1,4 +1,4 @@
-package com.example.howie.core
+package com.example.howie.ui
 
 import android.content.Context
 import android.text.Editable
@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import com.example.howie.R
+import com.example.howie.core.ScheduleInXTimeUnits
+import com.example.howie.core.TimeUnit
 import kotlinx.android.synthetic.main.view_schedule_in_x_time_units.view.*
 
 class ScheduleInXTimeUnitsView(context: Context, attrs: AttributeSet? = null) :

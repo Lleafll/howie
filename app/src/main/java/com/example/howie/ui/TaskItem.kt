@@ -8,10 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import com.example.howie.R
-import com.example.howie.core.Task
-import com.example.howie.core.isSnoozed
 import kotlinx.android.synthetic.main.task_item.view.*
-import java.time.LocalDate
 
 class TaskItem : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -54,38 +51,17 @@ class TaskItem : LinearLayout {
 
     private var _listener: Listener? = null
 
-    var task: Task = Task("")
-        set(value) {
-            field = value
-            name_text_view.text = task.name
-            setDateString(due_text_view, task.due)
-            setDateString(snoozed_text_view, task.snoozed)
-            setDateString(archived_text_view, task.archived)
-            if (!task.isSnoozed()) {
-                snooze_to_tomorrow.isVisible = true
-                remove_snooze.isVisible = false
-            } else {
-                snooze_to_tomorrow.isVisible = false
-                remove_snooze.isVisible = true
-            }
-            when {
-                task.archived != null -> {
-                    reschedule_button.isVisible = false
-                    archive_button.isVisible = false
-                    unarchive_button.isVisible = true
-                }
-                task.schedule != null -> {
-                    reschedule_button.isVisible = true
-                    archive_button.isVisible = false
-                    unarchive_button.isVisible = false
-                }
-                else -> {
-                    reschedule_button.isVisible = false
-                    archive_button.isVisible = true
-                    unarchive_button.isVisible = false
-                }
-            }
-        }
+    fun setFields(fields: TaskItemFields) {
+        name_text_view.text = fields.name
+        setDateString(due_text_view, fields.due)
+        setDateString(snoozed_text_view, fields.snoozed)
+        setDateString(archived_text_view, fields.archived)
+        snooze_to_tomorrow.isVisible = fields.snoozedToTomorrow
+        remove_snooze.isVisible = fields.removeSnoozed
+        reschedule_button.isVisible = fields.reschedule != null
+        archive_button.isVisible = fields.archive
+        unarchive_button.isVisible = fields.unarchive
+    }
 
     fun setListener(listener: Listener) {
         _listener = listener
@@ -107,11 +83,11 @@ class TaskItem : LinearLayout {
     }
 }
 
-private fun setDateString(view: TextView, date: LocalDate?) {
+private fun setDateString(view: TextView, date: String?) {
     if (date == null) {
         view.visibility = View.INVISIBLE
     } else {
         view.isVisible = true
-        view.text = date.toString()
+        view.text = date
     }
 }
