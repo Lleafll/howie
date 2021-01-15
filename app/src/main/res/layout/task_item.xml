@@ -82,6 +82,7 @@
         tools:visibility="visible">
 
         <LinearLayout
+            android:id="@+id/snooze_to_tomorrow_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -104,6 +105,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/remove_snooze_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -126,6 +128,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/reschedule_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -149,6 +152,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/archive_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -171,6 +175,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/unarchive_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
