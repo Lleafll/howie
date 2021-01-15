@@ -93,8 +93,11 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="0dp"
                 app:icon="@drawable/outline_plus_one_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -116,8 +119,11 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="0dp"
                 app:icon="@drawable/outline_alarm_off_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -139,8 +145,11 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="0dp"
                 app:icon="@drawable/outline_schedule_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
 
             <TextView
                 android:id="@+id/schedule_text"
@@ -163,8 +172,11 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="0dp"
                 app:icon="@drawable/outline_archive_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -186,8 +198,11 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="0dp"
                 app:icon="@drawable/outline_unarchive_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -208,8 +223,11 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="0dp"
                 app:icon="@drawable/outline_edit_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
 
             <TextView
                 android:layout_width="match_parent"
