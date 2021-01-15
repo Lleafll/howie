@@ -87,7 +87,7 @@ class TaskItemFieldsTest {
             archived = null,
             snoozedToTomorrow = false,
             removeSnoozed = true,
-            reschedule = "",
+            reschedule = "1 Day",
             archive = true,
             unarchive = false
         )
