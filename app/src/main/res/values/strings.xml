@@ -41,6 +41,9 @@
     <string name="schedule">Schedule</string>
     <string name="_0">0</string>
     <string name="_1">1</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="unsnooze">Unsnooze</string>
+    <string name="edit">Edit</string>
     <string-array name="week_days">
         <item>Monday</item>
         <item>Tuesday</item>

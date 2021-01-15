@@ -56,11 +56,14 @@ class TaskItem : LinearLayout {
         setDateString(due_text_view, fields.due)
         setDateString(snoozed_text_view, fields.snoozed)
         setDateString(archived_text_view, fields.archived)
-        snooze_to_tomorrow.isVisible = fields.snoozedToTomorrow
-        remove_snooze.isVisible = fields.removeSnoozed
-        reschedule_button.isVisible = fields.reschedule != null
-        archive_button.isVisible = fields.archive
-        unarchive_button.isVisible = fields.unarchive
+        snooze_to_tomorrow_layout.isVisible = fields.snoozedToTomorrow
+        remove_snooze_layout.isVisible = fields.removeSnoozed
+        reschedule_layout.isVisible = fields.reschedule != null
+        if (fields.reschedule != null) {
+            schedule_text.text = fields.reschedule
+        }
+        archive_layout.isVisible = fields.archive
+        unarchive_layout.isVisible = fields.unarchive
     }
 
     fun setListener(listener: Listener) {
