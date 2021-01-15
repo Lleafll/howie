@@ -15,6 +15,23 @@ data class ScheduleInXTimeUnits(val quantity: Long, val timeUnit: TimeUnit) : Pa
             error("quantity ($quantity) can not by less than 1")
         }
     }
+
+    override fun toString(): String {
+        return "$quantity ${timeUnit.toString(quantity != 1L)}"
+    }
+}
+
+private fun TimeUnit.toString(plural: Boolean): String {
+    var string = when (this) {
+        TimeUnit.DAY -> "Day"
+        TimeUnit.WEEK -> "Week"
+        TimeUnit.MONTH -> "Month"
+        TimeUnit.YEAR -> "Years"
+    }
+    if (plural) {
+        string += "s"
+    }
+    return string
 }
 
 fun ScheduleInXTimeUnits.scheduleNext(date: LocalDate): LocalDate {
