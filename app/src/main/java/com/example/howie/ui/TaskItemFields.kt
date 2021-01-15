@@ -2,6 +2,7 @@ package com.example.howie.ui
 
 import com.example.howie.core.IndexedTask
 import com.example.howie.core.TaskIndex
+import com.example.howie.core.isArchived
 import com.example.howie.core.isSnoozed
 import java.time.LocalDate
 
@@ -19,7 +20,8 @@ data class TaskItemFields(
 )
 
 fun IndexedTask.toTaskItemFields(): TaskItemFields {
-    val showSnoozeAction = !task.isSnoozed()
+    val showSnoozeAction = !task.isSnoozed() && !task.isArchived()
+    val showRemoveSnoozeAction = task.isSnoozed() && !task.isArchived()
     val showScheduleAction = task.schedule != null
     val showArchiveAction = task.archived == null
     return TaskItemFields(
@@ -29,7 +31,7 @@ fun IndexedTask.toTaskItemFields(): TaskItemFields {
         toString(task.snoozed),
         toString(task.archived),
         showSnoozeAction,
-        !showSnoozeAction,
+        showRemoveSnoozeAction,
         if (showScheduleAction) task.schedule.toString() else null,
         showArchiveAction,
         !showArchiveAction
