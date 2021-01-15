@@ -28,6 +28,10 @@ class WidgetService : Service() {
         startForegroundWithNotification()
     }
 
+    override fun onDestroy() {
+        hideNotification()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForegroundWithNotification()
         val context = applicationContext
@@ -51,6 +55,7 @@ class WidgetService : Service() {
                 }
             }
         }
+        hideNotification()
         return START_STICKY
     }
 
@@ -124,4 +129,8 @@ private fun WidgetService.buildNotification(notificationChannelId: String): Noti
         .setCategory(Notification.CATEGORY_SERVICE)
         .setOngoing(true)
     return notificationBuilder.build()
+}
+
+private fun WidgetService.hideNotification() {
+    stopForeground(true)
 }
