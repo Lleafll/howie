@@ -14,29 +14,28 @@ import com.example.howie.databinding.ViewScheduleInXTimeUnitsBinding
 class ScheduleInXTimeUnitsView(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs) {
 
-    private val binding =
+    private val _binding =
         ViewScheduleInXTimeUnitsBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_schedule_in_x_time_units, this)
         ArrayAdapter.createFromResource(
             context,
             R.array.time_units,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.timeUnitSpinner.adapter = adapter
+            _binding.timeUnitSpinner.adapter = adapter
         }
     }
 
     fun setSchedule(schedule: ScheduleInXTimeUnits) {
-        binding.quantityField.setText(schedule.quantity.toString())
-        binding.timeUnitSpinner.setSelection(schedule.timeUnit.ordinal)
+        _binding.quantityField.setText(schedule.quantity.toString())
+        _binding.timeUnitSpinner.setSelection(schedule.timeUnit.ordinal)
     }
 
     fun getSchedule() = ScheduleInXTimeUnits(
-        convertTextToValidQuantity(binding.quantityField.text),
-        TimeUnit.values()[binding.timeUnitSpinner.selectedItemPosition]
+        convertTextToValidQuantity(_binding.quantityField.text),
+        TimeUnit.values()[_binding.timeUnitSpinner.selectedItemPosition]
     )
 }
 
