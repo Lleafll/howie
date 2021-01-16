@@ -1,6 +1,5 @@
 package com.lorenz.howie.database
 
-import com.example.howie.TaskEntity
 import com.lorenz.howie.core.*
 import org.junit.Assert.assertEquals
 import org.junit.Test

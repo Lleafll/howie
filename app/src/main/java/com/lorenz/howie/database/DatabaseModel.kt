@@ -1,6 +1,5 @@
 package com.lorenz.howie.database
 
-import com.example.howie.TaskEntity
 import com.lorenz.howie.core.Task
 import com.lorenz.howie.core.TaskList
 
