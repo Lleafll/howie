@@ -1,17 +1,22 @@
 package com.example.howie.ui
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.howie.core.TaskIndex
+import com.example.howie.databinding.TaskListHeaderBinding
 import com.example.howie.databinding.TaskRowItemBinding
 
 class TaskAdapter(private val adapterListener: Listener) :
-    ListAdapter<TaskItemFields, TaskAdapter.TaskViewHolder>(TasksComparator()) {
+    ListAdapter<TaskItemFields, TaskAdapter.ViewHolder>(TasksComparator()) {
 
-    private var selectedIndex: TaskIndex? = null
+    companion object {
+        private const val VIEW_TYPE_ITEM = 1
+        private const val VIEW_TYPE_HEADER = 2
+    }
 
     interface Listener {
         fun onSnoozeToTomorrowClicked(index: TaskIndex)
@@ -22,71 +27,99 @@ class TaskAdapter(private val adapterListener: Listener) :
         fun onEditClicked(index: TaskIndex)
     }
 
-    class TaskViewHolder(binding: TaskRowItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        val taskItem: TaskItem = binding.taskItem
+    private var selectedIndex: TaskIndex? = null
+
+    sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        class TaskViewHolder(binding: TaskRowItemBinding) : ViewHolder(binding.root) {
+            val taskItem: TaskItem = binding.taskItem
+        }
+
+        class HeaderViewHolder(binding: TaskListHeaderBinding) : ViewHolder(binding.root)
     }
 
     class TasksComparator : DiffUtil.ItemCallback<TaskItemFields>() {
-        override fun areItemsTheSame(oldItem: TaskItemFields, newItem: TaskItemFields): Boolean {
+        override fun areItemsTheSame(
+            oldItem: TaskItemFields,
+            newItem: TaskItemFields
+        ): Boolean {
             return oldItem.index == newItem.index
         }
 
-        override fun areContentsTheSame(oldItem: TaskItemFields, newItem: TaskItemFields): Boolean {
+        override fun areContentsTheSame(
+            oldItem: TaskItemFields,
+            newItem: TaskItemFields
+        ): Boolean {
             return oldItem.name == newItem.name &&
                     oldItem.due == newItem.due &&
                     oldItem.snoozed == newItem.snoozed
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        return TaskViewHolder(
-            TaskRowItemBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+    override fun getItemCount(): Int = super.getItemCount() + 1
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
     }
 
-    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val taskItemFields = getItem(position)
-        val taskItem = holder.taskItem
-        taskItem.setFields(taskItemFields)
-        val index = taskItemFields.index
-        if (index == selectedIndex) {
-            taskItem.expand()
-        } else {
-            taskItem.collapse()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            VIEW_TYPE_ITEM -> ViewHolder.TaskViewHolder(
+                TaskRowItemBinding.inflate(inflater, parent, false)
+            )
+            VIEW_TYPE_HEADER -> ViewHolder.HeaderViewHolder(
+                TaskListHeaderBinding.inflate(inflater, parent, false)
+            )
+            else -> error("Invalid viewType: $viewType")
         }
-        taskItem.setListener(object : TaskItem.Listener {
-            override fun onSnoozeToTomorrowClicked() {
-                adapterListener.onSnoozeToTomorrowClicked(index)
-            }
+    }
 
-            override fun onRemoveSnoozeClicked() {
-                adapterListener.onRemoveSnoozeClicked(index)
-            }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        when (holder) {
+            is ViewHolder.TaskViewHolder -> {
+                val taskItemFields = getItem(position - 1)
+                val taskItem = holder.taskItem
+                taskItem.setFields(taskItemFields)
+                val index = taskItemFields.index
+                if (index == selectedIndex) {
+                    taskItem.expand()
+                } else {
+                    taskItem.collapse()
+                }
+                taskItem.setListener(object : TaskItem.Listener {
+                    override fun onSnoozeToTomorrowClicked() {
+                        adapterListener.onSnoozeToTomorrowClicked(index)
+                    }
 
-            override fun onRescheduleClicked() {
-                adapterListener.onRescheduleClicked(index)
-            }
+                    override fun onRemoveSnoozeClicked() {
+                        adapterListener.onRemoveSnoozeClicked(index)
+                    }
 
-            override fun onArchiveClicked() {
-                adapterListener.onArchiveClicked(index)
-            }
+                    override fun onRescheduleClicked() {
+                        adapterListener.onRescheduleClicked(index)
+                    }
 
-            override fun onUnarchiveClicked() {
-                adapterListener.onUnarchiveClicked(index)
-            }
+                    override fun onArchiveClicked() {
+                        adapterListener.onArchiveClicked(index)
+                    }
 
-            override fun onEditClicked() {
-                adapterListener.onEditClicked(index)
-            }
+                    override fun onUnarchiveClicked() {
+                        adapterListener.onUnarchiveClicked(index)
+                    }
 
-            override fun onSelected() {
-                selectedIndex = if (taskItem.isExpanded()) null else index
-                notifyDataSetChanged()
+                    override fun onEditClicked() {
+                        adapterListener.onEditClicked(index)
+                    }
+
+                    override fun onSelected() {
+                        selectedIndex = if (taskItem.isExpanded()) null else index
+                        notifyDataSetChanged()
+                    }
+                })
             }
-        })
+            is ViewHolder.HeaderViewHolder -> {
+                // noop
+            }
+        }
     }
 }

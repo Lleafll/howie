@@ -42,7 +42,6 @@ private fun TasksObjectFragment.setupViews(
     binding: FragmentTasksObjectBinding
 ) {
     binding.unsnoozedTasksView.setHeaderText("Tasks")
-    binding.snoozedTasksView.setHeaderText("Snoozed Tasks")
     val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
     val snoozedAdapter = buildTaskAdapter(viewModel, activity)
     val liveData = getLiveDataAccordingToCategory(viewModel)
