@@ -3,6 +3,7 @@ package com.example.howie.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.howie.core.TaskIndex
 import com.example.howie.databinding.TaskListHeaderBinding
 import com.example.howie.databinding.TaskRowItemBinding
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 class TaskAdapter(private val title: String, private val adapterListener: Listener) :
     ListAdapter<TaskItemFields, TaskAdapter.ViewHolder>(TasksComparator()) {
@@ -17,6 +20,9 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
     companion object {
         private const val VIEW_TYPE_ITEM = 1
         private const val VIEW_TYPE_HEADER = 2
+
+        private const val IC_EXPANDED_ROTATION_DEG = 0F
+        private const val IC_COLLAPSED_ROTATION_DEG = 180F
     }
 
     interface Listener {
@@ -28,8 +34,6 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
         fun onEditClicked(index: TaskIndex)
     }
 
-    private var selectedIndex: TaskIndex? = null
-
     sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         class TaskViewHolder(binding: TaskRowItemBinding) : ViewHolder(binding.root) {
             val taskItem: TaskItem = binding.taskItem
@@ -37,6 +41,7 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
 
         class HeaderViewHolder(binding: TaskListHeaderBinding) : ViewHolder(binding.root) {
             val textView: TextView = binding.textView
+            val expandIndicator: ImageView = binding.icExpand
         }
     }
 
@@ -58,7 +63,23 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
         }
     }
 
-    override fun getItemCount(): Int = super.getItemCount() + 1
+    private var selectedIndex: TaskIndex? = null
+
+    var isExpanded: Boolean by Delegates.observable(true) { _: KProperty<*>, _: Boolean, newExpandedValue: Boolean ->
+        if (newExpandedValue) {
+            notifyItemRangeInserted(1, super.getItemCount())
+            notifyItemChanged(0)
+        } else {
+            notifyItemRangeRemoved(1, super.getItemCount())
+            notifyItemChanged(0)
+        }
+    }
+
+    private val onHeaderClickListener = View.OnClickListener {
+        isExpanded = !isExpanded
+    }
+
+    override fun getItemCount(): Int = if (isExpanded) super.getItemCount() + 1 else 1
 
     override fun getItemViewType(position: Int): Int {
         return if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
@@ -122,6 +143,9 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
             }
             is ViewHolder.HeaderViewHolder -> {
                 holder.textView.text = title
+                holder.expandIndicator.rotation =
+                    if (isExpanded) IC_EXPANDED_ROTATION_DEG else IC_COLLAPSED_ROTATION_DEG
+                holder.expandIndicator.setOnClickListener(onHeaderClickListener)
             }
         }
     }
