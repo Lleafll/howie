@@ -157,6 +157,11 @@ class MainViewModel(
     val taskSnoozedToTomorrowNotificationEvent = SingleLiveEvent<TaskIndex>()
     val snoozeRemovedNotificationEvent = SingleLiveEvent<Pair<TaskIndex, LocalDate>>()
     val taskScheduledNotificationEvent = SingleLiveEvent<Boolean>()
+
+    fun renameTaskList(newName: String) = viewModelScope.launch {
+        _repository.renameTaskList(currentTaskList, newName)
+        forceRefresh()
+    }
 }
 
 private fun buildLabel(information: TaskListInformation): String {

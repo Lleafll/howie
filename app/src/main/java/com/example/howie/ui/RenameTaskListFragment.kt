@@ -5,17 +5,13 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import com.example.howie.R
-import com.example.howie.core.TaskListIndex
 import com.google.android.material.textfield.TextInputEditText
 
 const val TASK_LIST_ID_ARGUMENT = "taskListId"
 
 class RenameTaskListFragment : DialogFragment() {
-    private val viewModel: RenameTaskListViewModel by viewModels {
-        RenameTaskListViewModelFactory(requireActivity().application)
-    }
+    lateinit var onOkClicked: (String) -> Unit
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val messageBoxBuilder =
@@ -23,9 +19,7 @@ class RenameTaskListFragment : DialogFragment() {
                 .setMessage("Rename List")
                 .setPositiveButton("Ok") { _, _ ->
                     val textEdit: TextInputEditText = dialog!!.findViewById(R.id.new_task_list_name)
-                    val taskListId =
-                        requireArguments().getParcelable<TaskListIndex>(TASK_LIST_ID_ARGUMENT)!!
-                    viewModel.renameTaskList(taskListId, textEdit.text.toString())
+                    onOkClicked(textEdit.text.toString())
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

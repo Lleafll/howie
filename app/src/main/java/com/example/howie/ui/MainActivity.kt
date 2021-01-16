@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
                 R.id.action_rename -> {
-                    openRenameTaskListFragment(viewModel.currentTaskList)
+                    openRenameTaskListFragment(viewModel.currentTaskList, viewModel)
                     true
                 }
                 R.id.action_delete -> {
@@ -270,11 +270,15 @@ private fun MainActivity.setupColors() {
     setupActivityColors(resources, window, applicationContext)
 }
 
-private fun MainActivity.openRenameTaskListFragment(taskList: TaskListIndex) {
+private fun MainActivity.openRenameTaskListFragment(
+    taskList: TaskListIndex,
+    viewModel: MainViewModel
+) {
     val dialog = RenameTaskListFragment()
     val arguments = Bundle()
     arguments.putParcelable(TASK_LIST_ID_ARGUMENT, taskList)
     dialog.arguments = arguments
+    dialog.onOkClicked = { viewModel.renameTaskList(it) }
     dialog.show(supportFragmentManager, "renameTask")
 }
 
