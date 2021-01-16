@@ -5,6 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground"
     android:minHeight="64dp"
     android:orientation="vertical"
     app:layout_constraintEnd_toEndOf="parent"

@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskIndex
 import com.example.howie.databinding.FragmentTasksObjectBinding
@@ -27,6 +29,7 @@ class TasksObjectFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTasksObjectBinding.inflate(inflater, container, false)
+        _binding.tasksView.layoutManager = LinearLayoutManager(context)
         return _binding.root
     }
 
@@ -40,14 +43,18 @@ private fun TasksObjectFragment.setupViews(
     activity: FragmentActivity,
     binding: FragmentTasksObjectBinding
 ) {
-    binding.unsnoozedTasksView.setHeaderText("Tasks")
-    binding.snoozedTasksView.setHeaderText("Snoozed Tasks")
-    val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
-    val snoozedAdapter = buildTaskAdapter(viewModel, activity)
     val liveData = getLiveDataAccordingToCategory(viewModel)
+    binding.tasksView.itemAnimator = ExpandableItemAnimator()
     liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
-        setTasks(unsnoozedAdapter, binding.unsnoozedTasksView, unarchivedTasks.unsnoozed, true)
-        setTasks(snoozedAdapter, binding.snoozedTasksView, unarchivedTasks.snoozed, false)
+        val unsnoozedAdapter =
+            buildTaskAdapter(viewModel, activity, "Due Tasks", unarchivedTasks.unsnoozed)
+        val snoozedAdapter =
+            buildTaskAdapter(viewModel, activity, "Snoozed Tasks", unarchivedTasks.snoozed)
+        val concatAdapterConfig = ConcatAdapter.Config.Builder()
+            .setIsolateViewTypes(false)
+            .build()
+        binding.tasksView.adapter =
+            ConcatAdapter(concatAdapterConfig, listOf(unsnoozedAdapter, snoozedAdapter))
     }
 }
 
@@ -62,48 +69,40 @@ private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainVi
     }
 }
 
-private fun setTasks(
-    taskAdapter: TaskAdapter,
-    view: ExpandableTasksView,
-    tasks: List<TaskItemFields>,
-    defaultExpandState: Boolean
-) {
-    view.setAdapter(taskAdapter)
-    if (tasks.isEmpty()) {
-        view.visibility = View.GONE
-    } else {
-        view.visibility = View.VISIBLE
-        view.setExpanded(defaultExpandState)
-        taskAdapter.submitList(tasks)
-    }
-}
+private fun buildTaskAdapter(
+    viewModel: MainViewModel,
+    activity: FragmentActivity,
+    headerTitle: String,
+    tasks: List<TaskItemFields>
+) =
+    TaskAdapter(
+        tasks,
+        headerTitle,
+        object : TaskAdapter.Listener {
+            override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
+                viewModel.snoozeToTomorrow(index)
+            }
 
-private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivity) =
-    TaskAdapter(object : TaskAdapter.Listener {
-        override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
-            viewModel.snoozeToTomorrow(index)
-        }
+            override fun onRemoveSnoozeClicked(index: TaskIndex) {
+                viewModel.removeSnooze(index)
+            }
 
-        override fun onRemoveSnoozeClicked(index: TaskIndex) {
-            viewModel.removeSnooze(index)
-        }
+            override fun onRescheduleClicked(index: TaskIndex) {
+                viewModel.reschedule(index)
+            }
 
-        override fun onRescheduleClicked(index: TaskIndex) {
-            viewModel.reschedule(index)
-        }
+            override fun onArchiveClicked(index: TaskIndex) {
+                viewModel.doArchive(index)
+            }
 
-        override fun onArchiveClicked(index: TaskIndex) {
-            viewModel.doArchive(index)
-        }
+            override fun onUnarchiveClicked(index: TaskIndex) {
+                viewModel.unarchive(index)
+            }
 
-        override fun onUnarchiveClicked(index: TaskIndex) {
-            viewModel.unarchive(index)
-        }
-
-        override fun onEditClicked(index: TaskIndex) {
-            val intent = Intent(activity.applicationContext, TaskActivity::class.java)
-            intent.putExtra(TaskActivity.TASK_ID, index)
-            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-            activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
-        }
-    })
+            override fun onEditClicked(index: TaskIndex) {
+                val intent = Intent(activity.applicationContext, TaskActivity::class.java)
+                intent.putExtra(TaskActivity.TASK_ID, index)
+                intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+                activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
+            }
+        })

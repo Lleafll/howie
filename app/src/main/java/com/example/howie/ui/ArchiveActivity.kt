@@ -93,40 +93,43 @@ private fun ArchiveActivity.setupArchiveView(
     archiveView: RecyclerView
 ) {
     archiveView.layoutManager = LinearLayoutManager(applicationContext)
-    val taskAdapter = TaskAdapter(object : TaskAdapter.Listener {
-        override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
-            // noop
-        }
-
-        override fun onRemoveSnoozeClicked(index: TaskIndex) {
-            // noop
-        }
-
-        override fun onRescheduleClicked(index: TaskIndex) {
-            // noop
-        }
-
-        override fun onArchiveClicked(index: TaskIndex) {
-            // noop
-        }
-
-        override fun onUnarchiveClicked(index: TaskIndex) {
-            viewModel.unarchive(index)
-        }
-
-        override fun onEditClicked(index: TaskIndex) {
-            val intent = Intent(applicationContext, TaskActivity::class.java)
-            intent.putExtra(TaskActivity.TASK_ID, index)
-            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-            startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
-        }
-    })
-    archiveView.adapter = taskAdapter
     val taskListIndex: TaskListIndex =
         intent.getParcelableExtra(ArchiveActivity.TASKLIST_INDEX)!!
     viewModel.setTaskList(taskListIndex)
+    archiveView.itemAnimator = ExpandableItemAnimator()
     viewModel.archive.observe(this, {
-        taskAdapter.submitList(it)
+        val taskAdapter = TaskAdapter(
+            it,
+            "Archived Tasks",
+            object : TaskAdapter.Listener {
+                override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
+                    // noop
+                }
+
+                override fun onRemoveSnoozeClicked(index: TaskIndex) {
+                    // noop
+                }
+
+                override fun onRescheduleClicked(index: TaskIndex) {
+                    // noop
+                }
+
+                override fun onArchiveClicked(index: TaskIndex) {
+                    // noop
+                }
+
+                override fun onUnarchiveClicked(index: TaskIndex) {
+                    viewModel.unarchive(index)
+                }
+
+                override fun onEditClicked(index: TaskIndex) {
+                    val intent = Intent(applicationContext, TaskActivity::class.java)
+                    intent.putExtra(TaskActivity.TASK_ID, index)
+                    intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+                    startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
+                }
+            })
+        archiveView.adapter = taskAdapter
     })
 }
 
