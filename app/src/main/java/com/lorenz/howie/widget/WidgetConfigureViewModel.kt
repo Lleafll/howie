@@ -1,4 +1,4 @@
-package com.lorenz.howie.widget;
+package com.lorenz.howie.widget
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

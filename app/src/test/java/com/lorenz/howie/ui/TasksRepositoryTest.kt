@@ -1,11 +1,11 @@
 package com.lorenz.howie.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.howie.TaskEntity
 import com.lorenz.howie.core.Importance
 import com.lorenz.howie.core.TaskIndex
 import com.lorenz.howie.core.TaskListIndex
 import com.lorenz.howie.database.TaskDao
+import com.lorenz.howie.database.TaskEntity
 import com.lorenz.howie.database.TaskListDao
 import com.lorenz.howie.database.TaskListEntity
 import io.mockk.MockKAnnotations

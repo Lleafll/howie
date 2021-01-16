@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.lorenz.howie.core.TaskIndex
 import com.example.howie.databinding.TaskListHeaderBinding
 import com.example.howie.databinding.TaskRowItemBinding
+import com.lorenz.howie.core.TaskIndex
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
@@ -47,7 +47,7 @@ class TaskAdapter(
 
     private var selectedIndex: TaskIndex? = null
 
-    var isExpanded: Boolean by Delegates.observable(true) { _: KProperty<*>, _: Boolean, newExpandedValue: Boolean ->
+    private var isExpanded: Boolean by Delegates.observable(true) { _: KProperty<*>, _: Boolean, newExpandedValue: Boolean ->
         if (newExpandedValue) {
             notifyItemRangeInserted(1, fields.size)
             notifyItemChanged(0)

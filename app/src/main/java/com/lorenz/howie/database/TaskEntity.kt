@@ -1,4 +1,4 @@
-package com.example.howie
+package com.lorenz.howie.database
 
 import androidx.room.*
 import com.lorenz.howie.core.Importance

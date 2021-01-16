@@ -11,9 +11,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.howie.databinding.FragmentTasksObjectBinding
 import com.lorenz.howie.core.TaskCategory
 import com.lorenz.howie.core.TaskIndex
-import com.example.howie.databinding.FragmentTasksObjectBinding
 
 class TasksObjectFragment : Fragment() {
     companion object {
@@ -59,9 +59,7 @@ private fun TasksObjectFragment.setupViews(
 }
 
 private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainViewModel): LiveData<UnarchivedTaskItemFields> {
-    val category =
-        arguments!!.getSerializable(TasksObjectFragment.TASK_CATEGORY_ARGUMENT)!! as TaskCategory
-    return when (category) {
+    return when (arguments!!.getSerializable(TasksObjectFragment.TASK_CATEGORY_ARGUMENT)!! as TaskCategory) {
         TaskCategory.DO -> viewModel.doTasks
         TaskCategory.DECIDE -> viewModel.decideTasks
         TaskCategory.DELEGATE -> viewModel.delegateTasks
