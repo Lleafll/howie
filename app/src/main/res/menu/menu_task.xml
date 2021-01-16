@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.howie.ui.TaskActivity"
+    tools:context="com.lorenz.howie.ui.TaskActivity"
     tools:ignore="AlwaysShowAction">
 
     <item

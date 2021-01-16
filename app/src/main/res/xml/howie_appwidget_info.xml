@@ -1,5 +1,5 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="com.example.howie.widget.WidgetConfigureActivity"
+    android:configure="com.lorenz.howie.widget.WidgetConfigureActivity"
     android:initialLayout="@layout/howie_appwidget"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
