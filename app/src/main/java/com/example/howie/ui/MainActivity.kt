@@ -2,13 +2,16 @@ package com.example.howie.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.howie.R
@@ -17,6 +20,7 @@ import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskIndex
 import com.example.howie.core.TaskListIndex
 import com.example.howie.databinding.ActivityMainBinding
+import com.example.howie.databinding.SidebarListItemBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -82,13 +86,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_add_list) {
-            viewModel.addTaskList()
-        } else {
-            val taskList = TaskListIndex(item.itemId - R.id.action_add_list - 1)
-            viewModel.setTaskList(taskList)
-        }
-        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -189,18 +186,51 @@ private fun MainActivity.setupDrawer(
     )
     drawer.addDrawerListener(toggle)
     toggle.syncState()
-    mainViewModel.taskListDrawerLabels.observe(this, { taskListNamesAndCounts ->
-        buildDrawerContent(taskListNamesAndCounts, binding.navView.menu)
+    mainViewModel.taskListDrawerContent.observe(this, { taskListNamesAndCounts ->
+        buildDrawerHeaderContent(
+            taskListNamesAndCounts,
+            binding,
+            mainViewModel
+        )
     })
+    binding.navView.getHeaderView(0).findViewById<Button>(R.id.add_new_list_button)
+        .setOnClickListener {
+            closeDrawer(binding)
+            mainViewModel.addTaskList()
+        }
     binding.navView.setNavigationItemSelectedListener(this)
 }
 
-private fun buildDrawerContent(labels: List<String>, menu: Menu) {
-    menu.removeGroup(R.id.list_groups)
-    labels.forEachIndexed { index, label ->
-        val itemId = buildNavigationItemId(index)
-        menu.add(R.id.list_groups, itemId, Menu.NONE, label)
+private fun MainActivity.buildDrawerHeaderContent(
+    content: TaskListDrawerContent,
+    mainBinding: ActivityMainBinding,
+    viewModel: MainViewModel
+) {
+    val headerLayout = mainBinding.navView.getHeaderView(0) as LinearLayout
+    val taskListLayout: LinearLayout = headerLayout.findViewById(R.id.task_lists)
+    taskListLayout.removeAllViews()
+    content.labels.forEachIndexed { index, label ->
+        val binding = SidebarListItemBinding.inflate(
+            LayoutInflater.from(applicationContext),
+            taskListLayout,
+            true
+        )
+        binding.root.apply {
+            text = label
+            textAlignment = Button.TEXT_ALIGNMENT_VIEW_START
+            if (index == content.selectedIndex) {
+                setTextColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            }
+            setOnClickListener {
+                closeDrawer(mainBinding)
+                viewModel.setTaskList(TaskListIndex(index))
+            }
+        }
     }
+}
+
+private fun closeDrawer(binding: ActivityMainBinding) {
+    binding.drawerLayout.closeDrawer(GravityCompat.START)
 }
 
 private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel: MainViewModel) {
@@ -215,10 +245,6 @@ private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel
         startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
     }
 }
-
-private fun buildNavigationItemId(taskListIndex: Int) =
-    R.id.action_add_list + taskListIndex + 1
-
 
 private fun handleTaskActivityReturn(
     returnCode: Int, data: Intent, layout: CoordinatorLayout, mainViewModel: MainViewModel

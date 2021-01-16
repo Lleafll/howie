@@ -14,6 +14,11 @@ data class TabLabels(
     val label3: String
 )
 
+data class TaskListDrawerContent(
+    val selectedIndex: Int,
+    val labels: List<String>
+)
+
 class MainViewModel(
     private val _application: Application,
     private var _repository: TasksRepository
@@ -93,9 +98,14 @@ class MainViewModel(
         setTaskList(TaskListIndex(0))
     }
 
-    val taskListDrawerLabels: LiveData<List<String>> = _currentTaskList.switchMap {
+    val taskListDrawerContent: LiveData<TaskListDrawerContent> = _currentTaskList.switchMap {
         liveData {
-            emit(_repository.getTaskListInformation().map { buildLabel(it) })
+            emit(
+                TaskListDrawerContent(
+                    it.value,
+                    _repository.getTaskListInformation().map { buildLabel(it) }
+                )
+            )
         }
     }
 

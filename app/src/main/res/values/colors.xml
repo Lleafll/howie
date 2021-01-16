@@ -11,4 +11,5 @@
     <color name="taskItemExpandedColorLight">#EDEDED</color>
     <color name="taskItemCollapsedColorDark">@color/statusBarColorDark</color>
     <color name="taskItemCollapsedColorLight">@color/design_default_color_surface</color>
+    <color name="ripple_white">#999999</color>
 </resources>

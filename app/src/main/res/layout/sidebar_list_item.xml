@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?borderlessButtonStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:foreground="@drawable/ripple"
+    android:paddingStart="16dp"
+    android:paddingEnd="0dp"
+    android:textAlignment="viewStart"
+    android:textColor="@color/design_default_color_surface"
+    tools:text="Task List" />
