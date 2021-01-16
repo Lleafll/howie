@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskIndex
 import com.example.howie.databinding.FragmentTasksObjectBinding
@@ -28,6 +29,7 @@ class TasksObjectFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTasksObjectBinding.inflate(inflater, container, false)
+        _binding.unsnoozedTasksView.layoutManager = LinearLayoutManager(context)
         return _binding.root
     }
 
@@ -41,7 +43,6 @@ private fun TasksObjectFragment.setupViews(
     activity: FragmentActivity,
     binding: FragmentTasksObjectBinding
 ) {
-    binding.unsnoozedTasksView.setHeaderText("Tasks")
     val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
     val snoozedAdapter = buildTaskAdapter(viewModel, activity)
     val liveData = getLiveDataAccordingToCategory(viewModel)
@@ -51,9 +52,8 @@ private fun TasksObjectFragment.setupViews(
         val concatAdapterConfig = ConcatAdapter.Config.Builder()
             .setIsolateViewTypes(false)
             .build()
-        val concatAdapter =
+        binding.unsnoozedTasksView.adapter =
             ConcatAdapter(concatAdapterConfig, listOf(unsnoozedAdapter, snoozedAdapter))
-        binding.unsnoozedTasksView.setAdapter(concatAdapter)
     }
 }
 
