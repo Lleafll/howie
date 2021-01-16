@@ -36,6 +36,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
         }
         _viewModel.taskListNames.observe(this) {
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, it)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             _binding.taskListSelection.adapter = adapter
         }
         _viewModel.widgetSettings.observe(this, { updateWidget() })

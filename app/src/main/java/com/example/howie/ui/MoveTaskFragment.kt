@@ -43,6 +43,7 @@ class MoveTaskFragment : DialogFragment() {
                 }
         _viewModel.taskListNames.observe(this) {
             val adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_spinner_item, it)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.taskListSpinner.adapter = adapter
         }
         return messageBoxBuilder.create()
