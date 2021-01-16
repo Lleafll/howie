@@ -9,5 +9,4 @@
     android:paddingStart="16dp"
     android:paddingEnd="0dp"
     android:textAlignment="viewStart"
-    android:textColor="@color/design_default_color_surface"
     tools:text="Task List" />

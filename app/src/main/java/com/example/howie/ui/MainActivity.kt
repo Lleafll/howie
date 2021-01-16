@@ -220,6 +220,15 @@ private fun MainActivity.buildDrawerHeaderContent(
             textAlignment = Button.TEXT_ALIGNMENT_VIEW_START
             if (index == content.selectedIndex) {
                 setTextColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            } else {
+                if (isDarkMode(resources)) {
+                    setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.design_default_color_surface
+                        )
+                    )
+                }
             }
             setOnClickListener {
                 closeDrawer(mainBinding)
