@@ -43,12 +43,13 @@ private fun TasksObjectFragment.setupViews(
     activity: FragmentActivity,
     binding: FragmentTasksObjectBinding
 ) {
-    val unsnoozedAdapter = buildTaskAdapter(viewModel, activity, "Due Tasks")
-    val snoozedAdapter = buildTaskAdapter(viewModel, activity, "Snoozed Tasks")
     val liveData = getLiveDataAccordingToCategory(viewModel)
+    binding.tasksView.itemAnimator = ExpandableItemAnimator()
     liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
-        setTasks(unsnoozedAdapter, unarchivedTasks.unsnoozed)
-        setTasks(snoozedAdapter, unarchivedTasks.snoozed)
+        val unsnoozedAdapter =
+            buildTaskAdapter(viewModel, activity, "Due Tasks", unarchivedTasks.unsnoozed)
+        val snoozedAdapter =
+            buildTaskAdapter(viewModel, activity, "Snoozed Tasks", unarchivedTasks.snoozed)
         val concatAdapterConfig = ConcatAdapter.Config.Builder()
             .setIsolateViewTypes(false)
             .build()
@@ -68,40 +69,40 @@ private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainVi
     }
 }
 
-private fun setTasks(taskAdapter: TaskAdapter, tasks: List<TaskItemFields>) {
-    taskAdapter.submitList(tasks)
-}
-
 private fun buildTaskAdapter(
     viewModel: MainViewModel,
     activity: FragmentActivity,
-    headerTitle: String
+    headerTitle: String,
+    tasks: List<TaskItemFields>
 ) =
-    TaskAdapter(headerTitle, object : TaskAdapter.Listener {
-        override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
-            viewModel.snoozeToTomorrow(index)
-        }
+    TaskAdapter(
+        tasks,
+        headerTitle,
+        object : TaskAdapter.Listener {
+            override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
+                viewModel.snoozeToTomorrow(index)
+            }
 
-        override fun onRemoveSnoozeClicked(index: TaskIndex) {
-            viewModel.removeSnooze(index)
-        }
+            override fun onRemoveSnoozeClicked(index: TaskIndex) {
+                viewModel.removeSnooze(index)
+            }
 
-        override fun onRescheduleClicked(index: TaskIndex) {
-            viewModel.reschedule(index)
-        }
+            override fun onRescheduleClicked(index: TaskIndex) {
+                viewModel.reschedule(index)
+            }
 
-        override fun onArchiveClicked(index: TaskIndex) {
-            viewModel.doArchive(index)
-        }
+            override fun onArchiveClicked(index: TaskIndex) {
+                viewModel.doArchive(index)
+            }
 
-        override fun onUnarchiveClicked(index: TaskIndex) {
-            viewModel.unarchive(index)
-        }
+            override fun onUnarchiveClicked(index: TaskIndex) {
+                viewModel.unarchive(index)
+            }
 
-        override fun onEditClicked(index: TaskIndex) {
-            val intent = Intent(activity.applicationContext, TaskActivity::class.java)
-            intent.putExtra(TaskActivity.TASK_ID, index)
-            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-            activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
-        }
-    })
+            override fun onEditClicked(index: TaskIndex) {
+                val intent = Intent(activity.applicationContext, TaskActivity::class.java)
+                intent.putExtra(TaskActivity.TASK_ID, index)
+                intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+                activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
+            }
+        })

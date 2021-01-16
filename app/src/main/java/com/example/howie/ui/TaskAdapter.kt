@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.howie.core.TaskIndex
 import com.example.howie.databinding.TaskListHeaderBinding
@@ -14,9 +12,11 @@ import com.example.howie.databinding.TaskRowItemBinding
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
-class TaskAdapter(private val title: String, private val adapterListener: Listener) :
-    ListAdapter<TaskItemFields, TaskAdapter.ViewHolder>(TasksComparator()) {
-
+class TaskAdapter(
+    private val fields: List<TaskItemFields>,
+    private val title: String,
+    private val adapterListener: Listener
+) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     companion object {
         private const val VIEW_TYPE_ITEM = 1
         private const val VIEW_TYPE_HEADER = 2
@@ -45,32 +45,14 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
         }
     }
 
-    class TasksComparator : DiffUtil.ItemCallback<TaskItemFields>() {
-        override fun areItemsTheSame(
-            oldItem: TaskItemFields,
-            newItem: TaskItemFields
-        ): Boolean {
-            return oldItem.index == newItem.index
-        }
-
-        override fun areContentsTheSame(
-            oldItem: TaskItemFields,
-            newItem: TaskItemFields
-        ): Boolean {
-            return oldItem.name == newItem.name &&
-                    oldItem.due == newItem.due &&
-                    oldItem.snoozed == newItem.snoozed
-        }
-    }
-
     private var selectedIndex: TaskIndex? = null
 
     var isExpanded: Boolean by Delegates.observable(true) { _: KProperty<*>, _: Boolean, newExpandedValue: Boolean ->
         if (newExpandedValue) {
-            notifyItemRangeInserted(1, super.getItemCount())
+            notifyItemRangeInserted(1, fields.size)
             notifyItemChanged(0)
         } else {
-            notifyItemRangeRemoved(1, super.getItemCount())
+            notifyItemRangeRemoved(1, fields.size)
             notifyItemChanged(0)
         }
     }
@@ -79,7 +61,7 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
         isExpanded = !isExpanded
     }
 
-    override fun getItemCount(): Int = if (isExpanded) super.getItemCount() + 1 else 1
+    override fun getItemCount(): Int = if (isExpanded) fields.size + 1 else 1
 
     override fun getItemViewType(position: Int): Int {
         return if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
@@ -101,7 +83,7 @@ class TaskAdapter(private val title: String, private val adapterListener: Listen
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder.TaskViewHolder -> {
-                val taskItemFields = getItem(position - 1)
+                val taskItemFields = fields[position - 1]
                 val taskItem = holder.taskItem
                 taskItem.setFields(taskItemFields)
                 val index = taskItemFields.index
