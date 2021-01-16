@@ -7,9 +7,9 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.lorenz.howie.core.Schedule
-import com.example.howie.databinding.ViewScheduleBinding
+import com.lorenz.howie.databinding.ViewScheduleBinding
 
 class ScheduleView(context: Context, attrs: AttributeSet? = null) :
     ConstraintLayout(context, attrs) {

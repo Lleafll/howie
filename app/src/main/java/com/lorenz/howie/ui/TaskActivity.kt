@@ -11,9 +11,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.isVisible
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.lorenz.howie.core.*
-import com.example.howie.databinding.ActivityTaskBinding
+import com.lorenz.howie.databinding.ActivityTaskBinding
 import java.time.LocalDate
 
 private const val DUE_DATE_ID = 0

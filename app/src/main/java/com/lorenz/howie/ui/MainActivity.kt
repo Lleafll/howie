@@ -14,13 +14,13 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.lorenz.howie.core.Task
 import com.lorenz.howie.core.TaskCategory
 import com.lorenz.howie.core.TaskIndex
 import com.lorenz.howie.core.TaskListIndex
-import com.example.howie.databinding.ActivityMainBinding
-import com.example.howie.databinding.SidebarListItemBinding
+import com.lorenz.howie.databinding.ActivityMainBinding
+import com.lorenz.howie.databinding.SidebarListItemBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar

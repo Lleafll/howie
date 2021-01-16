@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-const val CONFIGURE_UPDATE = "com.example.howie.CONFIGURE_UPDATE"
+const val CONFIGURE_UPDATE = "com.lorenz.howie.CONFIGURE_UPDATE"
 
 class HowieAppWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(

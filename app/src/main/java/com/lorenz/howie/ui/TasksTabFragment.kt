@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
-import com.example.howie.R
-import com.example.howie.databinding.FragmentTasksTabBinding
+import com.lorenz.howie.R
+import com.lorenz.howie.databinding.FragmentTasksTabBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 

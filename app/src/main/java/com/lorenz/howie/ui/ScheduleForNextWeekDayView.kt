@@ -5,9 +5,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.lorenz.howie.core.ScheduleForNextWeekDay
-import com.example.howie.databinding.ViewScheduleForNextDayOfWeekBinding
+import com.lorenz.howie.databinding.ViewScheduleForNextDayOfWeekBinding
 import java.time.DayOfWeek
 
 class ScheduleForNextWeekDayView(context: Context, attrs: AttributeSet? = null) :

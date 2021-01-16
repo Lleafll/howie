@@ -7,11 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.lorenz.howie.core.Task
 import com.lorenz.howie.core.TaskIndex
 import com.lorenz.howie.core.TaskListIndex
-import com.example.howie.databinding.ActivityArchiveBinding
+import com.lorenz.howie.databinding.ActivityArchiveBinding
 import com.google.android.material.snackbar.Snackbar
 
 class ArchiveActivity : AppCompatActivity() {

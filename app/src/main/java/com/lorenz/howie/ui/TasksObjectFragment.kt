@@ -11,7 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.howie.databinding.FragmentTasksObjectBinding
+import com.lorenz.howie.databinding.FragmentTasksObjectBinding
 import com.lorenz.howie.core.TaskCategory
 import com.lorenz.howie.core.TaskIndex
 

@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.lorenz.howie.core.ScheduleForNextDayOfMonth
-import com.example.howie.databinding.ViewScheduleForNextDayOfMonthBinding
+import com.lorenz.howie.databinding.ViewScheduleForNextDayOfMonthBinding
 
 class ScheduleForNextDayOfMonthView(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs) {

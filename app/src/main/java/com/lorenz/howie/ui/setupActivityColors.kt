@@ -6,7 +6,7 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.view.Window
 import androidx.core.content.ContextCompat
-import com.example.howie.R
+import com.lorenz.howie.R
 
 fun setupActivityColors(resources: Resources, window: Window, applicationContext: Context) {
     if (isDarkMode(resources)) {

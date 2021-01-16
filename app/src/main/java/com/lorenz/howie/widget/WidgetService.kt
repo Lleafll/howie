@@ -9,7 +9,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.asLiveData
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.lorenz.howie.core.TaskListIndex
 import com.lorenz.howie.database.WidgetSettingsDao
 import com.lorenz.howie.database.getDatabase
@@ -104,7 +104,7 @@ class WidgetService : Service() {
 private fun toText(count: Int) = if (count != 0) count.toString() else "✓"
 
 fun WidgetService.startForegroundWithNotification() {
-    val notificationChannelId = "com.example.howie"
+    val notificationChannelId = "com.lorenz.howie"
     createNotificationChannel(notificationChannelId)
     val notification = buildNotification(notificationChannelId)
     startForeground(1, notification)

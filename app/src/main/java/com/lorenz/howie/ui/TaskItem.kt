@@ -10,8 +10,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.example.howie.R
-import com.example.howie.databinding.TaskItemBinding
+import com.lorenz.howie.R
+import com.lorenz.howie.databinding.TaskItemBinding
 
 class TaskItem : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)

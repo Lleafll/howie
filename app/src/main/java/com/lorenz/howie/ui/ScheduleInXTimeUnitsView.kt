@@ -6,10 +6,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.lorenz.howie.core.ScheduleInXTimeUnits
 import com.lorenz.howie.core.TimeUnit
-import com.example.howie.databinding.ViewScheduleInXTimeUnitsBinding
+import com.lorenz.howie.databinding.ViewScheduleInXTimeUnitsBinding
 
 class ScheduleInXTimeUnitsView(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs) {

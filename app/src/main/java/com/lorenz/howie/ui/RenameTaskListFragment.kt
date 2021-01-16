@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.example.howie.R
+import com.lorenz.howie.R
 import com.google.android.material.textfield.TextInputEditText
 
 const val TASK_LIST_ID_ARGUMENT = "taskListId"

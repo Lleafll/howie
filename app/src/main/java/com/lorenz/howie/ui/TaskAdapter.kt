@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.howie.databinding.TaskListHeaderBinding
-import com.example.howie.databinding.TaskRowItemBinding
+import com.lorenz.howie.databinding.TaskListHeaderBinding
+import com.lorenz.howie.databinding.TaskRowItemBinding
 import com.lorenz.howie.core.TaskIndex
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty

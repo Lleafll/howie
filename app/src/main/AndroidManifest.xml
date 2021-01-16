@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.howie">
+    package="com.lorenz.howie">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
@@ -43,8 +43,8 @@
         <receiver android:name="com.lorenz.howie.widget.HowieAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.example.howie.CONFIGURE_UPDATE" />
-                <action android:name="com.example.howie.DATABASE_UPDATE" />
+                <action android:name="com.lorenz.howie.CONFIGURE_UPDATE" />
+                <action android:name="com.lorenz.howie.DATABASE_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

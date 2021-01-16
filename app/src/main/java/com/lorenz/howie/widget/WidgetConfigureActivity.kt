@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.howie.R
-import com.example.howie.databinding.ActivityWidgetConfigureBinding
+import com.lorenz.howie.R
+import com.lorenz.howie.databinding.ActivityWidgetConfigureBinding
 
 class WidgetConfigureActivity : AppCompatActivity() {
     private val _viewModel: WidgetConfigureViewModel by viewModels {
