@@ -6,6 +6,14 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 
 android {
+    signingConfigs {
+        'default' {
+            storeFile file('C:\\Users\\Lars\\androidkey\\upload-keystore.jks')
+            storePassword 'menscheNwiE93'
+            keyAlias 'upload'
+            keyPassword 'menscheNwiE93'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion '30.0.3'
     defaultConfig {
@@ -25,6 +33,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.'default'
         }
     }
     compileOptions {
