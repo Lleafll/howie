@@ -60,6 +60,7 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
 
     suspend fun renameTaskList(taskListId: TaskListIndex, newName: String) {
         _domainModel.await().renameTaskList(taskListId, newName)
+        saveAll()
     }
 
     suspend fun doArchive(taskListId: TaskListIndex, taskId: TaskIndex, date: LocalDate) {
