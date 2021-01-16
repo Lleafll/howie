@@ -44,6 +44,7 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="unsnooze">Unsnooze</string>
     <string name="edit">Edit</string>
+    <string name="expand_indicator">Expand indicator</string>
     <string-array name="week_days">
         <item>Monday</item>
         <item>Tuesday</item>

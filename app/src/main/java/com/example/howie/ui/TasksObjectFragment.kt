@@ -29,7 +29,7 @@ class TasksObjectFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTasksObjectBinding.inflate(inflater, container, false)
-        _binding.unsnoozedTasksView.layoutManager = LinearLayoutManager(context)
+        _binding.tasksView.layoutManager = LinearLayoutManager(context)
         return _binding.root
     }
 
@@ -43,8 +43,8 @@ private fun TasksObjectFragment.setupViews(
     activity: FragmentActivity,
     binding: FragmentTasksObjectBinding
 ) {
-    val unsnoozedAdapter = buildTaskAdapter(viewModel, activity)
-    val snoozedAdapter = buildTaskAdapter(viewModel, activity)
+    val unsnoozedAdapter = buildTaskAdapter(viewModel, activity, "Due Tasks")
+    val snoozedAdapter = buildTaskAdapter(viewModel, activity, "Snoozed Tasks")
     val liveData = getLiveDataAccordingToCategory(viewModel)
     liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
         setTasks(unsnoozedAdapter, unarchivedTasks.unsnoozed)
@@ -52,7 +52,7 @@ private fun TasksObjectFragment.setupViews(
         val concatAdapterConfig = ConcatAdapter.Config.Builder()
             .setIsolateViewTypes(false)
             .build()
-        binding.unsnoozedTasksView.adapter =
+        binding.tasksView.adapter =
             ConcatAdapter(concatAdapterConfig, listOf(unsnoozedAdapter, snoozedAdapter))
     }
 }
@@ -72,8 +72,12 @@ private fun setTasks(taskAdapter: TaskAdapter, tasks: List<TaskItemFields>) {
     taskAdapter.submitList(tasks)
 }
 
-private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivity) =
-    TaskAdapter(object : TaskAdapter.Listener {
+private fun buildTaskAdapter(
+    viewModel: MainViewModel,
+    activity: FragmentActivity,
+    headerTitle: String
+) =
+    TaskAdapter(headerTitle, object : TaskAdapter.Listener {
         override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
             viewModel.snoozeToTomorrow(index)
         }

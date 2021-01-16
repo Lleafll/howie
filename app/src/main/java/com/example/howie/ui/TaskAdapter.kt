@@ -3,6 +3,7 @@ package com.example.howie.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +11,7 @@ import com.example.howie.core.TaskIndex
 import com.example.howie.databinding.TaskListHeaderBinding
 import com.example.howie.databinding.TaskRowItemBinding
 
-class TaskAdapter(private val adapterListener: Listener) :
+class TaskAdapter(private val title: String, private val adapterListener: Listener) :
     ListAdapter<TaskItemFields, TaskAdapter.ViewHolder>(TasksComparator()) {
 
     companion object {
@@ -34,7 +35,9 @@ class TaskAdapter(private val adapterListener: Listener) :
             val taskItem: TaskItem = binding.taskItem
         }
 
-        class HeaderViewHolder(binding: TaskListHeaderBinding) : ViewHolder(binding.root)
+        class HeaderViewHolder(binding: TaskListHeaderBinding) : ViewHolder(binding.root) {
+            val textView: TextView = binding.textView
+        }
     }
 
     class TasksComparator : DiffUtil.ItemCallback<TaskItemFields>() {
@@ -118,7 +121,7 @@ class TaskAdapter(private val adapterListener: Listener) :
                 })
             }
             is ViewHolder.HeaderViewHolder -> {
-                // noop
+                holder.textView.text = title
             }
         }
     }

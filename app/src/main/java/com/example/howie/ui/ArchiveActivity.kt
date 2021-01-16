@@ -93,7 +93,7 @@ private fun ArchiveActivity.setupArchiveView(
     archiveView: RecyclerView
 ) {
     archiveView.layoutManager = LinearLayoutManager(applicationContext)
-    val taskAdapter = TaskAdapter(object : TaskAdapter.Listener {
+    val taskAdapter = TaskAdapter("Archived Tasks", object : TaskAdapter.Listener {
         override fun onSnoozeToTomorrowClicked(index: TaskIndex) {
             // noop
         }
