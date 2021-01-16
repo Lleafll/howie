@@ -93,10 +93,6 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             binding.dueTextDate.text = dateString
         } else if (id == SNOOZED_DATE_ID) {
             binding.snoozedTextDate.text = dateString
-            if (date > LocalDate.parse(binding.dueTextDate.text)) {
-                // Due can't realistically be before snoozed
-                binding.dueTextDate.text = dateString
-            }
         }
     }
 
