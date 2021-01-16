@@ -50,6 +50,11 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
 
     val taskUnarchivedNotificationEvent = SingleLiveEvent<Pair<TaskIndex, LocalDate>>()
     val taskDeletedNotificationEvent = SingleLiveEvent<Task>()
+    val title: LiveData<String> = _taskList.switchMap {
+        liveData {
+            emit("Archive: ${_repository.getTaskListName(it)}")
+        }
+    }
 }
 
 private fun buildTaskRepository(application: Application): TasksRepository {

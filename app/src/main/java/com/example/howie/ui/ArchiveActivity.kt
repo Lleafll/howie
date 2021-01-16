@@ -26,7 +26,7 @@ class ArchiveActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityArchiveBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupToolbar(binding.toolbar)
+        setupToolbar(binding.toolbar, viewModel)
         setupArchiveView(viewModel, binding.archiveView)
         setupActivityColors(resources, window, applicationContext)
         setupSnackbar(viewModel)
@@ -133,10 +133,14 @@ private fun ArchiveActivity.setupArchiveView(
     })
 }
 
-private fun ArchiveActivity.setupToolbar(toolbar: androidx.appcompat.widget.Toolbar) {
+private fun ArchiveActivity.setupToolbar(
+    toolbar: androidx.appcompat.widget.Toolbar,
+    viewModel: ArchiveViewModel
+) {
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayShowHomeEnabled(true)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setDisplayShowTitleEnabled(false)
+    viewModel.title.observe(this) { toolbar.title = it }
 }
 
