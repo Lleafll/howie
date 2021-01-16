@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.howie.R
 import com.example.howie.databinding.ExpandableTaskListViewBinding
@@ -31,7 +32,7 @@ class ExpandableTasksView(context: Context, attrs: AttributeSet?) :
         binding.header.text = text
     }
 
-    fun setAdapter(taskAdapter: TaskAdapter) {
+    fun setAdapter(taskAdapter: ConcatAdapter) {
         binding.taskListView.adapter = taskAdapter
     }
 

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.ConcatAdapter
 import com.example.howie.core.TaskCategory
 import com.example.howie.core.TaskIndex
 import com.example.howie.databinding.FragmentTasksObjectBinding
@@ -46,8 +47,14 @@ private fun TasksObjectFragment.setupViews(
     val snoozedAdapter = buildTaskAdapter(viewModel, activity)
     val liveData = getLiveDataAccordingToCategory(viewModel)
     liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
-        setTasks(unsnoozedAdapter, binding.unsnoozedTasksView, unarchivedTasks.unsnoozed, true)
-        setTasks(snoozedAdapter, binding.snoozedTasksView, unarchivedTasks.snoozed, false)
+        setTasks(unsnoozedAdapter, unarchivedTasks.unsnoozed)
+        setTasks(snoozedAdapter, unarchivedTasks.snoozed)
+        val concatAdapterConfig = ConcatAdapter.Config.Builder()
+            .setIsolateViewTypes(false)
+            .build()
+        val concatAdapter =
+            ConcatAdapter(concatAdapterConfig, listOf(unsnoozedAdapter, snoozedAdapter))
+        binding.unsnoozedTasksView.setAdapter(concatAdapter)
     }
 }
 
@@ -62,20 +69,8 @@ private fun TasksObjectFragment.getLiveDataAccordingToCategory(viewModel: MainVi
     }
 }
 
-private fun setTasks(
-    taskAdapter: TaskAdapter,
-    view: ExpandableTasksView,
-    tasks: List<TaskItemFields>,
-    defaultExpandState: Boolean
-) {
-    view.setAdapter(taskAdapter)
-    if (tasks.isEmpty()) {
-        view.visibility = View.GONE
-    } else {
-        view.visibility = View.VISIBLE
-        view.setExpanded(defaultExpandState)
-        taskAdapter.submitList(tasks)
-    }
+private fun setTasks(taskAdapter: TaskAdapter, tasks: List<TaskItemFields>) {
+    taskAdapter.submitList(tasks)
 }
 
 private fun buildTaskAdapter(viewModel: MainViewModel, activity: FragmentActivity) =
