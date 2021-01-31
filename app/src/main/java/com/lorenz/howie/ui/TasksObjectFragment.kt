@@ -46,15 +46,33 @@ private fun TasksObjectFragment.setupViews(
     val liveData = getLiveDataAccordingToCategory(viewModel)
     binding.tasksView.itemAnimator = ExpandableItemAnimator()
     liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
-        val unsnoozedAdapter =
-            buildTaskAdapter(viewModel, activity, "Due Tasks", unarchivedTasks.unsnoozed, true)
-        val snoozedAdapter =
-            buildTaskAdapter(viewModel, activity, "Snoozed Tasks", unarchivedTasks.snoozed, false)
+        val adapters = mutableListOf<TaskAdapter>()
+        if (unarchivedTasks.unsnoozed.isNotEmpty()) {
+            adapters.add(
+                buildTaskAdapter(
+                    viewModel,
+                    activity,
+                    "Due Tasks",
+                    unarchivedTasks.unsnoozed,
+                    true
+                )
+            )
+        }
+        if (unarchivedTasks.snoozed.isNotEmpty()) {
+            adapters.add(
+                buildTaskAdapter(
+                    viewModel,
+                    activity,
+                    "Snoozed Tasks",
+                    unarchivedTasks.snoozed,
+                    false
+                )
+            )
+        }
         val concatAdapterConfig = ConcatAdapter.Config.Builder()
             .setIsolateViewTypes(false)
             .build()
-        binding.tasksView.adapter =
-            ConcatAdapter(concatAdapterConfig, listOf(unsnoozedAdapter, snoozedAdapter))
+        binding.tasksView.adapter = ConcatAdapter(concatAdapterConfig, adapters)
     }
 }
 
@@ -104,4 +122,5 @@ private fun buildTaskAdapter(
                 intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
                 activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
             }
-        }, isInitiallyExpanded)
+        }, isInitiallyExpanded
+    )
