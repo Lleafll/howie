@@ -15,7 +15,8 @@ import kotlin.reflect.KProperty
 class TaskAdapter(
     private val fields: List<TaskItemFields>,
     private val title: String,
-    private val adapterListener: Listener
+    private val adapterListener: Listener,
+    isInitiallyExpanded: Boolean
 ) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     companion object {
         private const val VIEW_TYPE_ITEM = 1
@@ -47,7 +48,7 @@ class TaskAdapter(
 
     private var selectedIndex: TaskIndex? = null
 
-    private var isExpanded: Boolean by Delegates.observable(true) { _: KProperty<*>, _: Boolean, newExpandedValue: Boolean ->
+    private var isExpanded: Boolean by Delegates.observable(isInitiallyExpanded) { _: KProperty<*>, _: Boolean, newExpandedValue: Boolean ->
         if (newExpandedValue) {
             notifyItemRangeInserted(1, fields.size)
             notifyItemChanged(0)

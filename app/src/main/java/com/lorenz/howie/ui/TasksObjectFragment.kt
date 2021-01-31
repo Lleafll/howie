@@ -47,9 +47,9 @@ private fun TasksObjectFragment.setupViews(
     binding.tasksView.itemAnimator = ExpandableItemAnimator()
     liveData.observe(viewLifecycleOwner) { unarchivedTasks ->
         val unsnoozedAdapter =
-            buildTaskAdapter(viewModel, activity, "Due Tasks", unarchivedTasks.unsnoozed)
+            buildTaskAdapter(viewModel, activity, "Due Tasks", unarchivedTasks.unsnoozed, true)
         val snoozedAdapter =
-            buildTaskAdapter(viewModel, activity, "Snoozed Tasks", unarchivedTasks.snoozed)
+            buildTaskAdapter(viewModel, activity, "Snoozed Tasks", unarchivedTasks.snoozed, false)
         val concatAdapterConfig = ConcatAdapter.Config.Builder()
             .setIsolateViewTypes(false)
             .build()
@@ -71,7 +71,8 @@ private fun buildTaskAdapter(
     viewModel: MainViewModel,
     activity: FragmentActivity,
     headerTitle: String,
-    tasks: List<TaskItemFields>
+    tasks: List<TaskItemFields>,
+    isInitiallyExpanded: Boolean
 ) =
     TaskAdapter(
         tasks,
@@ -103,4 +104,4 @@ private fun buildTaskAdapter(
                 intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
                 activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
             }
-        })
+        }, isInitiallyExpanded)

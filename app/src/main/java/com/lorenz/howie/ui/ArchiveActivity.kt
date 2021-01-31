@@ -128,7 +128,7 @@ private fun ArchiveActivity.setupArchiveView(
                     intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
                     startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
                 }
-            })
+            }, true)
         archiveView.adapter = taskAdapter
     })
 }
