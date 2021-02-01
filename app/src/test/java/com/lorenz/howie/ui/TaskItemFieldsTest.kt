@@ -58,7 +58,7 @@ class TaskItemFieldsTest {
             TaskIndex(0),
             "ABC",
             due = null,
-            snoozed = "1111-11-11",
+            snoozed = null,
             archived = null,
             snoozedToTomorrow = true,
             removeSnoozed = false,

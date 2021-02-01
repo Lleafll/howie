@@ -4,7 +4,6 @@ import com.lorenz.howie.core.IndexedTask
 import com.lorenz.howie.core.TaskIndex
 import com.lorenz.howie.core.isArchived
 import com.lorenz.howie.core.isSnoozed
-import java.time.LocalDate
 
 data class TaskItemFields(
     val index: TaskIndex,
@@ -24,12 +23,17 @@ fun IndexedTask.toTaskItemFields(): TaskItemFields {
     val showRemoveSnoozeAction = task.isSnoozed() && !task.isArchived()
     val showScheduleAction = task.schedule != null
     val showArchiveAction = task.archived == null
+    val snoozed: String? = if (task.isSnoozed()) {
+        task.snoozed.toString()
+    } else {
+        null
+    }
     return TaskItemFields(
         indexInTaskList,
         task.name,
-        toString(task.due),
-        toString(task.snoozed),
-        toString(task.archived),
+        task.due?.toString(),
+        snoozed,
+        task.archived?.toString(),
         showSnoozeAction,
         showRemoveSnoozeAction,
         if (showScheduleAction) task.schedule.toString() else null,
@@ -38,6 +42,3 @@ fun IndexedTask.toTaskItemFields(): TaskItemFields {
     )
 }
 
-private fun toString(date: LocalDate?): String? {
-    return date?.toString()
-}
