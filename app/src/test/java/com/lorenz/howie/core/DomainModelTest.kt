@@ -720,4 +720,29 @@ class DomainModelTest {
             model.getUnarchivedTasks(TaskListIndex(0), TaskCategory.DO)
         )
     }
+
+    @Test
+    fun `getUnarchivedTasks sorts snoozed tasks by snooze date`() {
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "",
+                    mutableListOf(
+                        Task("A", snoozed = LocalDate.of(2222, 11, 11)),
+                        Task("B", snoozed = LocalDate.of(2221, 11, 11))
+                    )
+                )
+            )
+        )
+        assertEquals(
+            UnarchivedTasks(
+                emptyList(),
+                listOf(
+                    IndexedTask(TaskIndex(1), Task("B", snoozed = LocalDate.of(2221, 11, 11))),
+                    IndexedTask(TaskIndex(0), Task("A", snoozed = LocalDate.of(2222, 11, 11)))
+                )
+            ),
+            model.getUnarchivedTasks(TaskListIndex(0), TaskCategory.DECIDE)
+        )
+    }
 }

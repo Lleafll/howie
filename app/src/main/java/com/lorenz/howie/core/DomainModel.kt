@@ -90,7 +90,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         val partitionedTasks = categoryTasks.partition { it.task.isSnoozed() }
         return UnarchivedTasks(
             partitionedTasks.second.sortedBy { it.task.due },
-            partitionedTasks.first
+            partitionedTasks.first.sortedBy { it.task.snoozed }
         )
     }
 
