@@ -88,7 +88,7 @@ class TaskItemFieldsTest {
             snoozedToTomorrow = false,
             removeSnoozed = true,
             reschedule = "1 Day",
-            archive = true,
+            archive = false,
             unarchive = false
         )
         assertEquals(expected, task.toTaskItemFields())

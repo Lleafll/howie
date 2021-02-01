@@ -22,7 +22,8 @@ fun IndexedTask.toTaskItemFields(): TaskItemFields {
     val showSnoozeAction = !task.isSnoozed() && !task.isArchived()
     val showRemoveSnoozeAction = task.isSnoozed() && !task.isArchived()
     val showScheduleAction = task.schedule != null
-    val showArchiveAction = task.archived == null
+    val showArchiveAction = task.archived == null && task.schedule == null
+    val showUnarchiveAction = task.archived != null
     val snoozed: String? = if (task.isSnoozed()) {
         task.snoozed.toString()
     } else {
@@ -38,7 +39,7 @@ fun IndexedTask.toTaskItemFields(): TaskItemFields {
         showRemoveSnoozeAction,
         if (showScheduleAction) task.schedule.toString() else null,
         showArchiveAction,
-        !showArchiveAction
+        showUnarchiveAction
     )
 }
 
