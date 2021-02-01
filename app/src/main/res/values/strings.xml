@@ -55,7 +55,7 @@
         <item>Sunday</item>
     </string-array>
     <string-array name="schedule_options">
-        <item>In</item>
+        <item>Every</item>
         <item>Week Day</item>
         <item>Day of Month</item>
     </string-array>
