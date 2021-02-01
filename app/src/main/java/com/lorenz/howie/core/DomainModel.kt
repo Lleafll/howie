@@ -88,7 +88,10 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         val unArchivedTasks = filterUnarchivedTasksToIndexedTask(taskLists[taskList.value].tasks)
         val categoryTasks = filterCategory(unArchivedTasks, category)
         val partitionedTasks = categoryTasks.partition { it.task.isSnoozed() }
-        return UnarchivedTasks(partitionedTasks.second, partitionedTasks.first)
+        return UnarchivedTasks(
+            partitionedTasks.second.sortedBy { it.task.due },
+            partitionedTasks.first
+        )
     }
 
     fun getArchive(taskList: TaskListIndex): List<IndexedTask> {

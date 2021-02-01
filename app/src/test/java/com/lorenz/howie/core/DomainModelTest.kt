@@ -696,4 +696,28 @@ class DomainModelTest {
         )
     }
 
+    @Test
+    fun `getUnarchivedTasks sorts due tasks by due date`() {
+        val model = DomainModel(
+            listOf(
+                TaskList(
+                    "",
+                    mutableListOf(
+                        Task("A", due = LocalDate.of(2222, 11, 11)),
+                        Task("B", due = LocalDate.of(1111, 11, 11))
+                    )
+                )
+            )
+        )
+        assertEquals(
+            UnarchivedTasks(
+                listOf(
+                    IndexedTask(TaskIndex(1), Task("B", due = LocalDate.of(1111, 11, 11))),
+                    IndexedTask(TaskIndex(0), Task("A", due = LocalDate.of(2222, 11, 11)))
+                ),
+                emptyList()
+            ),
+            model.getUnarchivedTasks(TaskListIndex(0), TaskCategory.DO)
+        )
+    }
 }
