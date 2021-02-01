@@ -38,7 +38,7 @@
         <item>Month(s)</item>
         <item>Year(s)</item>
     </string-array>
-    <string name="schedule">Schedule</string>
+    <string name="schedule">Recurring</string>
     <string name="_0">0</string>
     <string name="_1">1</string>
     <string name="tomorrow">Tomorrow</string>
