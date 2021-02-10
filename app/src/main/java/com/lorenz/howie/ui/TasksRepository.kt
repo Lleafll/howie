@@ -6,14 +6,10 @@ import kotlinx.coroutines.*
 import java.time.LocalDate
 
 class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: TaskListDao) {
-    private val _domainModel: Deferred<DomainModel>
-
-    init {
-        _domainModel = GlobalScope.async {
-            val taskLists =
-                DatabaseModel(_taskDao.getAll(), _taskListDao.getAllTaskLists()).toDomainModel()
-            DomainModel(taskLists)
-        }
+    private val _domainModel: Deferred<DomainModel> = GlobalScope.async {
+        val taskLists =
+            DatabaseModel(_taskDao.getAll(), _taskListDao.getAllTaskLists()).toDomainModel()
+        DomainModel(taskLists)
     }
 
     suspend fun getTaskCounts(taskList: TaskListIndex) =
