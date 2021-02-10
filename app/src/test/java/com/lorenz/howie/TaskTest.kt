@@ -1,10 +1,7 @@
 package com.lorenz.howie
 
-import com.lorenz.howie.core.Task
-import com.lorenz.howie.core.isArchived
-import com.lorenz.howie.core.isSnoozed
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import com.lorenz.howie.core.*
+import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate
 
@@ -25,5 +22,20 @@ class TaskTest {
         assertTrue(Task("", archived = LocalDate.of(1234, 12, 12)).isArchived())
         assertFalse(Task("").isArchived())
         assertFalse(Task("", archived = null).isArchived())
+    }
+
+    @Test
+    fun `scheduleNext when both due and snoozed are set`() {
+        val tomorrow = LocalDate.now().plusDays(1)
+        val scheduleToTomorrow = Schedule(ScheduleInXTimeUnits(1, TimeUnit.DAY))
+        assertEquals(
+            Task("", due = tomorrow, snoozed = tomorrow, schedule = scheduleToTomorrow),
+            Task(
+                "",
+                due = LocalDate.MIN,
+                snoozed = LocalDate.MIN,
+                schedule = scheduleToTomorrow
+            ).scheduleNext()
+        )
     }
 }
