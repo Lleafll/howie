@@ -9,6 +9,7 @@ import com.lorenz.howie.database.WidgetSettings
 import com.lorenz.howie.database.WidgetSettingsDao
 import com.lorenz.howie.database.getDatabase
 import com.lorenz.howie.ui.TasksRepository
+import com.lorenz.howie.ui.buildDefaultWidgetUpdater
 import kotlinx.coroutines.launch
 
 
@@ -18,7 +19,11 @@ class WidgetConfigureViewModel(application: Application) : AndroidViewModel(appl
 
     init {
         val database = getDatabase(application.applicationContext)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
+        repository = TasksRepository(
+            buildDefaultWidgetUpdater(application),
+            database.getTaskDao(),
+            database.getTaskListDao()
+        )
         widgetSettingsDao = database.getWidgetSettingsDao()
     }
 

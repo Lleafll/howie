@@ -222,7 +222,11 @@ private fun optionsForUnarchivedTask() = OptionsVisibility(
 
 private fun buildTaskRepository(application: Application): TasksRepository {
     val database = getDatabase(application.applicationContext)
-    return TasksRepository(database.getTaskDao(), database.getTaskListDao())
+    return TasksRepository(
+        buildDefaultWidgetUpdater(application),
+        database.getTaskDao(),
+        database.getTaskListDao()
+    )
 }
 
 private fun archiveDateToString(archived: LocalDate?) = archived?.toString() ?: ""

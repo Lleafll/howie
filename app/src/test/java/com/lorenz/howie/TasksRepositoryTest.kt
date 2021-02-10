@@ -65,7 +65,7 @@ class TasksRepositoryTest {
         val taskListDao = mockk<TaskListDao>(relaxed = true) {
             every { getAllTaskLists() } returns listOf(TaskListEntity("DEF", 0))
         }
-        val repository = TasksRepository(taskDao, taskListDao)
+        val repository = TasksRepository({ }, taskDao, taskListDao)
         runBlocking {
             repository.deleteTask(TaskListIndex(0), TaskIndex(0))
         }

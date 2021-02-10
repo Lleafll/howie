@@ -1,11 +1,19 @@
 package com.lorenz.howie.ui
 
+import android.app.Application
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import com.lorenz.howie.core.*
 import com.lorenz.howie.database.*
+import com.lorenz.howie.widget.HowieAppWidgetProvider
 import kotlinx.coroutines.*
 import java.time.LocalDate
 
-class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: TaskListDao) {
+class TasksRepository(
+    private val _widgetUpdater: () -> Unit,
+    private val _taskDao: TaskDao,
+    private val _taskListDao: TaskListDao
+) {
     private val _domainModel: Deferred<DomainModel> = GlobalScope.async {
         val taskLists =
             DatabaseModel(_taskDao.getAll(), _taskListDao.getAllTaskLists()).toDomainModel()
@@ -22,9 +30,6 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
         _domainModel.await().getTaskListName(taskList)
 
     suspend fun getTaskListNames() = _domainModel.await().getTaskListNames()
-
-    suspend fun getTaskListInformation(taskList: TaskListIndex) =
-        _domainModel.await().getTaskListInformation(taskList)
 
     suspend fun getTaskListInformation() = _domainModel.await().getTaskListInformation()
 
@@ -93,6 +98,7 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
             _taskListDao.deleteAll()
             _taskListDao.insertAll(databaseModel.taskListEntities)
         }
+        _widgetUpdater()
     }
 
     suspend fun scheduleNext(taskList: TaskListIndex, task: TaskIndex) {
@@ -125,5 +131,16 @@ class TasksRepository(private val _taskDao: TaskDao, private val _taskListDao: T
     suspend fun addSnooze(currentTaskList: TaskListIndex, task: TaskIndex, snooze: LocalDate) {
         _domainModel.await().addSnooze(currentTaskList, task, snooze)
         saveAll()
+    }
+}
+
+fun buildDefaultWidgetUpdater(application: Application): () -> Unit {
+    return {
+        val appWidgetManager = AppWidgetManager.getInstance(application)
+        HowieAppWidgetProvider().onUpdate(
+            application, appWidgetManager, appWidgetManager.getAppWidgetIds(
+                ComponentName(application, HowieAppWidgetProvider::class.java)
+            )
+        )
     }
 }

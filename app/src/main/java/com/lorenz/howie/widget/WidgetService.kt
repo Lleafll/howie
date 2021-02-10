@@ -10,18 +10,20 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.asLiveData
 import com.lorenz.howie.R
+import com.lorenz.howie.core.DomainModel
 import com.lorenz.howie.core.TaskListIndex
+import com.lorenz.howie.database.DatabaseModel
 import com.lorenz.howie.database.WidgetSettingsDao
 import com.lorenz.howie.database.getDatabase
+import com.lorenz.howie.database.toDomainModel
 import com.lorenz.howie.ui.MainActivity
 import com.lorenz.howie.ui.SHOW_TASK_LIST_EXTRA
-import com.lorenz.howie.ui.TasksRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
 class WidgetService : Service() {
-    private lateinit var repository: TasksRepository
+    private lateinit var domainModel: DomainModel
     private lateinit var widgetSettingsDao: WidgetSettingsDao
 
     override fun onCreate() {
@@ -36,7 +38,12 @@ class WidgetService : Service() {
         startForegroundWithNotification()
         val context = applicationContext
         val database = getDatabase(context)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
+        domainModel = DomainModel(
+            DatabaseModel(
+                database.getTaskDao().getAll(),
+                database.getTaskListDao().getAllTaskLists()
+            ).toDomainModel()
+        )
         widgetSettingsDao = database.getWidgetSettingsDao()
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val componentName = ComponentName(this, HowieAppWidgetProvider::class.java)
@@ -87,7 +94,7 @@ class WidgetService : Service() {
         GlobalScope.launch {
             RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
                 setOnClickPendingIntent(R.id.background, pendingIntent)
-                repository.getTaskListInformation(taskListIndex).let { taskListInfo ->
+                domainModel.getTaskListInformation(taskListIndex).let { taskListInfo ->
                     val taskCounts = taskListInfo.taskCounts
                     setTextViewText(R.id.doTextView, toText(taskCounts.doCount))
                     setTextViewText(R.id.decideTextView, toText(taskCounts.decideCount))
