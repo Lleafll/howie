@@ -411,7 +411,7 @@ class DomainModelTest {
         model.scheduleNext(TaskListIndex(0), TaskIndex(0))
         val nextDate = schedule.scheduleNext(LocalDate.now())
         assertEquals(
-            Task("", schedule = schedule, due = nextDate, snoozed = nextDate),
+            Task("", schedule = schedule, due = null, snoozed = nextDate),
             model.getTask(TaskListIndex(0), TaskIndex(0))
         )
     }

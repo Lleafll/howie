@@ -40,7 +40,11 @@ fun Task.scheduleNext(): Task? = if (schedule == null) {
     null
 } else {
     val newDate = schedule.scheduleNext(LocalDate.now())
-    copy(due = newDate, snoozed = newDate)
+    if (due == null) {
+        copy(snoozed = newDate)
+    } else {
+        copy(due = newDate, snoozed = newDate)
+    }
 }
 
 fun Task.isSnoozed(): Boolean {

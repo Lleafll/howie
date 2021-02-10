@@ -43,4 +43,14 @@ class TaskTest {
             ).scheduleNext()
         )
     }
+
+    @Test
+    fun `scheduleNext when neither due nor snoozed are set`() {
+        val tomorrow = LocalDate.now().plusDays(1)
+        val scheduleToTomorrow = Schedule(ScheduleInXTimeUnits(1, TimeUnit.DAY))
+        assertEquals(
+            Task("", due = null, snoozed = tomorrow, schedule = scheduleToTomorrow),
+            Task("", schedule = scheduleToTomorrow).scheduleNext()
+        )
+    }
 }
