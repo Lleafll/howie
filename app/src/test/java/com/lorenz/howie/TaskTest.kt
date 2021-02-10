@@ -25,6 +25,11 @@ class TaskTest {
     }
 
     @Test
+    fun `scheduleNext with null schedule`() {
+        assertNull(Task("").scheduleNext())
+    }
+
+    @Test
     fun `scheduleNext when both due and snoozed are set`() {
         val tomorrow = LocalDate.now().plusDays(1)
         val scheduleToTomorrow = Schedule(ScheduleInXTimeUnits(1, TimeUnit.DAY))
