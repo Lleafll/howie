@@ -1,5 +1,6 @@
-package com.lorenz.howie.core
+package com.lorenz.howie
 
+import com.lorenz.howie.core.*
 import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate

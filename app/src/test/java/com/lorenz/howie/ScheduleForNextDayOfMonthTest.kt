@@ -56,4 +56,10 @@ class ScheduleForNextDayOfMonthTest {
             schedule.scheduleNext(LocalDate.of(2020, Month.JANUARY, 31))
         )
     }
+
+    @Test
+    fun `toString tests`() {
+        assertEquals("1.", ScheduleForNextDayOfMonth(1).toString())
+        assertEquals("30.", ScheduleForNextDayOfMonth(30).toString())
+    }
 }

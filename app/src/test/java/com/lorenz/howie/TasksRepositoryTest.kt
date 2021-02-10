@@ -1,4 +1,4 @@
-package com.lorenz.howie.ui
+package com.lorenz.howie
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.lorenz.howie.core.Importance
@@ -8,6 +8,7 @@ import com.lorenz.howie.database.TaskDao
 import com.lorenz.howie.database.TaskEntity
 import com.lorenz.howie.database.TaskListDao
 import com.lorenz.howie.database.TaskListEntity
+import com.lorenz.howie.ui.TasksRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.every

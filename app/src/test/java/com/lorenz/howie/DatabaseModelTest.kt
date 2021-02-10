@@ -1,6 +1,7 @@
-package com.lorenz.howie.database
+package com.lorenz.howie
 
 import com.lorenz.howie.core.*
+import com.lorenz.howie.database.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate

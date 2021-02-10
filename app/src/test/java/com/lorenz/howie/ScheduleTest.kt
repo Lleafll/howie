@@ -1,6 +1,7 @@
 package com.lorenz.howie
 
 import com.lorenz.howie.core.*
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -61,5 +62,26 @@ class ScheduleTest {
                 LocalDate.of(2020, Month.JANUARY, 31)
             )
         )
+    }
+
+    @Test
+    fun `Schedule comparison`() {
+        assertEquals(
+            Schedule(ScheduleInXTimeUnits(1, TimeUnit.WEEK)),
+            Schedule(ScheduleInXTimeUnits(1, TimeUnit.WEEK))
+        )
+        Assert.assertNotEquals(
+            Schedule(ScheduleInXTimeUnits(1, TimeUnit.WEEK)),
+            Schedule(ScheduleInXTimeUnits(2, TimeUnit.WEEK))
+        )
+        Assert.assertNotEquals(Schedule(ScheduleInXTimeUnits(1, TimeUnit.WEEK)), null)
+        Assert.assertNotEquals(Schedule(ScheduleInXTimeUnits(1, TimeUnit.WEEK)), 1)
+    }
+
+    @Test
+    fun `toString for all types`() {
+        assertEquals("1 Day", Schedule(ScheduleInXTimeUnits(1, TimeUnit.DAY)).toString())
+        assertEquals("30.", Schedule(ScheduleForNextDayOfMonth(30)).toString())
+        assertEquals("Sunday", Schedule(ScheduleForNextWeekDay(DayOfWeek.SUNDAY)).toString())
     }
 }

@@ -1,5 +1,8 @@
-package com.lorenz.howie.core
+package com.lorenz.howie
 
+import com.lorenz.howie.core.Task
+import com.lorenz.howie.core.isArchived
+import com.lorenz.howie.core.isSnoozed
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

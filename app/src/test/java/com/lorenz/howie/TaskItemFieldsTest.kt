@@ -1,6 +1,8 @@
-package com.lorenz.howie.ui
+package com.lorenz.howie
 
 import com.lorenz.howie.core.*
+import com.lorenz.howie.ui.TaskItemFields
+import com.lorenz.howie.ui.toTaskItemFields
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate

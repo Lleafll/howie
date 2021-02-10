@@ -1,8 +1,12 @@
-package com.lorenz.howie.ui
+package com.lorenz.howie
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.lorenz.howie.core.*
+import com.lorenz.howie.ui.OptionsVisibility
+import com.lorenz.howie.ui.TaskFields
+import com.lorenz.howie.ui.TaskViewModel
+import com.lorenz.howie.ui.TasksRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockk
