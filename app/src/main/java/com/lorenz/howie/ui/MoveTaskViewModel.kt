@@ -17,7 +17,11 @@ class MoveTaskViewModel(application: Application) : AndroidViewModel(application
 
     init {
         val database = getDatabase(application.applicationContext)
-        repository = TasksRepository(database.getTaskDao(), database.getTaskListDao())
+        repository = TasksRepository(
+            buildDefaultWidgetUpdater(application),
+            database.getTaskDao(),
+            database.getTaskListDao()
+        )
     }
 
     val taskListNames = liveData {

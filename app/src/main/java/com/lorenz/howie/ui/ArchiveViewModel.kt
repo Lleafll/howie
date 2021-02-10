@@ -59,5 +59,9 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
 
 private fun buildTaskRepository(application: Application): TasksRepository {
     val database = getDatabase(application.applicationContext)
-    return TasksRepository(database.getTaskDao(), database.getTaskListDao())
+    return TasksRepository(
+        buildDefaultWidgetUpdater(application),
+        database.getTaskDao(),
+        database.getTaskListDao()
+    )
 }
