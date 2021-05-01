@@ -112,7 +112,7 @@ class WidgetService : Service() {
     }
 }
 
-private fun toText(count: Int) = if (count != 0) count.toString() else "✓"
+private fun toText(count: Int) = if (count != 0) count.toString() else "•"
 
 fun WidgetService.startForegroundWithNotification() {
     val notificationChannelId = "com.lorenz.howie"

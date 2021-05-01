@@ -174,12 +174,12 @@ private fun buildLabel(information: TaskListInformation): String {
 }
 
 private fun formatLabel(taskCount: Int, lowerText: String): String {
-    val upperText = if (taskCount != 0) taskCount.toString() else "✓"
+    val upperText = if (taskCount != 0) taskCount.toString() else "•"
     return "$upperText\n$lowerText"
 }
 
 private fun countToString(count: Int) = when (count) {
-    0 -> "✓"
+    0 -> "•"
     else -> count.toString()
 }
 
