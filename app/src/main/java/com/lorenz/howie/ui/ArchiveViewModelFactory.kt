@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class ArchiveViewModelFactory(val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ArchiveViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return ArchiveViewModel(application) as T
