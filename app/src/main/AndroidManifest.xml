@@ -6,6 +6,7 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupOnly="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
@@ -14,7 +15,8 @@
         <activity
             android:name="com.lorenz.howie.ui.MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,13 +36,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lorenz.howie.ui.MainActivity" />
         </activity>
-        <activity android:name="com.lorenz.howie.widget.WidgetConfigureActivity">
+        <activity android:name="com.lorenz.howie.widget.WidgetConfigureActivity"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.lorenz.howie.widget.HowieAppWidgetProvider">
+        <receiver android:name="com.lorenz.howie.widget.HowieAppWidgetProvider"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.lorenz.howie.CONFIGURE_UPDATE" />
