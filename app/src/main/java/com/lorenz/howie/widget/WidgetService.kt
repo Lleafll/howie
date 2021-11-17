@@ -18,12 +18,10 @@ import com.lorenz.howie.database.getDatabase
 import com.lorenz.howie.database.toDomainModel
 import com.lorenz.howie.ui.MainActivity
 import com.lorenz.howie.ui.SHOW_TASK_LIST_EXTRA
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
+@DelicateCoroutinesApi
 class WidgetService : Service() {
     private lateinit var domainModel: Deferred<DomainModel>
     private lateinit var widgetSettingsDao: WidgetSettingsDao
@@ -114,6 +112,7 @@ class WidgetService : Service() {
 
 private fun toText(count: Int) = if (count != 0) count.toString() else "•"
 
+@DelicateCoroutinesApi
 fun WidgetService.startForegroundWithNotification() {
     val notificationChannelId = "com.lorenz.howie"
     createNotificationChannel(notificationChannelId)
@@ -121,6 +120,7 @@ fun WidgetService.startForegroundWithNotification() {
     startForeground(1, notification)
 }
 
+@DelicateCoroutinesApi
 private fun WidgetService.createNotificationChannel(notificationChannelId: String) {
     val channel = NotificationChannel(
         notificationChannelId,
@@ -133,6 +133,7 @@ private fun WidgetService.createNotificationChannel(notificationChannelId: Strin
     notificationManager.createNotificationChannel(channel)
 }
 
+@DelicateCoroutinesApi
 private fun WidgetService.buildNotification(notificationChannelId: String): Notification {
     val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
         .setContentTitle("App is running in background")
@@ -142,6 +143,7 @@ private fun WidgetService.buildNotification(notificationChannelId: String): Noti
     return notificationBuilder.build()
 }
 
+@DelicateCoroutinesApi
 private fun WidgetService.hideNotification() {
     stopForeground(true)
 }
