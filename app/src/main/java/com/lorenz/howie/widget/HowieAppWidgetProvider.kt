@@ -6,12 +6,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import com.lorenz.howie.database.getDatabase
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 const val CONFIGURE_UPDATE = "com.lorenz.howie.CONFIGURE_UPDATE"
 
+@DelicateCoroutinesApi
 class HowieAppWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
