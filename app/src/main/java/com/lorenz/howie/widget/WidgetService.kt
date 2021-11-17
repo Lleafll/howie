@@ -91,7 +91,12 @@ class WidgetService : Service() {
     ) {
         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java).let { intent ->
             intent.putExtra(SHOW_TASK_LIST_EXTRA, taskListIndex)
-            PendingIntent.getActivity(context, taskListIndex.value, intent, 0)
+            PendingIntent.getActivity(
+                context,
+                taskListIndex.value,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
         }
         GlobalScope.launch {
             RemoteViews(context.packageName, R.layout.howie_appwidget).apply {
