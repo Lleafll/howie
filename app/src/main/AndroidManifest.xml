@@ -59,6 +59,10 @@
             android:name="com.lorenz.howie.widget.WidgetService"
             android:exported="false" />
 
+        <service
+            android:name="com.lorenz.howie.notification.NotificationService"
+            android:exported="false" />
+
     </application>
 
 </manifest>
