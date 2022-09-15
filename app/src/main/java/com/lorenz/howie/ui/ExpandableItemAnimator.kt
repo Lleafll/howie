@@ -53,7 +53,7 @@ class ExpandableItemAnimator : DefaultItemAnimator() {
                 )
                 .also {
                     it.addListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
+                        override fun onAnimationEnd(animation: Animator) {
                             holder.expandIndicator.rotation = postInfo.arrowRotation
                             dispatchAnimationFinished(holder)
                         }
