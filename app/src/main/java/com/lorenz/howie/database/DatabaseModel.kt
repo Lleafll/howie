@@ -9,16 +9,10 @@ data class DatabaseModel(
 )
 
 fun List<TaskList>.toDatabaseModel(): DatabaseModel {
-    val modifiable = filter { it.canBeModified }
     val taskListEntities =
-        modifiable.mapIndexed { index, taskList ->
-            TaskListEntity(
-                taskList.name,
-                index.toLong()
-            )
-        }
+        mapIndexed { index, taskList -> TaskListEntity(taskList.name, index.toLong()) }
     var taskIndex = 0
-    val taskEntities = modifiable.mapIndexed { index, taskList ->
+    val taskEntities = mapIndexed { index, taskList ->
         val taskListIndex = index.toLong()
         taskList.tasks.map { task ->
             TaskEntity(
@@ -38,15 +32,13 @@ fun List<TaskList>.toDatabaseModel(): DatabaseModel {
 }
 
 fun DatabaseModel.toDomainModel(): List<TaskList> {
-    val model = taskListEntities.map { taskListEntity ->
+    return taskListEntities.map { taskListEntity ->
         TaskList(
             taskListEntity.name,
             taskEntities.filter { it.taskListId == taskListEntity.id }.map { it.toTask() }
                 .toMutableList()
         )
-    }.toMutableList()
-    model.add(0, TaskList("All", taskEntities.map { it.toTask() }.toMutableList(), false))
-    return model
+    }
 }
 
 private fun TaskEntity.toTask(): Task {

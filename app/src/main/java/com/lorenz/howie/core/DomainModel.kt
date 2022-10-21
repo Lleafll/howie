@@ -38,7 +38,7 @@ data class TaskListInformation(
 
 class DomainModel(initialTaskLists: List<TaskList>) {
     private val _taskLists: MutableList<TaskList> = if (initialTaskLists.isEmpty()) {
-        mutableListOf(TaskList("Tasks", mutableListOf(), true))
+        mutableListOf(TaskList("Tasks", mutableListOf()))
     } else {
         initialTaskLists.toMutableList()
     }

@@ -67,7 +67,7 @@ class TasksRepositoryTest {
         }
         val repository = TasksRepository({ }, taskDao, taskListDao)
         runBlocking {
-            repository.deleteTask(TaskListIndex(1), TaskIndex(0))
+            repository.deleteTask(TaskListIndex(0), TaskIndex(0))
         }
         coVerify {
             taskDao.insertAll(emptyList())

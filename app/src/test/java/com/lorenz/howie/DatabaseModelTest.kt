@@ -9,9 +9,9 @@ import java.time.Month
 
 class DatabaseModelTest {
     @Test
-    fun `toDomainModel returns All list on empty mode`() {
+    fun `toDomainModel returns empty model on empty mode`() {
         val databaseModel = DatabaseModel(listOf(), listOf())
-        assertEquals(listOf(TaskList("All", mutableListOf(), false)), databaseModel.toDomainModel())
+        assertEquals(listOf<TaskList>(), databaseModel.toDomainModel())
     }
 
     @Test
@@ -20,13 +20,7 @@ class DatabaseModelTest {
             listOf(),
             listOf(TaskListEntity("ABC", 1))
         )
-        assertEquals(
-            listOf(
-                TaskList("All", mutableListOf(), false),
-                TaskList("ABC", mutableListOf())
-            ),
-            databaseModel.toDomainModel()
-        )
+        assertEquals(listOf(TaskList("ABC", mutableListOf())), databaseModel.toDomainModel())
     }
 
     @Test
@@ -41,7 +35,6 @@ class DatabaseModelTest {
         )
         assertEquals(
             listOf(
-                TaskList("All", mutableListOf(), false),
                 TaskList("ABC", mutableListOf()),
                 TaskList("DEF", mutableListOf()),
                 TaskList("GHI", mutableListOf()),
@@ -70,11 +63,6 @@ class DatabaseModelTest {
         )
         assertEquals(
             listOf(
-                TaskList(
-                    "All",
-                    mutableListOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null)),
-                    false
-                ),
                 TaskList(
                     "ABC",
                     mutableListOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
@@ -106,11 +94,6 @@ class DatabaseModelTest {
         )
         assertEquals(
             listOf(
-                TaskList(
-                    "All",
-                    mutableListOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null)),
-                    false
-                ),
                 TaskList(
                     "ABC",
                     mutableListOf(Task("TaskName", Importance.IMPORTANT, null, null, null, null))
@@ -148,20 +131,6 @@ class DatabaseModelTest {
         )
         val expected = listOf(
             TaskList(
-                "All",
-                mutableListOf(
-                    Task(
-                        "Task2",
-                        Importance.UNIMPORTANT,
-                        due,
-                        snoozed,
-                        schedule,
-                        archived
-                    )
-                ),
-                false
-            ),
-            TaskList(
                 "",
                 mutableListOf(
                     Task(
@@ -192,14 +161,6 @@ class DatabaseModelTest {
         )
         assertEquals(
             listOf(
-                TaskList(
-                    "All",
-                    mutableListOf(
-                        Task("TaskName1", Importance.IMPORTANT, null, null, null, null),
-                        Task("TaskName2", Importance.IMPORTANT, null, null, null, null)
-                    ),
-                    false
-                ),
                 TaskList(
                     "ABC",
                     mutableListOf(Task("TaskName1", Importance.IMPORTANT, null, null, null, null))
