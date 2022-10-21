@@ -2,6 +2,7 @@ package com.lorenz.howie.ui
 
 import android.app.Application
 import androidx.lifecycle.*
+import androidx.room.Index
 import com.lorenz.howie.core.*
 import com.lorenz.howie.database.getDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -165,7 +166,7 @@ class TaskViewModel(
             error("delete cannot be called with a null taskIndex")
         }
         val oldTask = _repository.deleteTask(taskIndex!!)
-        returnTaskDeletedEvent.value = oldTask
+        returnTaskDeletedEvent.value = IndexedTask(taskIndex!!, oldTask)
     }
 
     val optionsVisibility: LiveData<OptionsVisibility> = _task.switchMap {
@@ -187,7 +188,7 @@ class TaskViewModel(
         _finishEvent.value = true
     }
 
-    val returnTaskDeletedEvent = SingleLiveEvent<Task>()
+    val returnTaskDeletedEvent = SingleLiveEvent<IndexedTask>()
 }
 
 private fun optionsForNewTask() = OptionsVisibility(

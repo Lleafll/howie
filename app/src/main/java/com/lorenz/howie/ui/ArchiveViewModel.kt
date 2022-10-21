@@ -2,6 +2,7 @@ package com.lorenz.howie.ui
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.lorenz.howie.core.IndexedTask
 import com.lorenz.howie.core.Task
 import com.lorenz.howie.core.TaskIndex
 import com.lorenz.howie.core.TaskListIndex
@@ -12,15 +13,15 @@ import java.time.LocalDate
 class ArchiveViewModel(private val _application: Application) : AndroidViewModel(_application) {
     private var _repository = buildTaskRepository(_application)
 
-    lateinit var currentTaskList: TaskListIndex
-    private val _taskList = MutableLiveData<TaskListIndex>()
+    var currentTaskList: TaskListIndex? = null
+    private val _taskList = MutableLiveData<TaskListIndex?>()
     val archive: LiveData<List<TaskItemFields>> = _taskList.switchMap {
         liveData {
             emit(_repository.getArchive(it).map { it.toTaskItemFields() })
         }
     }
 
-    fun setTaskList(taskListIndex: TaskListIndex) = viewModelScope.launch {
+    fun setTaskList(taskListIndex: TaskListIndex?) = viewModelScope.launch {
         currentTaskList = taskListIndex
         _taskList.value = taskListIndex
     }
@@ -43,16 +44,16 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
         setTaskList(currentTaskList)
     }
 
-    fun addTask(task: Task) = viewModelScope.launch {
-        _repository.addTask(currentTaskList, task)
+    fun addTask(task: IndexedTask) = viewModelScope.launch {
+        _repository.addTask(task.index.list, task.task)
         setTaskList(currentTaskList) // Force refresh of tasks
     }
 
     val taskUnarchivedNotificationEvent = SingleLiveEvent<Pair<TaskIndex, LocalDate>>()
-    val taskDeletedNotificationEvent = SingleLiveEvent<Task>()
+    val taskDeletedNotificationEvent = SingleLiveEvent<IndexedTask>()
     val title: LiveData<String> = _taskList.switchMap {
         liveData {
-            emit("Archive: ${_repository.getTaskListName(it)}")
+            emit("Archive: ${it?.let { it1 -> _repository.getTaskListName(it1) }}")
         }
     }
 }

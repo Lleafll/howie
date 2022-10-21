@@ -67,7 +67,7 @@ class TasksRepository(
         saveAll()
     }
 
-    suspend fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
+    suspend fun getArchive(taskList: TaskListIndex?): List<IndexedTask> {
         return _domainModel.await().getArchive(taskList)
     }
 

@@ -14,9 +14,10 @@ data class TaskIndex(
     val list: TaskListIndex, val task: Int
 ) : Parcelable
 
+@Parcelize
 data class IndexedTask(
     val index: TaskIndex, val task: Task
-)
+) : Parcelable
 
 data class UnarchivedTasks(
     val unsnoozed: List<IndexedTask>, val snoozed: List<IndexedTask>
@@ -94,8 +95,17 @@ class DomainModel(initialTaskLists: List<TaskList>) {
             partitionedTasks.first.sortedBy { it.task.snoozed })
     }
 
-    fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
-        return filterArchivedTasksToIndexTask(taskLists[taskList.value].tasks, taskList)
+    fun getArchive(taskList: TaskListIndex?): List<IndexedTask> {
+        return if (taskList != null) {
+            filterArchivedTasksToIndexTask(taskLists[taskList.value].tasks, taskList)
+        } else {
+            taskLists.mapIndexed { index, list ->
+                filterArchivedTasksToIndexTask(
+                    list.tasks,
+                    TaskListIndex(index)
+                )
+            }.flatten()
+        }
     }
 
     fun deleteTaskList(taskList: TaskListIndex): Boolean {
