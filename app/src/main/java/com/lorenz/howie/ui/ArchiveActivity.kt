@@ -13,6 +13,7 @@ import com.lorenz.howie.core.TaskIndex
 import com.lorenz.howie.core.TaskListIndex
 import com.lorenz.howie.databinding.ActivityArchiveBinding
 import com.google.android.material.snackbar.Snackbar
+import com.lorenz.howie.core.IndexedTask
 
 class ArchiveActivity : AppCompatActivity() {
     companion object {
@@ -61,7 +62,7 @@ private fun handleTaskActivityReturn(
 ) {
     when (returnCode) {
         TASK_DELETED_RETURN_CODE -> {
-            val task: Task = data.getParcelableExtra(DELETED_TASK_CODE)
+            val task: IndexedTask = data.getParcelableExtra(DELETED_TASK_CODE)
                 ?: error("Deleted task missing from returned intent")
             viewModel.taskDeletedNotificationEvent.value = task
         }
@@ -93,8 +94,8 @@ private fun ArchiveActivity.setupArchiveView(
     archiveView: RecyclerView
 ) {
     archiveView.layoutManager = LinearLayoutManager(applicationContext)
-    val taskListIndex: TaskListIndex =
-        intent.getParcelableExtra(ArchiveActivity.TASKLIST_INDEX)!!
+    val taskListIndex: TaskListIndex? =
+        intent.getParcelableExtra(ArchiveActivity.TASKLIST_INDEX)
     viewModel.setTaskList(taskListIndex)
     archiveView.itemAnimator = ExpandableItemAnimator()
     viewModel.archive.observe(this, {
@@ -125,7 +126,7 @@ private fun ArchiveActivity.setupArchiveView(
                 override fun onEditClicked(index: TaskIndex) {
                     val intent = Intent(applicationContext, TaskActivity::class.java)
                     intent.putExtra(TaskActivity.TASK_ID, index)
-                    intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+                    intent.putExtra(TaskActivity.TASK_LIST_INDEX, index.list)
                     startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
                 }
             }, true)

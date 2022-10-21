@@ -2,6 +2,7 @@ package com.lorenz.howie.ui
 
 import android.app.Application
 import androidx.lifecycle.*
+import androidx.room.Index
 import com.lorenz.howie.core.*
 import com.lorenz.howie.database.getDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -63,12 +64,12 @@ class TaskViewModel(
     private val _taskList = MutableLiveData<TaskListIndex>()
     private val _taskIndex = MutableLiveData<NullableTaskIndex>()
     private val _taskCategory = MutableLiveData<NullableTaskCategory>()
-    private val _task: LiveData<NullableTask> = CombinedLiveData(_taskList, _taskIndex).switchMap {
+    private val _task: LiveData<NullableTask> = _taskIndex.switchMap {
         liveData {
-            if (it.second.index == null) {
+            if (it.index == null) {
                 emit(NullableTask(null))
             } else {
-                val task = _repository.getTask(it.first, it.second.index!!)
+                val task = _repository.getTask(it.index)
                 emit(NullableTask(task))
             }
         }
@@ -131,7 +132,7 @@ class TaskViewModel(
         }
 
     fun updateTask(task: Task) = getCoroutineScope().launch {
-        val success = _repository.updateTask(taskList, taskIndex!!, task)
+        val success = _repository.updateTask(taskIndex!!, task)
         if (success) {
             callFinish()
         }
@@ -148,7 +149,7 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("doArchive cannot be called with a null taskIndex")
         }
-        _repository.doArchive(taskList, taskIndex!!, LocalDate.now())
+        _repository.doArchive(taskIndex!!, LocalDate.now())
         callFinish()
     }
 
@@ -156,7 +157,7 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("unarchive cannot be called with a null taskIndex")
         }
-        _repository.unarchive(taskList, taskIndex!!)
+        _repository.unarchive(taskIndex!!)
         callFinish()
     }
 
@@ -164,8 +165,8 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("delete cannot be called with a null taskIndex")
         }
-        val oldTask = _repository.deleteTask(taskList, taskIndex!!)
-        returnTaskDeletedEvent.value = oldTask
+        val oldTask = _repository.deleteTask(taskIndex!!)
+        returnTaskDeletedEvent.value = IndexedTask(taskIndex!!, oldTask)
     }
 
     val optionsVisibility: LiveData<OptionsVisibility> = _task.switchMap {
@@ -187,7 +188,7 @@ class TaskViewModel(
         _finishEvent.value = true
     }
 
-    val returnTaskDeletedEvent = SingleLiveEvent<Task>()
+    val returnTaskDeletedEvent = SingleLiveEvent<IndexedTask>()
 }
 
 private fun optionsForNewTask() = OptionsVisibility(

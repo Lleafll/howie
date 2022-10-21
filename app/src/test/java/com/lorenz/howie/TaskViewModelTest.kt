@@ -80,7 +80,7 @@ class TaskViewModelTest {
             )
         }
         val viewModel = TaskViewModel(application, repository, testScope)
-        viewModel.initialize(TaskListIndex(0), TaskIndex(0), TaskCategory.DECIDE)
+        viewModel.initialize(TaskListIndex(0), TaskIndex(TaskListIndex(0), 0), TaskCategory.DECIDE)
         viewModel.taskFields.observeForever {}
         val expected = TaskFields(
             "TaskName",
@@ -102,7 +102,7 @@ class TaskViewModelTest {
             coEvery { getTask(any(), any()) } returns Task("TaskName", archived = LocalDate.MIN)
         }
         val viewModel = TaskViewModel(application, repository, testScope)
-        viewModel.initialize(TaskListIndex(0), TaskIndex(0), null)
+        viewModel.initialize(TaskListIndex(0), TaskIndex(TaskListIndex(0), 0), null)
         viewModel.optionsVisibility.observeForever {}
         val expected = OptionsVisibility(
             save = false,

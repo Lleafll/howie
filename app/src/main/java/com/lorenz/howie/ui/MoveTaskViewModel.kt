@@ -13,7 +13,6 @@ import kotlin.properties.Delegates
 class MoveTaskViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: TasksRepository
     var taskId by Delegates.notNull<TaskIndex>()
-    var fromTaskList by Delegates.notNull<TaskListIndex>()
 
     init {
         val database = getDatabase(application.applicationContext)
@@ -29,6 +28,6 @@ class MoveTaskViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun moveToList(toList: TaskListIndex) = viewModelScope.launch {
-        repository.moveTaskFromListToList(taskId, fromTaskList, toList)
+        repository.moveTaskFromListToList(taskId, toList)
     }
 }

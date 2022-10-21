@@ -30,7 +30,7 @@ fun IndexedTask.toTaskItemFields(): TaskItemFields {
         null
     }
     return TaskItemFields(
-        indexInTaskList,
+        index,
         task.name,
         task.due?.toString(),
         snoozed,

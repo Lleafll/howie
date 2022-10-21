@@ -11,11 +11,11 @@ class TaskItemFieldsTest {
     @Test
     fun `toTaskItemFields for default IndexedTask`() {
         val task = IndexedTask(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             Task("ABC")
         )
         val expected = TaskItemFields(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             "ABC",
             due = null,
             snoozed = null,
@@ -32,11 +32,11 @@ class TaskItemFieldsTest {
     @Test
     fun `toTaskItemFields for archived IndexedTask`() {
         val task = IndexedTask(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             Task("ABC", archived = LocalDate.of(1111, 11, 11)),
         )
         val expected = TaskItemFields(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             "ABC",
             due = null,
             snoozed = null,
@@ -53,11 +53,11 @@ class TaskItemFieldsTest {
     @Test
     fun `toTaskItemFields for unarchived IndexedTask with snooze in the past`() {
         val task = IndexedTask(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             Task("ABC", snoozed = LocalDate.of(1111, 11, 11)),
         )
         val expected = TaskItemFields(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             "ABC",
             due = null,
             snoozed = null,
@@ -74,7 +74,7 @@ class TaskItemFieldsTest {
     @Test
     fun `toTaskItemFields for unarchived IndexedTask with snooze in the future and schedule`() {
         val task = IndexedTask(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             Task(
                 "ABC",
                 snoozed = LocalDate.of(2222, 11, 11),
@@ -82,7 +82,7 @@ class TaskItemFieldsTest {
             ),
         )
         val expected = TaskItemFields(
-            TaskIndex(0),
+            TaskIndex(TaskListIndex(0), 0),
             "ABC",
             due = null,
             snoozed = "2222-11-11",

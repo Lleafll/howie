@@ -172,10 +172,6 @@ class TaskActivity : AppCompatActivity(), DatePickerFragment.DatePickerListener,
             val dialog = MoveTaskFragment()
             val arguments = Bundle()
             arguments.putParcelable(MoveTaskFragment.TASK_ID_ARGUMENT, viewModel.taskIndex!!)
-            arguments.putParcelable(
-                MoveTaskFragment.FROM_TASK_LIST_ARGUMENT,
-                viewModel.taskList
-            )
             dialog.arguments = arguments
             dialog.show(supportFragmentManager, "moveTaskDialog")
             true

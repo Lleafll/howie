@@ -60,7 +60,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
                 R.id.action_rename -> {
-                    openRenameTaskListFragment(viewModel.currentTaskList, viewModel)
+                    viewModel.currentTaskList?.let { it1 ->
+                        openRenameTaskListFragment(
+                            it1,
+                            viewModel
+                        )
+                    }
                     true
                 }
                 R.id.action_delete -> {
@@ -79,9 +84,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val taskList: TaskListIndex? = intent.getParcelableExtra(SHOW_TASK_LIST_EXTRA)
-        if (taskList != null) {
-            viewModel.setTaskList(taskList)
+        val taskList: Int = intent.getIntExtra(SHOW_TASK_LIST_EXTRA, -1)
+        if (taskList >= 0) {
+            viewModel.selectTaskList(taskList + 1)
         }
     }
 
@@ -232,7 +237,7 @@ private fun MainActivity.buildDrawerHeaderContent(
             }
             setOnClickListener {
                 closeDrawer(mainBinding)
-                viewModel.setTaskList(TaskListIndex(index))
+                viewModel.selectTaskList(index)
             }
         }
     }
@@ -244,14 +249,16 @@ private fun closeDrawer(binding: ActivityMainBinding) {
 
 private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel: MainViewModel) {
     button.setOnClickListener {
-        val intent = Intent(applicationContext, TaskActivity::class.java)
-        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
-        intent.putExtra(
-            TaskActivity.TASK_CATEGORY,
-            TaskCategory.values()[tabLayout.selectedTabPosition]
-        )
-        intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-        startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
+        if (viewModel.currentTaskList != null) {
+            val intent = Intent(applicationContext, TaskActivity::class.java)
+            val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+            intent.putExtra(
+                TaskActivity.TASK_CATEGORY,
+                TaskCategory.values()[tabLayout.selectedTabPosition]
+            )
+            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+            startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
+        }
     }
 }
 
@@ -295,7 +302,7 @@ private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) 
     val builder = AlertDialog.Builder(this)
     builder.setMessage("Delete Task List?")
         .setPositiveButton("Yes") { _, _ ->
-            mainViewModel.deleteTaskList(mainViewModel.currentTaskList)
+            mainViewModel.deleteCurrentTaskList()
         }
         .setNegativeButton("No") { dialog, _ ->
             dialog.dismiss()
@@ -304,7 +311,7 @@ private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) 
     alert.show()
 }
 
-private fun MainActivity.showArchive(currentTaskList: TaskListIndex) {
+private fun MainActivity.showArchive(currentTaskList: TaskListIndex?) {
     val intent = Intent(applicationContext, ArchiveActivity::class.java)
     intent.putExtra(ArchiveActivity.TASKLIST_INDEX, currentTaskList)
     startActivityForResult(intent, ARCHIVE_ACTIVITY_REQUEST_CODE)

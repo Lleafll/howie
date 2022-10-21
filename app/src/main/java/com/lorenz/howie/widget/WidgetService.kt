@@ -90,7 +90,7 @@ class WidgetService : Service() {
         appWidgetId: Int
     ) {
         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java).let { intent ->
-            intent.putExtra(SHOW_TASK_LIST_EXTRA, taskListIndex)
+            intent.putExtra(SHOW_TASK_LIST_EXTRA, taskListIndex.value)
             PendingIntent.getActivity(
                 context,
                 taskListIndex.value,

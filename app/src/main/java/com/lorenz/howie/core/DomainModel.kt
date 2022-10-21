@@ -11,29 +11,24 @@ data class TaskListIndex(
 
 @Parcelize
 data class TaskIndex(
-    val value: Int
+    val list: TaskListIndex, val task: Int
 ) : Parcelable
 
+@Parcelize
 data class IndexedTask(
-    val indexInTaskList: TaskIndex,
-    val task: Task
-)
+    val index: TaskIndex, val task: Task
+) : Parcelable
 
 data class UnarchivedTasks(
-    val unsnoozed: List<IndexedTask>,
-    val snoozed: List<IndexedTask>
+    val unsnoozed: List<IndexedTask>, val snoozed: List<IndexedTask>
 )
 
 data class TaskCounts(
-    val doCount: Int,
-    val decideCount: Int,
-    val delegateCount: Int,
-    val dropCount: Int
+    val doCount: Int, val decideCount: Int, val delegateCount: Int, val dropCount: Int
 )
 
 data class TaskListInformation(
-    val name: String,
-    val taskCounts: TaskCounts
+    val name: String, val taskCounts: TaskCounts
 )
 
 class DomainModel(initialTaskLists: List<TaskList>) {
@@ -51,51 +46,66 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     fun getTaskListInformation(taskListIndex: TaskListIndex): TaskListInformation {
         val taskList = taskLists[taskListIndex.value]
         return TaskListInformation(
-            taskList.name,
-            countUnarchivedUnsnoozedTasks(taskList.tasks)
+            taskList.name, countUnarchivedUnsnoozedTasks(taskList.tasks)
         )
     }
 
     fun getTaskListInformation(): List<TaskListInformation> {
         return taskLists.map {
             TaskListInformation(
-                it.name,
-                countUnarchivedUnsnoozedTasks(it.tasks)
+                it.name, countUnarchivedUnsnoozedTasks(it.tasks)
             )
         }
     }
 
-    fun getTaskCounts(taskList: TaskListIndex): TaskCounts {
-        return countUnarchivedUnsnoozedTasks(taskLists[taskList.value].tasks)
+    fun getTaskCounts(taskList: TaskListIndex?): TaskCounts {
+        return countUnarchivedUnsnoozedTasks(if (taskList != null) taskLists[taskList.value].tasks else taskLists.flatMap { it.tasks })
     }
 
     fun addTask(taskList: TaskListIndex, task: Task): Boolean {
         return _taskLists[taskList.value].tasks.add(task)
     }
 
-    fun doArchive(taskList: TaskListIndex, task: TaskIndex, date: LocalDate) {
-        val taskObject = _taskLists[taskList.value].tasks[task.value]
-        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(archived = date)
+    fun doArchive(task: TaskIndex, date: LocalDate) {
+        val taskObject = _taskLists[task.list.value].tasks[task.task]
+        _taskLists[task.list.value].tasks[task.task] = taskObject.copy(archived = date)
     }
 
-    fun unarchive(taskList: TaskListIndex, task: TaskIndex): LocalDate? {
-        val taskObject = _taskLists[taskList.value].tasks[task.value]
-        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(archived = null)
+    fun unarchive(task: TaskIndex): LocalDate? {
+        val taskObject = _taskLists[task.list.value].tasks[task.task]
+        _taskLists[task.list.value].tasks[task.task] = taskObject.copy(archived = null)
         return taskObject.archived
     }
 
-    fun getUnarchivedTasks(taskList: TaskListIndex, category: TaskCategory): UnarchivedTasks {
-        val unArchivedTasks = filterUnarchivedTasksToIndexedTask(taskLists[taskList.value].tasks)
+    fun getUnarchivedTasks(taskList: TaskListIndex?, category: TaskCategory): UnarchivedTasks {
+        val unArchivedTasks =
+            if (taskList == null) {
+                taskLists.mapIndexed { index, list ->
+                    filterUnarchivedTasksToIndexedTask(
+                        list.tasks,
+                        TaskListIndex(index)
+                    )
+                }.flatten()
+            } else {
+                filterUnarchivedTasksToIndexedTask(taskLists[taskList.value].tasks, taskList)
+            }
         val categoryTasks = filterCategory(unArchivedTasks, category)
         val partitionedTasks = categoryTasks.partition { it.task.isSnoozed() }
-        return UnarchivedTasks(
-            partitionedTasks.second.sortedBy { it.task.due },
-            partitionedTasks.first.sortedBy { it.task.snoozed }
-        )
+        return UnarchivedTasks(partitionedTasks.second.sortedBy { it.task.due },
+            partitionedTasks.first.sortedBy { it.task.snoozed })
     }
 
-    fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
-        return filterArchivedTasksToIndexTask(taskLists[taskList.value].tasks)
+    fun getArchive(taskList: TaskListIndex?): List<IndexedTask> {
+        return if (taskList != null) {
+            filterArchivedTasksToIndexTask(taskLists[taskList.value].tasks, taskList)
+        } else {
+            taskLists.mapIndexed { index, list ->
+                filterArchivedTasksToIndexTask(
+                    list.tasks,
+                    TaskListIndex(index)
+                )
+            }.flatten()
+        }
     }
 
     fun deleteTaskList(taskList: TaskListIndex): Boolean {
@@ -107,16 +117,14 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         }
     }
 
-    fun getTask(taskListIndex: TaskListIndex, taskIndex: TaskIndex): Task {
-        return taskLists[taskListIndex.value].tasks[taskIndex.value]
+    fun getTask(taskIndex: TaskIndex): Task {
+        return taskLists[taskIndex.list.value].tasks[taskIndex.task]
     }
 
     fun moveTaskFromListToList(
-        taskId: TaskIndex,
-        fromTaskList: TaskListIndex,
-        toList: TaskListIndex
+        taskId: TaskIndex, toList: TaskListIndex
     ) {
-        val task = taskLists[fromTaskList.value].tasks.removeAt(taskId.value)
+        val task = taskLists[taskId.list.value].tasks.removeAt(taskId.task)
         taskLists[toList.value].tasks.add(task)
     }
 
@@ -129,33 +137,33 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         return TaskListIndex(_taskLists.size - 1)
     }
 
-    fun snoozeToTomorrow(taskList: TaskListIndex, task: TaskIndex) {
+    fun snoozeToTomorrow(task: TaskIndex) {
         val tomorrow = LocalDate.now().plusDays(1)
-        val taskObject = _taskLists[taskList.value].tasks[task.value]
-        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(snoozed = tomorrow)
+        val taskObject = _taskLists[task.list.value].tasks[task.task]
+        _taskLists[task.list.value].tasks[task.task] = taskObject.copy(snoozed = tomorrow)
     }
 
-    fun removeSnooze(taskList: TaskListIndex, task: TaskIndex): LocalDate? {
-        val taskObject = _taskLists[taskList.value].tasks[task.value]
-        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(snoozed = null)
+    fun removeSnooze(task: TaskIndex): LocalDate? {
+        val taskObject = _taskLists[task.list.value].tasks[task.task]
+        _taskLists[task.list.value].tasks[task.task] = taskObject.copy(snoozed = null)
         return taskObject.snoozed
     }
 
-    fun scheduleNext(taskList: TaskListIndex, task: TaskIndex) {
-        val taskObject = _taskLists[taskList.value].tasks[task.value]
+    fun scheduleNext(task: TaskIndex) {
+        val taskObject = _taskLists[task.list.value].tasks[task.task]
         val nextTask = taskObject.scheduleNext()
         if (nextTask != null) {
-            _taskLists[taskList.value].tasks[task.value] = nextTask
+            _taskLists[task.list.value].tasks[task.task] = nextTask
         }
     }
 
-    fun updateTask(taskList: TaskListIndex, taskIndex: TaskIndex, task: Task): Boolean {
-        taskLists[taskList.value].tasks[taskIndex.value] = task
+    fun updateTask(taskIndex: TaskIndex, task: Task): Boolean {
+        taskLists[taskIndex.list.value].tasks[taskIndex.task] = task
         return true
     }
 
-    fun deleteTask(taskList: TaskListIndex, task: TaskIndex): Task {
-        return taskLists[taskList.value].tasks.removeAt(task.value)
+    fun deleteTask(task: TaskIndex): Task {
+        return taskLists[task.list.value].tasks.removeAt(task.task)
     }
 
     fun renameTaskList(taskListId: TaskListIndex, newName: String) {
@@ -163,21 +171,19 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         _taskLists[taskListId.value] = taskList.copy(name = newName)
     }
 
-    fun addSnooze(taskList: TaskListIndex, task: TaskIndex, snooze: LocalDate) {
-        val taskObject = _taskLists[taskList.value].tasks[task.value]
-        _taskLists[taskList.value].tasks[task.value] = taskObject.copy(snoozed = snooze)
+    fun addSnooze(task: TaskIndex, snooze: LocalDate) {
+        val taskObject = _taskLists[task.list.value].tasks[task.task]
+        _taskLists[task.list.value].tasks[task.task] = taskObject.copy(snoozed = snooze)
     }
 }
 
-private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>) =
-    tasks.withIndex()
-        .filter { (_, task) -> task.archived != null }
-        .map { (i, task) -> IndexedTask(TaskIndex(i), task) }
+private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>, taskList: TaskListIndex) =
+    tasks.withIndex().filter { (_, task) -> task.archived != null }
+        .map { (i, task) -> IndexedTask(TaskIndex(taskList, i), task) }
 
-private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>) =
-    tasks.withIndex()
-        .filter { (_, task) -> task.archived == null }
-        .map { (i, task) -> IndexedTask(TaskIndex(i), task) }
+private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>, taskList: TaskListIndex) =
+    tasks.withIndex().filter { (_, task) -> task.archived == null }
+        .map { (i, task) -> IndexedTask(TaskIndex(taskList, i), task) }
 
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
 
