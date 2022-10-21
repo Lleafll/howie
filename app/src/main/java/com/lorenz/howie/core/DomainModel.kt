@@ -66,8 +66,12 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         }
     }
 
-    fun getTaskCounts(taskList: TaskListIndex): TaskCounts {
-        return countUnarchivedUnsnoozedTasks(taskLists[taskList.value].tasks)
+    fun getTaskCounts(taskList: TaskListIndex?): TaskCounts {
+        return if (taskList != null) {
+            countUnarchivedUnsnoozedTasks(taskLists[taskList.value].tasks)
+        } else {
+            TaskCounts(0, 0, 0, 0)
+        }
     }
 
     fun addTask(taskList: TaskListIndex, task: Task): Boolean {
@@ -85,8 +89,8 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         return taskObject.archived
     }
 
-    fun getUnarchivedTasks(taskList: TaskListIndex, category: TaskCategory): UnarchivedTasks {
-        val unArchivedTasks =
+    fun getUnarchivedTasks(taskList: TaskListIndex?, category: TaskCategory): UnarchivedTasks {
+        val unArchivedTasks = if (taskList == null) listOf() else
             filterUnarchivedTasksToIndexedTask(taskLists[taskList.value].tasks, taskList)
         val categoryTasks = filterCategory(unArchivedTasks, category)
         val partitionedTasks = categoryTasks.partition { it.task.isSnoozed() }
@@ -155,7 +159,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
         return true
     }
 
-    fun deleteTask( task: TaskIndex): Task {
+    fun deleteTask(task: TaskIndex): Task {
         return taskLists[task.list.value].tasks.removeAt(task.task)
     }
 

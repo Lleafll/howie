@@ -27,14 +27,14 @@ class MainViewModel(
 
     constructor(application: Application) : this(application, buildTaskRepository(application))
 
-    var currentTaskList = TaskListIndex(0)
+    var currentTaskList: TaskListIndex? = null
         private set
 
     private val _currentTaskList = MutableLiveData(currentTaskList)
 
     val currentTaskListName: LiveData<String> = _currentTaskList.switchMap {
         liveData {
-            emit(_repository.getTaskListName(it))
+            emit(if (it == null) "All" else _repository.getTaskListName(it))
         }
     }
 
@@ -67,13 +67,13 @@ class MainViewModel(
         }
     }
 
-    fun selectTaskList(taskList: Int) = viewModelScope.launch {
-        currentTaskList = TaskListIndex(taskList)
+    fun selectTaskList(selected: Int) = viewModelScope.launch {
+        currentTaskList = if (selected <= 0) null else TaskListIndex(selected - 1)
         _currentTaskList.value = currentTaskList
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
-        _repository.addTask(currentTaskList, task)
+        _repository.addTask(currentTaskList ?: TaskListIndex(0), task)
         refresh()
     }
 
@@ -94,8 +94,8 @@ class MainViewModel(
         refresh()
     }
 
-    fun deleteTaskList(taskList: TaskListIndex) = viewModelScope.launch {
-        _repository.deleteTaskList(taskList)
+    fun deleteCurrentTaskList() = viewModelScope.launch {
+        currentTaskList?.let { _repository.deleteTaskList(it) }
         selectTaskList(0)
     }
 
@@ -103,8 +103,9 @@ class MainViewModel(
         liveData {
             emit(
                 TaskListDrawerContent(
-                    it.value,
-                    _repository.getTaskListInformation().map { buildLabel(it) }
+                    if (it == null) 0 else it.value + 1,
+                    _repository.getTaskListInformation().map { buildLabel(it) }.toMutableList()
+                        .apply { add(0, buildAllLabel(_repository.getTaskListInformation())) }
                 )
             )
         }
@@ -164,7 +165,7 @@ class MainViewModel(
     val taskScheduledNotificationEvent = SingleLiveEvent<Boolean>()
 
     fun renameTaskList(newName: String) = viewModelScope.launch {
-        _repository.renameTaskList(currentTaskList, newName)
+        currentTaskList?.let { _repository.renameTaskList(it, newName) }
         forceRefresh()
     }
 }
@@ -176,6 +177,25 @@ private fun buildLabel(information: TaskListInformation): String {
             "${countToString(taskCounts.decideCount)}/" +
             "${countToString(taskCounts.delegateCount)}/" +
             "${countToString(taskCounts.dropCount)})"
+}
+
+private fun buildAllLabel(information: List<TaskListInformation>): String {
+    var doCount = 0
+    var decideCount = 0
+    var delegateCount = 0
+    var dropCount = 0
+    for (info in information) {
+        val counts = info.taskCounts
+        doCount += counts.doCount
+        decideCount += counts.decideCount
+        delegateCount += counts.delegateCount
+        dropCount += counts.dropCount
+    }
+    return "All (" +
+            "${countToString(doCount)}/" +
+            "${countToString(decideCount)}/" +
+            "${countToString(delegateCount)}/" +
+            "${countToString(dropCount)})"
 }
 
 private fun formatLabel(taskCount: Int, lowerText: String): String {

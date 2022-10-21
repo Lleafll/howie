@@ -60,7 +60,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
                 R.id.action_rename -> {
-                    openRenameTaskListFragment(viewModel.currentTaskList, viewModel)
+                    viewModel.currentTaskList?.let { it1 ->
+                        openRenameTaskListFragment(
+                            it1,
+                            viewModel
+                        )
+                    }
                     true
                 }
                 R.id.action_delete -> {
@@ -295,7 +300,7 @@ private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) 
     val builder = AlertDialog.Builder(this)
     builder.setMessage("Delete Task List?")
         .setPositiveButton("Yes") { _, _ ->
-            mainViewModel.deleteTaskList(mainViewModel.currentTaskList)
+            mainViewModel.deleteCurrentTaskList()
         }
         .setNegativeButton("No") { dialog, _ ->
             dialog.dismiss()
@@ -304,7 +309,7 @@ private fun MainActivity.openDeleteTaskListDialog(mainViewModel: MainViewModel) 
     alert.show()
 }
 
-private fun MainActivity.showArchive(currentTaskList: TaskListIndex) {
+private fun MainActivity.showArchive(currentTaskList: TaskListIndex?) {
     val intent = Intent(applicationContext, ArchiveActivity::class.java)
     intent.putExtra(ArchiveActivity.TASKLIST_INDEX, currentTaskList)
     startActivityForResult(intent, ARCHIVE_ACTIVITY_REQUEST_CODE)

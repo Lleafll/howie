@@ -20,10 +20,10 @@ class TasksRepository(
         DomainModel(taskLists)
     }
 
-    suspend fun getTaskCounts(taskList: TaskListIndex) =
+    suspend fun getTaskCounts(taskList: TaskListIndex?) =
         _domainModel.await().getTaskCounts(taskList)
 
-    suspend fun getTask(taskListIndex: TaskListIndex, taskIndex: TaskIndex) =
+    suspend fun getTask(taskIndex: TaskIndex) =
         _domainModel.await().getTask(taskIndex)
 
     suspend fun getTaskListName(taskList: TaskListIndex) =
@@ -33,7 +33,7 @@ class TasksRepository(
 
     suspend fun getTaskListInformation() = _domainModel.await().getTaskListInformation()
 
-    suspend fun getUnarchivedTasks(taskList: TaskListIndex, category: TaskCategory) =
+    suspend fun getUnarchivedTasks(taskList: TaskListIndex?, category: TaskCategory) =
         _domainModel.await().getUnarchivedTasks(taskList, category)
 
     suspend fun deleteTask(taskIndex: TaskIndex): Task {
@@ -51,9 +51,7 @@ class TasksRepository(
     }
 
     suspend fun moveTaskFromListToList(
-        taskId: TaskIndex,
-        fromTaskList: TaskListIndex,
-        toList: TaskListIndex
+        taskId: TaskIndex, toList: TaskListIndex
     ) {
         _domainModel.await().moveTaskFromListToList(taskId, toList)
         saveAll()

@@ -14,7 +14,6 @@ import com.lorenz.howie.databinding.FragmentMoveTaskBinding
 class MoveTaskFragment : DialogFragment() {
     companion object {
         const val TASK_ID_ARGUMENT = "taskId"
-        const val FROM_TASK_LIST_ARGUMENT = "fromTaskListId"
     }
 
     private val _viewModel: MoveTaskViewModel by viewModels {
@@ -28,7 +27,6 @@ class MoveTaskFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _viewModel.taskId = requireArguments().getParcelable(TASK_ID_ARGUMENT)!!
-        _viewModel.fromTaskList = requireArguments().getParcelable(FROM_TASK_LIST_ARGUMENT)!!
         val binding = FragmentMoveTaskBinding.inflate(LayoutInflater.from(context), null, false)
         val messageBoxBuilder =
             AlertDialog.Builder(requireActivity()).setView(binding.root)

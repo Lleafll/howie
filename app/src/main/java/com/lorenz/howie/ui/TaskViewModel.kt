@@ -63,12 +63,12 @@ class TaskViewModel(
     private val _taskList = MutableLiveData<TaskListIndex>()
     private val _taskIndex = MutableLiveData<NullableTaskIndex>()
     private val _taskCategory = MutableLiveData<NullableTaskCategory>()
-    private val _task: LiveData<NullableTask> = CombinedLiveData(_taskList, _taskIndex).switchMap {
+    private val _task: LiveData<NullableTask> = _taskIndex.switchMap {
         liveData {
-            if (it.second.index == null) {
+            if (it.index == null) {
                 emit(NullableTask(null))
             } else {
-                val task = _repository.getTask(it.first, it.second.index!!)
+                val task = _repository.getTask(it.index)
                 emit(NullableTask(task))
             }
         }
