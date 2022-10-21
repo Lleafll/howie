@@ -119,7 +119,7 @@ private fun buildTaskAdapter(
             override fun onEditClicked(index: TaskIndex) {
                 val intent = Intent(activity.applicationContext, TaskActivity::class.java)
                 intent.putExtra(TaskActivity.TASK_ID, index)
-                intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+                intent.putExtra(TaskActivity.TASK_LIST_INDEX, index.list)
                 activity.startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
             }
         }, isInitiallyExpanded

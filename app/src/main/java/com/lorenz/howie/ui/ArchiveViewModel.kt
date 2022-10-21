@@ -53,7 +53,7 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
     val taskDeletedNotificationEvent = SingleLiveEvent<IndexedTask>()
     val title: LiveData<String> = _taskList.switchMap {
         liveData {
-            emit("Archive: ${it?.let { it1 -> _repository.getTaskListName(it1) }}")
+            emit("Archive: ${if (it != null) _repository.getTaskListName(it) else "All"}")
         }
     }
 }

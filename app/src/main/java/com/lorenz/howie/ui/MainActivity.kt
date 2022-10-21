@@ -249,14 +249,16 @@ private fun closeDrawer(binding: ActivityMainBinding) {
 
 private fun MainActivity.setupTaskButton(button: FloatingActionButton, viewModel: MainViewModel) {
     button.setOnClickListener {
-        val intent = Intent(applicationContext, TaskActivity::class.java)
-        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
-        intent.putExtra(
-            TaskActivity.TASK_CATEGORY,
-            TaskCategory.values()[tabLayout.selectedTabPosition]
-        )
-        intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
-        startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
+        if (viewModel.currentTaskList != null) {
+            val intent = Intent(applicationContext, TaskActivity::class.java)
+            val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+            intent.putExtra(
+                TaskActivity.TASK_CATEGORY,
+                TaskCategory.values()[tabLayout.selectedTabPosition]
+            )
+            intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+            startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
+        }
     }
 }
 

@@ -126,7 +126,7 @@ private fun ArchiveActivity.setupArchiveView(
                 override fun onEditClicked(index: TaskIndex) {
                     val intent = Intent(applicationContext, TaskActivity::class.java)
                     intent.putExtra(TaskActivity.TASK_ID, index)
-                    intent.putExtra(TaskActivity.TASK_LIST_INDEX, viewModel.currentTaskList)
+                    intent.putExtra(TaskActivity.TASK_LIST_INDEX, index.list)
                     startActivityForResult(intent, TASK_ACTIVITY_REQUEST_CODE)
                 }
             }, true)
