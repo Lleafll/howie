@@ -22,7 +22,7 @@ class UnarchivedTaskItemFieldsTest {
             UnarchivedTaskItemFields(
                 listOf(
                     TaskItemFields(
-                        TaskIndex(0),
+                        TaskIndex(TaskListIndex(0), 0),
                         "ABC",
                         due = null,
                         snoozed = null,
@@ -36,7 +36,7 @@ class UnarchivedTaskItemFieldsTest {
                 ),
                 listOf(
                     TaskItemFields(
-                        TaskIndex(1),
+                        TaskIndex(TaskListIndex(0), 1),
                         "DEF",
                         due = null,
                         snoozed = null,
@@ -52,7 +52,7 @@ class UnarchivedTaskItemFieldsTest {
             UnarchivedTasks(
                 listOf(
                     IndexedTask(
-                        TaskIndex(0),
+                        TaskIndex(TaskListIndex(0), 0),
                         Task(
                             "ABC",
                             importance = Importance.IMPORTANT,
@@ -65,7 +65,7 @@ class UnarchivedTaskItemFieldsTest {
                 ),
                 listOf(
                     IndexedTask(
-                        TaskIndex(1),
+                        TaskIndex(TaskListIndex(0), 1),
                         Task(
                             "DEF",
                             importance = Importance.IMPORTANT,

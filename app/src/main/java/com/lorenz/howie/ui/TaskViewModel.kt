@@ -131,7 +131,7 @@ class TaskViewModel(
         }
 
     fun updateTask(task: Task) = getCoroutineScope().launch {
-        val success = _repository.updateTask(taskList, taskIndex!!, task)
+        val success = _repository.updateTask(taskIndex!!, task)
         if (success) {
             callFinish()
         }
@@ -148,7 +148,7 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("doArchive cannot be called with a null taskIndex")
         }
-        _repository.doArchive(taskList, taskIndex!!, LocalDate.now())
+        _repository.doArchive(taskIndex!!, LocalDate.now())
         callFinish()
     }
 
@@ -156,7 +156,7 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("unarchive cannot be called with a null taskIndex")
         }
-        _repository.unarchive(taskList, taskIndex!!)
+        _repository.unarchive(taskIndex!!)
         callFinish()
     }
 
@@ -164,7 +164,7 @@ class TaskViewModel(
         if (taskIndex == null) {
             error("delete cannot be called with a null taskIndex")
         }
-        val oldTask = _repository.deleteTask(taskList, taskIndex!!)
+        val oldTask = _repository.deleteTask(taskIndex!!)
         returnTaskDeletedEvent.value = oldTask
     }
 

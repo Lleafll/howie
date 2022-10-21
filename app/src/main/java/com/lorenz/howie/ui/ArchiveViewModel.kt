@@ -26,7 +26,7 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
     }
 
     fun unarchive(task: TaskIndex) = viewModelScope.launch {
-        val oldArchiveDate = _repository.unarchive(currentTaskList, task)
+        val oldArchiveDate = _repository.unarchive(task)
         setTaskList(currentTaskList)
         if (oldArchiveDate != null) {
             taskUnarchivedNotificationEvent.value = Pair(task, oldArchiveDate)
@@ -34,7 +34,7 @@ class ArchiveViewModel(private val _application: Application) : AndroidViewModel
     }
 
     fun doArchive(id: TaskIndex, date: LocalDate) = viewModelScope.launch {
-        _repository.doArchive(currentTaskList, id, date)
+        _repository.doArchive(id, date)
         setTaskList(currentTaskList) // Force refresh of tasks
     }
 

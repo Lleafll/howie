@@ -24,7 +24,7 @@ class TasksRepository(
         _domainModel.await().getTaskCounts(taskList)
 
     suspend fun getTask(taskListIndex: TaskListIndex, taskIndex: TaskIndex) =
-        _domainModel.await().getTask(taskListIndex, taskIndex)
+        _domainModel.await().getTask(taskIndex)
 
     suspend fun getTaskListName(taskList: TaskListIndex) =
         _domainModel.await().getTaskListName(taskList)
@@ -36,8 +36,8 @@ class TasksRepository(
     suspend fun getUnarchivedTasks(taskList: TaskListIndex, category: TaskCategory) =
         _domainModel.await().getUnarchivedTasks(taskList, category)
 
-    suspend fun deleteTask(taskList: TaskListIndex, taskIndex: TaskIndex): Task {
-        val task = _domainModel.await().deleteTask(taskList, taskIndex)
+    suspend fun deleteTask(taskIndex: TaskIndex): Task {
+        val task = _domainModel.await().deleteTask(taskIndex)
         saveAll()
         return task
     }
@@ -55,7 +55,7 @@ class TasksRepository(
         fromTaskList: TaskListIndex,
         toList: TaskListIndex
     ) {
-        _domainModel.await().moveTaskFromListToList(taskId, fromTaskList, toList)
+        _domainModel.await().moveTaskFromListToList(taskId, toList)
         saveAll()
     }
 
@@ -64,8 +64,8 @@ class TasksRepository(
         saveAll()
     }
 
-    suspend fun doArchive(taskListId: TaskListIndex, taskId: TaskIndex, date: LocalDate) {
-        _domainModel.await().doArchive(taskListId, taskId, date)
+    suspend fun doArchive(taskId: TaskIndex, date: LocalDate) {
+        _domainModel.await().doArchive(taskId, date)
         saveAll()
     }
 
@@ -79,13 +79,13 @@ class TasksRepository(
         return newIndex
     }
 
-    suspend fun snoozeToTomorrow(taskList: TaskListIndex, task: TaskIndex) {
-        _domainModel.await().snoozeToTomorrow(taskList, task)
+    suspend fun snoozeToTomorrow(task: TaskIndex) {
+        _domainModel.await().snoozeToTomorrow(task)
         saveAll()
     }
 
-    suspend fun removeSnooze(taskList: TaskListIndex, task: TaskIndex): LocalDate? {
-        val oldSnoozed = _domainModel.await().removeSnooze(taskList, task)
+    suspend fun removeSnooze(task: TaskIndex): LocalDate? {
+        val oldSnoozed = _domainModel.await().removeSnooze(task)
         saveAll()
         return oldSnoozed
     }
@@ -101,13 +101,13 @@ class TasksRepository(
         _widgetUpdater()
     }
 
-    suspend fun scheduleNext(taskList: TaskListIndex, task: TaskIndex) {
-        _domainModel.await().scheduleNext(taskList, task)
+    suspend fun scheduleNext(task: TaskIndex) {
+        _domainModel.await().scheduleNext(task)
         saveAll()
     }
 
-    suspend fun unarchive(taskList: TaskListIndex, taskIndex: TaskIndex): LocalDate? {
-        val oldArchivedate = _domainModel.await().unarchive(taskList, taskIndex)
+    suspend fun unarchive(taskIndex: TaskIndex): LocalDate? {
+        val oldArchivedate = _domainModel.await().unarchive(taskIndex)
         saveAll()
         return oldArchivedate
     }
@@ -120,16 +120,16 @@ class TasksRepository(
         return success
     }
 
-    suspend fun updateTask(taskList: TaskListIndex, taskIndex: TaskIndex, task: Task): Boolean {
-        val success = _domainModel.await().updateTask(taskList, taskIndex, task)
+    suspend fun updateTask(taskIndex: TaskIndex, task: Task): Boolean {
+        val success = _domainModel.await().updateTask(taskIndex, task)
         if (success) {
             saveAll()
         }
         return success
     }
 
-    suspend fun addSnooze(currentTaskList: TaskListIndex, task: TaskIndex, snooze: LocalDate) {
-        _domainModel.await().addSnooze(currentTaskList, task, snooze)
+    suspend fun addSnooze(task: TaskIndex, snooze: LocalDate) {
+        _domainModel.await().addSnooze(task, snooze)
         saveAll()
     }
 }
