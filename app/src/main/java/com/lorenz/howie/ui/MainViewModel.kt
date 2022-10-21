@@ -67,35 +67,36 @@ class MainViewModel(
         }
     }
 
-    fun setTaskList(taskList: TaskListIndex) = viewModelScope.launch {
-        currentTaskList = taskList
-        _currentTaskList.value = taskList
+    fun selectTaskList(taskList: Int) = viewModelScope.launch {
+        currentTaskList = TaskListIndex(taskList)
+        _currentTaskList.value = currentTaskList
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
         _repository.addTask(currentTaskList, task)
-        setTaskList(currentTaskList) // Force refresh of tasks
+        refresh()
     }
 
     fun doArchive(id: TaskIndex) = viewModelScope.launch {
         _repository.doArchive(id, LocalDate.now())
-        setTaskList(currentTaskList) // Force refresh of tasks
+        refresh()
         taskArchivedNotificationEvent.value = id
     }
 
     fun unarchive(id: TaskIndex) = viewModelScope.launch {
         _repository.unarchive(id)
-        setTaskList(currentTaskList) // Force refresh of tasks
+        refresh()
     }
 
     fun addTaskList() = viewModelScope.launch {
-        val newTaskListIndex = _repository.addTaskList()
-        setTaskList(newTaskListIndex)
+        currentTaskList = _repository.addTaskList()
+        _currentTaskList.value = currentTaskList
+        refresh()
     }
 
     fun deleteTaskList(taskList: TaskListIndex) = viewModelScope.launch {
         _repository.deleteTaskList(taskList)
-        setTaskList(TaskListIndex(0))
+        selectTaskList(0)
     }
 
     val taskListDrawerContent: LiveData<TaskListDrawerContent> = _currentTaskList.switchMap {
@@ -111,18 +112,18 @@ class MainViewModel(
 
     fun snoozeToTomorrow(task: TaskIndex) = viewModelScope.launch {
         _repository.snoozeToTomorrow(task)
-        setTaskList(currentTaskList) // Force refresh of tasks
+        refresh()
         taskSnoozedToTomorrowNotificationEvent.value = task
     }
 
     fun addSnooze(task: TaskIndex, snooze: LocalDate) = viewModelScope.launch {
         _repository.addSnooze(task, snooze)
-        setTaskList(currentTaskList) // Force refresh of tasks
+        refresh()
     }
 
     fun removeSnooze(index: TaskIndex) = viewModelScope.launch {
         val oldSnooze = _repository.removeSnooze(index)
-        setTaskList(currentTaskList) // Force refresh of tasks
+        refresh()
         if (oldSnooze != null) {
             snoozeRemovedNotificationEvent.value = Pair(index, oldSnooze)
         }
@@ -130,7 +131,7 @@ class MainViewModel(
 
     fun reschedule(taskIndex: TaskIndex) = viewModelScope.launch {
         _repository.scheduleNext(taskIndex)
-        setTaskList(currentTaskList) // Force refresh of tasks
+        refresh()
         taskScheduledNotificationEvent.value = true
     }
 
@@ -147,9 +148,13 @@ class MainViewModel(
         }
     }
 
+    private fun refresh() {
+        _currentTaskList.value = currentTaskList
+    }
+
     fun forceRefresh() = viewModelScope.launch {
         _repository = buildTaskRepository(_application)
-        setTaskList(currentTaskList)
+        refresh()
     }
 
     val taskArchivedNotificationEvent = SingleLiveEvent<TaskIndex>()

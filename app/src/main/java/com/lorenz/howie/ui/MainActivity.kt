@@ -79,9 +79,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val taskList: TaskListIndex? = intent.getParcelableExtra(SHOW_TASK_LIST_EXTRA)
-        if (taskList != null) {
-            viewModel.setTaskList(taskList)
+        val taskList: Int = intent.getIntExtra(SHOW_TASK_LIST_EXTRA, -1)
+        if (taskList >= 0) {
+            viewModel.selectTaskList(taskList + 1)
         }
     }
 
@@ -232,7 +232,7 @@ private fun MainActivity.buildDrawerHeaderContent(
             }
             setOnClickListener {
                 closeDrawer(mainBinding)
-                viewModel.setTaskList(TaskListIndex(index))
+                viewModel.selectTaskList(index)
             }
         }
     }
