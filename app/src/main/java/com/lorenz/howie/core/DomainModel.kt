@@ -11,30 +11,23 @@ data class TaskListIndex(
 
 @Parcelize
 data class TaskIndex(
-    val list: TaskListIndex,
-    val task: Int
+    val list: TaskListIndex, val task: Int
 ) : Parcelable
 
 data class IndexedTask(
-    val index: TaskIndex,
-    val task: Task
+    val index: TaskIndex, val task: Task
 )
 
 data class UnarchivedTasks(
-    val unsnoozed: List<IndexedTask>,
-    val snoozed: List<IndexedTask>
+    val unsnoozed: List<IndexedTask>, val snoozed: List<IndexedTask>
 )
 
 data class TaskCounts(
-    val doCount: Int,
-    val decideCount: Int,
-    val delegateCount: Int,
-    val dropCount: Int
+    val doCount: Int, val decideCount: Int, val delegateCount: Int, val dropCount: Int
 )
 
 data class TaskListInformation(
-    val name: String,
-    val taskCounts: TaskCounts
+    val name: String, val taskCounts: TaskCounts
 )
 
 class DomainModel(initialTaskLists: List<TaskList>) {
@@ -52,26 +45,20 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     fun getTaskListInformation(taskListIndex: TaskListIndex): TaskListInformation {
         val taskList = taskLists[taskListIndex.value]
         return TaskListInformation(
-            taskList.name,
-            countUnarchivedUnsnoozedTasks(taskList.tasks)
+            taskList.name, countUnarchivedUnsnoozedTasks(taskList.tasks)
         )
     }
 
     fun getTaskListInformation(): List<TaskListInformation> {
         return taskLists.map {
             TaskListInformation(
-                it.name,
-                countUnarchivedUnsnoozedTasks(it.tasks)
+                it.name, countUnarchivedUnsnoozedTasks(it.tasks)
             )
         }
     }
 
     fun getTaskCounts(taskList: TaskListIndex?): TaskCounts {
-        return if (taskList != null) {
-            countUnarchivedUnsnoozedTasks(taskLists[taskList.value].tasks)
-        } else {
-            TaskCounts(0, 0, 0, 0)
-        }
+        return countUnarchivedUnsnoozedTasks(if (taskList != null) taskLists[taskList.value].tasks else taskLists.flatMap { it.tasks })
     }
 
     fun addTask(taskList: TaskListIndex, task: Task): Boolean {
@@ -90,14 +77,21 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun getUnarchivedTasks(taskList: TaskListIndex?, category: TaskCategory): UnarchivedTasks {
-        val unArchivedTasks = if (taskList == null) listOf() else
-            filterUnarchivedTasksToIndexedTask(taskLists[taskList.value].tasks, taskList)
+        val unArchivedTasks =
+            if (taskList == null) {
+                taskLists.mapIndexed { index, list ->
+                    filterUnarchivedTasksToIndexedTask(
+                        list.tasks,
+                        TaskListIndex(index)
+                    )
+                }.flatten()
+            } else {
+                filterUnarchivedTasksToIndexedTask(taskLists[taskList.value].tasks, taskList)
+            }
         val categoryTasks = filterCategory(unArchivedTasks, category)
         val partitionedTasks = categoryTasks.partition { it.task.isSnoozed() }
-        return UnarchivedTasks(
-            partitionedTasks.second.sortedBy { it.task.due },
-            partitionedTasks.first.sortedBy { it.task.snoozed }
-        )
+        return UnarchivedTasks(partitionedTasks.second.sortedBy { it.task.due },
+            partitionedTasks.first.sortedBy { it.task.snoozed })
     }
 
     fun getArchive(taskList: TaskListIndex): List<IndexedTask> {
@@ -118,8 +112,7 @@ class DomainModel(initialTaskLists: List<TaskList>) {
     }
 
     fun moveTaskFromListToList(
-        taskId: TaskIndex,
-        toList: TaskListIndex
+        taskId: TaskIndex, toList: TaskListIndex
     ) {
         val task = taskLists[taskId.list.value].tasks.removeAt(taskId.task)
         taskLists[toList.value].tasks.add(task)
@@ -175,13 +168,11 @@ class DomainModel(initialTaskLists: List<TaskList>) {
 }
 
 private fun filterArchivedTasksToIndexTask(tasks: Iterable<Task>, taskList: TaskListIndex) =
-    tasks.withIndex()
-        .filter { (_, task) -> task.archived != null }
+    tasks.withIndex().filter { (_, task) -> task.archived != null }
         .map { (i, task) -> IndexedTask(TaskIndex(taskList, i), task) }
 
 private fun filterUnarchivedTasksToIndexedTask(tasks: Iterable<Task>, taskList: TaskListIndex) =
-    tasks.withIndex()
-        .filter { (_, task) -> task.archived == null }
+    tasks.withIndex().filter { (_, task) -> task.archived == null }
         .map { (i, task) -> IndexedTask(TaskIndex(taskList, i), task) }
 
 private fun filterUnarchivedTasks(tasks: Iterable<Task>) = tasks.filter { it.archived == null }
