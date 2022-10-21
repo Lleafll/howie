@@ -74,7 +74,7 @@ class TaskViewModelTest {
     fun `taskFields with non-null archived date`() {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true) {
-            coEvery { getTask(any(), any()) } returns Task(
+            coEvery { getTask(any()) } returns Task(
                 "TaskName",
                 archived = LocalDate.of(1111, 11, 11)
             )
@@ -99,7 +99,7 @@ class TaskViewModelTest {
     fun `optionsVisibility for archived task`() {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository> {
-            coEvery { getTask(any(), any()) } returns Task("TaskName", archived = LocalDate.MIN)
+            coEvery { getTask(any()) } returns Task("TaskName", archived = LocalDate.MIN)
         }
         val viewModel = TaskViewModel(application, repository, testScope)
         viewModel.initialize(TaskListIndex(0), TaskIndex(TaskListIndex(0), 0), null)

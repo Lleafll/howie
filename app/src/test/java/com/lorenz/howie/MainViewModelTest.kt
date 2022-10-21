@@ -44,7 +44,7 @@ class MainViewModelTest {
         val application = mockk<Application>(relaxed = true)
         val repository = mockk<TasksRepository>(relaxed = true)
         val taskManager = MainViewModel(application, repository)
-        taskManager.selectTaskList(TaskListIndex(456))
+        taskManager.selectTaskList(456)
         taskManager.doArchive(TaskIndex(TaskListIndex(456), 123))
         coVerify { repository.doArchive(TaskIndex(TaskListIndex(456), 123), LocalDate.now()) }
     }
