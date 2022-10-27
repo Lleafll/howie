@@ -8,10 +8,10 @@ apply plugin: 'kotlin-kapt'
 android {
     signingConfigs {
         'default' {
-            storeFile file('C:\\Users\\Lars\\androidkey\\upload-keystore.jks')
-            storePassword 'menscheNwiE93'
-            keyAlias 'upload'
-            keyPassword 'menscheNwiE93'
+            storeFile file('C:\\Users\\Lars PC\\androidkeystore\\androidkeystore.jks')
+            storePassword 'menscheNwiE'
+            keyAlias 'key0'
+            keyPassword 'menscheNwiE'
         }
     }
     compileSdk 33
